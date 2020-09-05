@@ -43,9 +43,53 @@
             <v-btn icon>
                 <v-icon>mdi-format-list-bulleted</v-icon>
             </v-btn>
-            <v-btn icon color="primary">
-                <v-icon>mdi-account-circle</v-icon>
-            </v-btn>
+            <v-menu offset-y>
+                <template v-slot:activator="{ on, attrs }">
+                    <v-btn
+                            color="primary"
+                            icon
+                            v-bind="attrs"
+                            v-on="on">
+                        <v-icon>mdi-account-circle</v-icon>
+                    </v-btn>
+                </template>
+                <v-list>
+                    <v-list-item two-line v-if="$store.getters.isLoggedIn">
+                        <v-list-item-avatar>
+                            <img :src="$store.state.userInfo.avatar" alt="User Avatar">
+                        </v-list-item-avatar>
+
+                        <v-list-item-content>
+                            <v-list-item-title>{{$store.state.userInfo.name}}</v-list-item-title>
+                            <v-list-item-subtitle>{{$store.state.userInfo.mail}}</v-list-item-subtitle>
+                        </v-list-item-content>
+                    </v-list-item>
+                    <v-list-item to="/settings">
+                        <v-list-item-icon>
+                            <v-icon>mdi-cog-outline</v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-content>
+                            <v-list-item-title>Settings</v-list-item-title>
+                        </v-list-item-content>
+                    </v-list-item>
+                    <v-list-item @click="logout()" color="primary" v-if="$store.getters.isLoggedIn">
+                        <v-list-item-icon>
+                            <v-icon>mdi-logout</v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-content>
+                            <v-list-item-title>Logout</v-list-item-title>
+                        </v-list-item-content>
+                    </v-list-item>
+                    <v-list-item to="/login" color="primary" v-else-if="$store.getters.isKeySet">
+                        <v-list-item-icon>
+                            <v-icon>mdi-login</v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-content>
+                            <v-list-item-title>Login</v-list-item-title>
+                        </v-list-item-content>
+                    </v-list-item>
+                </v-list>
+            </v-menu>
         </div>
     </div>
 </template>
@@ -65,6 +109,9 @@
                 } else {
                     this.volume = this.prevVolume;
                 }
+            },
+            logout() {
+                alert("NOOOO");
             }
         },
         computed: {
@@ -76,6 +123,9 @@
                 } else {
                     return 'mdi-volume-high';
                 }
+            },
+            adjustedVolume() {
+                return this.volume ** 2;
             }
         }
     }
@@ -92,7 +142,7 @@
         align-items: center;
     }
 
-    .controls {
+    .controls > * {
         -webkit-app-region: no-drag;
     }
 

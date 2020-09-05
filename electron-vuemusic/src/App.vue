@@ -20,7 +20,6 @@
 </template>
 
 <script>
-    //make design in photoshop :)
     import ToolBar from "@/components/ToolBar";
     import NavBar from "@/components/NavBar";
 
@@ -30,6 +29,17 @@
         data: () => ({
             drawer: true,
         }),
+        async mounted() {
+            console.log(this.$store);
+            await this.$store.dispatch('initialize');
+            if (!this.$store.getters.isKeySet) {
+                if (this.$store.state.shouldSetKey && this.$route.name !== 'Settings') {
+                    await this.$router.push('/settings');
+                }
+            } else if (!this.$store.getters.isLoggedIn && this.$route.name !== 'Settings') {
+                await this.$router.push('/settings');
+            }
+        }
     };
 </script>
 <style>
@@ -41,10 +51,10 @@
         font-family: Roboto, Helvetica Neue, Helvetica, Arial, sans-serif;
     }
 
-    .toolbar .drag-region {
+    .toolbar {
         display: flex;
         justify-content: left;
         align-items: center;
-        padding: 10px 20px;
+        padding: 0;
     }
 </style>
