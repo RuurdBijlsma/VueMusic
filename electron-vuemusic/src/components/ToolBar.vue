@@ -1,33 +1,10 @@
 <template>
     <div class="toolbar">
         <div></div>
-        <div class="controls">
-            <v-btn icon small>
-                <v-icon small>mdi-shuffle</v-icon>
-            </v-btn>
-            <v-btn icon small>
-                <v-icon>mdi-skip-previous</v-icon>
-            </v-btn>
-            <v-btn icon large>
-                <v-icon large>mdi-play</v-icon>
-            </v-btn>
-            <v-btn icon small>
-                <v-icon>mdi-skip-next</v-icon>
-            </v-btn>
-            <v-btn icon small>
-                <v-icon small>mdi-repeat</v-icon>
-            </v-btn>
-        </div>
+        <media-controls full class="controls"></media-controls>
         <div class="media-info">
-            <v-card outlined class="media-card">
-                <div v-if="false" class="media-album"/>
-                <div class="empty-album">
-                    <v-icon class="empty-album-icon">mdi-music</v-icon>
-                </div>
-                <div class="media-text-info">
-                    <img class="media-info-logo" src="../assets/logo-small-v.png" alt="vm5 logo">
-                </div>
-            </v-card>
+            <media-seek class="top-seeker" no-background small-time></media-seek>
+            <media-info class="top-info"></media-info>
         </div>
         <div class="volume">
             <v-slider
@@ -40,6 +17,9 @@
             ></v-slider>
         </div>
         <div class="buttons">
+            <v-btn icon>
+                <v-icon>mdi-heart-outline</v-icon>
+            </v-btn>
             <v-btn icon>
                 <v-icon>mdi-format-list-bulleted</v-icon>
             </v-btn>
@@ -72,7 +52,8 @@
                             <v-list-item-title>Settings</v-list-item-title>
                         </v-list-item-content>
                     </v-list-item>
-                    <v-list-item @click="logout()" color="primary" v-if="$store.getters.isLoggedIn">
+                    <v-list-item @click="$store.dispatch('spotifyLogout')" color="primary"
+                                 v-if="$store.getters.isLoggedIn">
                         <v-list-item-icon>
                             <v-icon>mdi-logout</v-icon>
                         </v-list-item-icon>
@@ -80,7 +61,8 @@
                             <v-list-item-title>Logout</v-list-item-title>
                         </v-list-item-content>
                     </v-list-item>
-                    <v-list-item to="/login" color="primary" v-else-if="$store.getters.isKeySet">
+                    <v-list-item @click="$store.dispatch('spotifyLogin')" color="primary"
+                                 v-else-if="$store.getters.isKeySet">
                         <v-list-item-icon>
                             <v-icon>mdi-login</v-icon>
                         </v-list-item-icon>
@@ -95,8 +77,13 @@
 </template>
 
 <script>
+    import MediaInfo from "./MediaInfo";
+    import MediaControls from "./MediaControls";
+    import MediaSeek from "./MediaSeek";
+
     export default {
         name: "ToolBar",
+        components: {MediaSeek, MediaControls, MediaInfo},
         data: () => ({
             volume: 1,
             prevVolume: 1,
@@ -110,9 +97,6 @@
                     this.volume = this.prevVolume;
                 }
             },
-            logout() {
-                alert("NOOOO");
-            }
         },
         computed: {
             volumeIcon() {
@@ -142,64 +126,71 @@
         align-items: center;
     }
 
+    .controls {
+        margin-left: 5px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
     .controls > * {
         -webkit-app-region: no-drag;
     }
 
     .media-info {
         -webkit-app-region: no-drag;
+        flex-grow: 10;
+        margin: 0 10px;
+        max-width: 500px;
     }
 
-    .media-card {
-        display: flex;
-        height: 50px;
+    .top-seeker {
+        width: calc(100% - 68px);
+        margin-left: 58px;
+        position: relative;
+        top: 39px;
+        z-index: 5;
     }
 
-    .media-album {
-        border-top-left-radius: 2px;
-        border-bottom-left-radius: 2px;
-        height: 48px;
-        width: 48px;
-        background-repeat: no-repeat;
-        background-size: cover;
-        background-position: center;
-        background-image: url("../assets/notfound.png");
-    }
-
-    .empty-album {
-        border-top-left-radius: 2px !important;
-        border-bottom-left-radius: 2px;
-        height: 48px;
-        width: 48px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background-color: rgba(0, 0, 0, 0.1);
-    }
-
-    .empty-album-icon {
-        opacity: 0.2;
-    }
-
-    .media-text-info {
-        min-width: 150px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
-    .media-info-logo {
-        height: 20px;
-        opacity: 0.5;
+    .top-info {
+        margin-top: -20px;
     }
 
     .volume {
         -webkit-app-region: no-drag;
-        width: 150px;
+        min-width: 100px;
+        max-width: 160px;
         height: 32px;
+        flex-grow: 1;
+    }
+
+    .buttons {
+        margin: 0 5px;
     }
 
     .buttons > * {
         -webkit-app-region: no-drag;
+    }
+
+    @media (max-width: 959px) {
+        .volume {
+            display: none;
+        }
+    }
+
+    @media (max-width: 870px) {
+        .controls {
+            display: none !important;
+        }
+
+        .media-info {
+            margin-left: 3px;
+            margin-right: 0px;
+        }
+
+        .top-seeker {
+            margin-left: 51px;
+            width: calc(100% - 61px);
+        }
     }
 </style>

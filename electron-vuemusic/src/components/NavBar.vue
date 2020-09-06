@@ -1,5 +1,5 @@
 <template>
-    <div class="nav-bar">
+    <vue-custom-scrollbar class="nav-bar">
         <div class="nav-top">
             <div class="logo">
                 <img class="logo-image" src="../assets/full-black-medium.png" alt="logo image"/>
@@ -60,22 +60,26 @@
                 </v-list-item-content>
             </v-list-item>
 
-            <v-subheader>Playlists</v-subheader>
-            <v-list-item v-for="playlist in userPlaylists" :key="playlist" :to="`/playlist?id=${playlist}`" exact>
+            <v-subheader v-if="$store.state.library.playlists.length > 0">Playlists</v-subheader>
+            <v-list-item v-for="playlist in $store.state.library.playlists" :key="playlist.id"
+                         :to="`/playlist?id=${playlist.id}`" exact>
                 <v-list-item-icon>
                     <v-icon>mdi-playlist-music</v-icon>
                 </v-list-item-icon>
                 <v-list-item-content>
-                    <v-list-item-title>{{playlist}}</v-list-item-title>
+                    <v-list-item-title>{{playlist.name}}</v-list-item-title>
                 </v-list-item-content>
             </v-list-item>
         </v-list>
-    </div>
+    </vue-custom-scrollbar>
 </template>
 
 <script>
+    import vueCustomScrollbar from 'vue-custom-scrollbar'
+
     export default {
         name: "NavBar",
+        components: {vueCustomScrollbar},
         data: () => ({
             userPlaylists: ['360 Dance', 'Housewerk', 'Rock This']//zet dit in vuex
         })
@@ -84,15 +88,15 @@
 
 <style scoped>
     .nav-bar {
-
+        height:100%;
     }
 
     .nav-top {
     }
 
     .logo {
-        margin-top:2px;
-        margin-left:2px;
+        margin-top: 2px;
+        margin-left: 2px;
         padding: 15px;
         font-weight: bold;
         display: flex;

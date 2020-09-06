@@ -10,7 +10,6 @@ export default {
     },
     mutations: {
         spotifyId: (state, id) => {
-            console.log("setting spotify id to", id);
             localStorage.spotifyId = id;
             state.spotifyId = id
         },
@@ -69,6 +68,7 @@ export default {
                         commit('server', null);
                         console.log("Stopped listening on *:" + port);
                         dispatch('getAuthByCode', {redirectUrl, code: req.query.code}).then(auth => {
+                            window.require('electron').remote.getCurrentWindow().focus();
                             resolve({
                                 code: req.query.code,
                                 token: auth.access_token,

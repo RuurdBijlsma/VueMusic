@@ -2,17 +2,20 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import SpotifyWebApi from 'spotify-web-api-js';
 import platform from './electron-module';
+import media from './media-module';
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
     state: {
+        windowWidth: window.innerWidth,
         auth: {
             code: null,
             token: null,
             refresh: null,
             expiryDate: null,
         },
+        timeout: -1,
         userInfo: {
             name: '',
             mail: '',
@@ -21,8 +24,15 @@ export default new Vuex.Store({
             avatar: 'img/no-user.jpg',
         },
         api: new SpotifyWebApi(),
+        library: {
+            playlists: [],
+        }
     },
     mutations: {
+        windowWidth: (state, windowWidth) => state.windowWidth = windowWidth,
+        addUserPlaylist: (state, playlist) => state.library.playlists.push(playlist),
+        userPlaylists: (state, playlists) => state.library.playlists = playlists,
+        timeout: (state, id) => state.timeout = id,
         userInfo: (state, userInfo) => state.userInfo = userInfo,
         server: (state, server) => state.server = server,
         auth: (state, auth) => {
@@ -47,13 +57,15 @@ export default new Vuex.Store({
     },
     actions: {
         initialize: async ({dispatch}) => {
-            if (localStorage.getItem('auth') !== null)
+            if (localStorage.getItem('auth') !== null) {
+                let auth;
                 try {
-                    let auth = JSON.parse(localStorage.getItem('auth'));
-                    await dispatch('commitAuth', auth);
+                    auth = JSON.parse(localStorage.getItem('auth'));
                 } catch (e) {
                     console.warn("Couldn't set auth from localStorage.auth", e)
                 }
+                await dispatch('commitAuth', auth);
+            }
 
             await dispatch('_initialize');
         },
@@ -67,8 +79,22 @@ export default new Vuex.Store({
                 console.warn("Couldn't get new token, refresh token isn't set", state.auth);
                 return;
             }
-            let auth = await dispatch('getAuthByRefreshToken', state.auth.refresh);
+            let {access_token, expires_in} = await dispatch('getAuthByRefreshToken', state.auth.refresh);
+            let auth = {...state.auth};
+            auth.token = access_token;
+            auth.expiryDate = (+new Date) + expires_in * 1000;
             await dispatch('commitAuth', auth);
+        },
+        spotifyLogout: async ({state, commit}) => {
+            localStorage.removeItem('auth');
+            clearTimeout(state.timeout);
+            commit('auth', {
+                code: null,
+                token: null,
+                refresh: null,
+                expiryDate: null,
+            });
+            commit('userPlaylists', []);
         },
         commitAuth: async ({dispatch, commit, state}, auth) => {
             commit('auth', auth);
@@ -78,16 +104,31 @@ export default new Vuex.Store({
                 state.api.setAccessToken(auth.token);
 
                 let msUntilExpire = auth.expiryDate - now;
-                await dispatch('loadUserProfile');
-                setTimeout(async () => {
+                await dispatch('initializeSpotify');
+                commit('timeout', setTimeout(async () => {
                     await dispatch('loginByRefreshToken');
-                }, msUntilExpire - 1000 * 60 * 5)
+                }, msUntilExpire - 1000 * 60 * 5));
             } else {
                 //auth is expired
                 await dispatch('loginByRefreshToken');
             }
         },
-        loadUserProfile: async ({state, commit}) => {
+        async * retrieveSpotifyArray({}, apiFunction) {
+            //Example apiFunction: ({limit, offset})=>state.api.getUserPlaylists(me.id, {limit, offset})
+            let offset = 0;
+            let limit = 10;
+
+            while (true) {
+                let result = await apiFunction({offset, limit});
+                for (let item of result.items) {
+                    yield item;
+                }
+                if (result.next === null)
+                    break;
+                offset += limit;
+            }
+        },
+        initializeSpotify: async ({state, commit, dispatch}) => {
             let me = await state.api.getMe();
             commit('userInfo', {
                 name: me.display_name,
@@ -95,8 +136,14 @@ export default new Vuex.Store({
                 country: me.country,
                 followers: me.followers,
                 avatar: me.images.length === 0 ? 'img/no-user.jpg' : me.images[0].url,
-            })
+            });
+
+            commit('userPlaylists', []);
+            let retrieval = ({limit, offset}) => state.api.getUserPlaylists(me.id, {limit, offset});
+            for await(let playlist of await dispatch('retrieveSpotifyArray', retrieval)) {
+                commit('addUserPlaylist', playlist);
+            }
         },
     },
-    modules: {platform}
+    modules: {platform, media}
 })

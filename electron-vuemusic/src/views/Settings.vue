@@ -12,7 +12,7 @@
                     <p>Spotify Client Secret</p>
                     <p>Youtube API Key</p>
                 </div>
-                <v-textarea spellcheck="false" :rules="secretRules" height="108" outlined
+                <v-textarea no-resize spellcheck="false" :rules="secretRules" outlined auto-grow row-height="4"
                             v-model="secrets"></v-textarea>
             </div>
             <p class="key-saved" v-if="$store.getters.isKeySet">
@@ -48,7 +48,7 @@
                         <p class="caption">{{$store.state.userInfo.mail}}</p>
                     </div>
                 </div>
-                <v-btn color="primary" outlined>Log out</v-btn>
+                <v-btn color="primary" outlined @click="$store.dispatch('spotifyLogout')">Log out</v-btn>
             </div>
         </div>
     </div>

@@ -9,7 +9,7 @@
         name: 'ListenNow',
         components: {},
         mounted() {
-            console.log("hello woorld", this.$store);
+
         }
     }
 </script>
