@@ -8,10 +8,10 @@
                  :color="noBackground ? 'transparent' : 'default'"
                  ref="seekBar"
                  :style="{margin: smallTime ? '0 -50px' : '0 5px'}">
-            <v-sheet color="primary" class="seek-progress"
+            <v-sheet color="primarySeek" class="seek-progress"
                      :style="{width: Math.round($store.getters.progress * 10000)/100+'%'}"
             ></v-sheet>
-            <v-sheet color="primary" class="seek-thumb"
+            <v-sheet color="primarySeek" class="seek-thumb"
                      :style="{left:'calc('+ Math.round($store.getters.progress * 10000)/100+'% - 5px)'}"
             ></v-sheet>
         </v-sheet>

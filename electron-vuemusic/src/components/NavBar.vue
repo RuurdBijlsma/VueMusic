@@ -1,5 +1,5 @@
 <template>
-    <vue-custom-scrollbar class="nav-bar">
+    <perfect-scrollbar class="nav-bar">
         <div class="nav-top">
             <div class="logo">
                 <img class="logo-image" src="../assets/full-black-medium.png" alt="logo image"/>
@@ -71,7 +71,7 @@
                 </v-list-item-content>
             </v-list-item>
         </v-list>
-    </vue-custom-scrollbar>
+    </perfect-scrollbar>
 </template>
 
 <script>
@@ -89,6 +89,7 @@
 <style scoped>
     .nav-bar {
         height:100%;
+        width:100%;
     }
 
     .nav-top {

@@ -4,13 +4,13 @@
             <v-icon small>mdi-shuffle</v-icon>
         </v-btn>
         <v-btn icon small>
-            <v-icon>mdi-skip-previous</v-icon>
+            <v-icon>mdi-rewind</v-icon>
         </v-btn>
         <v-btn icon large>
             <v-icon large>mdi-play</v-icon>
         </v-btn>
         <v-btn icon small>
-            <v-icon>mdi-skip-next</v-icon>
+            <v-icon>mdi-fast-forward</v-icon>
         </v-btn>
         <v-btn icon small v-if="full">
             <v-icon small>mdi-repeat</v-icon>

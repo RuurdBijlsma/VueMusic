@@ -1,6 +1,8 @@
 <template>
     <v-app class="app">
         <v-navigation-drawer
+                color="navBackground"
+                class="navBar"
                 v-if="$store.state.windowWidth > 645"
                 v-model="drawer"
                 :expand-on-hover="false"
@@ -15,8 +17,10 @@
             <tool-bar></tool-bar>
         </v-app-bar>
 
-        <v-main>
-            <router-view></router-view>
+        <v-main class="scroll-container">
+            <perfect-scrollbar class="perfect-scroller">
+            <router-view class="router-view"></router-view>
+            </perfect-scrollbar>
         </v-main>
 
         <v-card flat class="bottom-media-control" v-if="$store.state.windowWidth <= 645" color="primaryLight">
@@ -102,6 +106,22 @@
         justify-content: left;
         align-items: center;
         padding: 0;
+    }
+
+    .router-view {
+        /*position: absolute;*/
+        width:100%;
+        height:100%;
+        position: absolute;
+    }
+    .perfect-scroller{
+
+        height:100%;
+        overflow-y: auto;
+    }
+
+    .navBar {
+        /*position: fixed;*/
     }
 
     .bottom-media-control {

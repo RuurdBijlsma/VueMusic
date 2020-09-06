@@ -3,8 +3,8 @@ import Utils from "../../js/Utils";
 export default {
     state: {
         track: {
-            name: '',
-            artists: [],
+            name: 'Lefty',
+            artists: [{id: 'ad89', name: 'XYLO'}, {id: '89d0', name: 'K.Flay'}],
             duration: 100,
             progressSeconds: 35.32,
             favorite: false,
@@ -22,6 +22,9 @@ export default {
         queueTracks: (state, queueTracks) => state.queueTracks = queueTracks,
     },
     getters: {
+        isTrackSet: state => {
+            return state.track.name !== '';
+        },
         durationHms: state => {
             return Utils.secondsToHms(state.track.duration);
         },

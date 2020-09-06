@@ -5,6 +5,10 @@ import router from './plugins/router'
 import store from './plugins/vuex/store'
 import vuetify from './plugins/vuetify';
 
+import PerfectScrollbar from 'vue2-perfect-scrollbar'
+import 'vue2-perfect-scrollbar/dist/vue2-perfect-scrollbar.css'
+Vue.use(PerfectScrollbar)
+
 Vue.config.productionTip = false
 
 new Vue({

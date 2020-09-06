@@ -9,11 +9,15 @@ export default new Vuetify({
         themes: {
             dark: {
                 primary: '#ef2d46',
+                primarySeek: '#c9c9c9',
+                navBackground: '#1b1b1c',
                 primaryLight: '#2a2a2b',
                 secondary: '#de901a',
             },
             light: {
                 primary: '#e7474c',
+                primarySeek: '#e7474c',
+                navBackground: '#ffffff',
                 primaryLight: '#f1efef',
                 secondary: '#ffcf84',
             },

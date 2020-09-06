@@ -7,7 +7,16 @@
             </div>
             <div class="white-part">
                 <div class="media-text-info">
-                    <img class="media-info-logo" src="../assets/logo-small-v.png" alt="vm5 logo">
+                    <img v-if="!$store.getters.isTrackSet"
+                         class="media-info-logo" src="../assets/logo-small-v.png"
+                         alt="vm5 logo">
+                    <div v-else class="media-title-artists">
+                        <span :title="$store.state.media.track.name"
+                              class="track-title">
+                            {{$store.state.media.track.name}}
+                        </span>
+                        <artists-span class="track-artists" :artists="$store.state.media.track.artists"></artists-span>
+                    </div>
                 </div>
             </div>
             <media-controls class="controls"></media-controls>
@@ -17,10 +26,11 @@
 
 <script>
     import MediaControls from "./MediaControls";
+    import ArtistsSpan from "./ArtistsSpan";
 
     export default {
         name: "MediaInfo",
-        components: {MediaControls}
+        components: {ArtistsSpan, MediaControls}
     }
 </script>
 
@@ -64,13 +74,34 @@
         width: 100%;
         display: flex;
         justify-content: center;
-        align-items: center;
+        align-items: start;
     }
 
     .media-info-logo {
         height: 20px;
         opacity: 0.5;
     }
+
+    .media-title-artists {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: calc(100% - 10px);
+        margin-top: 3px;
+        font-size: 13px;
+    }
+
+    .track-title {
+        margin-bottom: -4px;
+        font-weight: bold;
+        max-width: calc(100% - 25px);
+        overflow-x: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
 
     .controls {
         display: none !important;
@@ -88,5 +119,13 @@
         .controls {
             display: none !important;
         }
+    }
+
+    .media-info >>> a {
+        text-decoration: none;
+    }
+
+    .media-info >>> a:hover {
+        text-decoration: underline;
     }
 </style>

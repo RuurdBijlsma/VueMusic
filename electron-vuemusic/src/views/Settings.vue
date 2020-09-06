@@ -1,6 +1,6 @@
 <template>
     <div class="settings">
-        <h1>Settings</h1>
+        <h1 class="page-title">Settings</h1>
         <v-divider></v-divider>
         <div class="secrets" v-if="$store.state.platform.shouldSetKey">
             <h2>Secrets</h2>
@@ -94,8 +94,12 @@
 
 <style scoped>
     .settings {
-        padding: 20px;
+        padding: 30px;
         max-width: 800px;
+    }
+
+    .page-title {
+        font-size: 2.4rem;
     }
 
     .secret-help {
