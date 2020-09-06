@@ -127,6 +127,7 @@
     }
 
     .controls {
+        -webkit-app-region: no-drag;
         margin-left: 5px;
         display: flex;
         justify-content: center;
