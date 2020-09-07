@@ -41,8 +41,15 @@ export default new Vuex.Store({
             categories: [],
             genres: [],
         },
+        playlist: {},
+        album: {},
     },
     mutations: {
+        loadPlaylist: (state, {id, playlist}) => Vue.set(state.playlist, id, playlist),
+        extendPlaylist: (state, {id, tracks}) => state.playlist[id].tracks.push(...tracks),
+        loadAlbum: (state, {id, album}) => Vue.set(state.album, id, album),
+        extendAlbum: (state, {id, tracks}) => state.album[id].tracks.push(...tracks),
+
         browseCategories: (state, categories) => state.browse.categories = categories,
         browseGenres: (state, genres) => state.browse.genres = genres,
 
@@ -148,19 +155,24 @@ export default new Vuex.Store({
                 return;
             return await dispatch('waitFor', 'accessToken');
         },
-        async * retrieveSpotifyArray({}, apiFunction) {
-            //Example apiFunction: ({limit, offset})=>state.api.getUserPlaylists(me.id, {limit, offset})
-            let offset = 0;
-            let limit = 10;
+        async * retrieveSpotifyArray({state}, [apiFunction, nextProperty = r => r.next]) {
+            let getData = () => apiFunction()
 
             while (true) {
-                let result = await apiFunction({offset, limit});
-                for (let item of result.items) {
-                    yield item;
-                }
-                if (result.next === null)
+                let result = await getData();
+
+                if (result !== null)
+                    yield result;
+
+                if (result === null || nextProperty(result) === null)
                     break;
-                offset += limit;
+
+                let nextUrl = nextProperty(result);
+                if (nextUrl === undefined)
+                    console.warn("next url is undefined");
+
+                getData = () => state.api.getGeneric(nextUrl);
+                nextProperty = r => r.next;
             }
         },
         initializeSpotify: async ({state, commit, dispatch}) => {
@@ -189,9 +201,10 @@ export default new Vuex.Store({
             if (state.userInfo.id === '')
                 await dispatch('refreshUserInfo');
 
-            let retrieval = ({limit, offset}) => state.api.getUserPlaylists(state.userInfo.id, {limit, offset});
-            for await(let playlist of await dispatch('retrieveSpotifyArray', retrieval)) {
-                commit('addUserPlaylist', playlist);
+            let retrieval = () => state.api.getUserPlaylists(state.userInfo.id);
+            for await(let batch of await dispatch('retrieveSpotifyArray', [retrieval])) {
+                for (let playlist of batch.items)
+                    commit('addUserPlaylist', playlist);
             }
             state.events.emit('refreshedPlaylists');
             commit('isRefreshingPlaylists', false);
@@ -252,6 +265,28 @@ export default new Vuex.Store({
                         .join(' ')
                 ));
             });
+        },
+        loadPlaylist: async ({dispatch, commit, state}, id) => {
+            let retrieval = () => state.api.getPlaylist(id);
+            let nextProperty = r => r.tracks.next;
+            for await(let batch of await dispatch('retrieveSpotifyArray', [retrieval, nextProperty])) {
+                if (batch.items) {
+                    commit('extendPlaylist', {id, tracks: batch.items});
+                } else {
+                    commit('loadPlaylist', {id, playlist: {...batch, tracks: batch.tracks.items}});
+                }
+            }
+        },
+        loadAlbum: async ({dispatch, commit, state}, id) => {
+            let retrieval = () => state.api.getAlbum(id);
+            let nextProperty = r => r.tracks.next;
+            for await(let batch of await dispatch('retrieveSpotifyArray', [retrieval, nextProperty])) {
+                if (batch.items) {
+                    commit('extendAlbum', {id, tracks: batch.items});
+                } else {
+                    commit('loadAlbum', {id, album: {...batch, tracks: batch.tracks.items}});
+                }
+            }
         },
     },
     modules: {platform, media}

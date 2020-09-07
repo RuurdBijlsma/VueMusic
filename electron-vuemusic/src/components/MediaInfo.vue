@@ -15,7 +15,7 @@
                               class="track-title">
                             {{$store.state.media.track.name}}
                         </span>
-                        <artists-span class="track-artists" :artists="$store.state.media.track.artists"></artists-span>
+                        <artists-span grey class="track-artists" :artists="$store.state.media.track.artists"></artists-span>
                     </div>
                 </div>
             </div>

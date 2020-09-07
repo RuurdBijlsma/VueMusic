@@ -20,6 +20,16 @@ const routes = [
         name: 'Browse',
         component: () => import('../views/Browse')
     },
+    {
+        path: '/album',
+        name: 'Album',
+        component: () => import('../views/Album')
+    },
+    {
+        path: '/playlist',
+        name: 'Playlist',
+        component: () => import('../views/Playlist')
+    },
 ]
 
 const router = new VueRouter({

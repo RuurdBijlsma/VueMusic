@@ -66,6 +66,10 @@
         min-width: 186px;
     }
 
+    .category {
+        margin-bottom: 15px;
+    }
+
     .genres {
         flex-grow: 20;
         max-width: 400px;
@@ -98,7 +102,7 @@
 
         .genres {
             margin-left: 0;
-            max-width:100%;
+            max-width: 100%;
         }
     }
 

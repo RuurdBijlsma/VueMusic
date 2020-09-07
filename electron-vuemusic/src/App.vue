@@ -67,6 +67,20 @@
     import MediaControls from "./components/MediaControls";
     import MediaSeek from "./components/MediaSeek";
 
+    //TOOD:
+    //Responsive playlist page
+    //Reuse/create components from playlist page to make album page
+    //Library pages(albums,songs,artists)
+    //Search
+    //Category page
+    //Tune page (from browse)
+    //Radio page
+    //user page (is in api, for "created by" click)
+    //Fix clicking link to query not changing content of page (ie click on playlist link when in playlist)
+
+    //After that, add functionality xd
+
+
     export default {
         name: 'App',
         components: {MediaSeek, MediaControls, MediaInfo, NavBar, ToolBar},
