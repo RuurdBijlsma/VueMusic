@@ -17,7 +17,7 @@
             ></v-slider>
         </div>
         <div class="buttons">
-            <v-btn icon>
+            <v-btn icon class="favorite-button">
                 <v-icon>mdi-heart-outline</v-icon>
             </v-btn>
             <v-btn icon>
@@ -72,6 +72,14 @@
                     </v-list-item>
                 </v-list>
             </v-menu>
+            <v-btn v-if="$store.state.platform.type==='electron'" icon
+                   class="minimize-button"
+                   @click="$store.dispatch('minimizeWindow')">
+                <v-icon>mdi-minus</v-icon>
+            </v-btn>
+            <v-btn v-if="$store.state.platform.type==='electron'" icon @click="$store.dispatch('closeWindow')">
+                <v-icon>mdi-close</v-icon>
+            </v-btn>
         </div>
     </div>
 </template>
@@ -186,12 +194,21 @@
 
         .media-info {
             margin-left: 3px;
-            margin-right: 0px;
+            margin-right: 0;
         }
 
         .top-seeker {
             margin-left: 51px;
             width: calc(100% - 61px);
+        }
+    }
+
+    @media (max-width: 760px) {
+        .favorite-button {
+            display: none;
+        }
+        .minimize-button {
+            display: none;
         }
     }
 </style>

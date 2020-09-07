@@ -35,7 +35,16 @@ export default {
 
     },
     actions: {
-        _initialize: async ({commit}) => {
+        _initialize: async ({}) => {
+        },
+        openDevTools: async () => {
+            window.require('electron').remote.getCurrentWindow().openDevTools();
+        },
+        closeWindow: async () => {
+            window.require('electron').remote.app.exit();
+        },
+        minimizeWindow: async () => {
+            window.require('electron').remote.getCurrentWindow().minimize();
         },
         resetSpotifyLogin({state, commit}) {
             if (state.server !== null) {

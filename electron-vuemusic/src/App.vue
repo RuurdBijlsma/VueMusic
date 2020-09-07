@@ -19,7 +19,7 @@
 
         <v-main class="scroll-container">
             <perfect-scrollbar class="perfect-scroller">
-            <router-view class="router-view"></router-view>
+                <router-view class="router-view"></router-view>
             </perfect-scrollbar>
         </v-main>
 
@@ -74,7 +74,8 @@
             drawer: true,
         }),
         async mounted() {
-            window.addEventListener('resize', () => this.$store.commit('windowWidth', window.innerWidth));
+            document.addEventListener('keypress', this.devListener);
+            window.addEventListener('resize', this.resizeListener);
 
             console.log(this.$store);
             await this.$store.dispatch('initialize');
@@ -84,6 +85,22 @@
                 }
             } else if (!this.$store.getters.isLoggedIn && this.$route.name !== 'Settings') {
                 await this.$router.push('/settings');
+            }
+        },
+        beforeDestroy() {
+            document.removeEventListener('keypress', this.devListener);
+            window.removeEventListener('resize', this.resizeListener);
+        },
+        methods: {
+            resizeListener() {
+                this.$store.commit('windowWidth', window.innerWidth);
+            },
+            devListener(e) {
+                console.log(e.key);
+                if (e.key === '`')
+                    this.$store.dispatch('openDevTools');
+                if (e.key === 'r' && e.ctrlKey)
+                    location.reload();
             }
         }
     };
@@ -110,13 +127,14 @@
 
     .router-view {
         /*position: absolute;*/
-        width:100%;
-        height:100%;
+        width: 100%;
+        height: 100%;
         position: absolute;
     }
-    .perfect-scroller{
 
-        height:100%;
+    .perfect-scroller {
+
+        height: 100%;
         overflow-y: auto;
     }
 

@@ -14,7 +14,12 @@ const routes = [
         path: '/settings',
         name: 'Settings',
         component: () => import('../views/Settings')
-    }
+    },
+    {
+        path: '/browse',
+        name: 'Browse',
+        component: () => import('../views/Browse')
+    },
 ]
 
 const router = new VueRouter({

@@ -3,8 +3,16 @@
         <div class="padded">
             <h1 class="page-title">Listen Now</h1>
             <v-divider></v-divider>
-            <h2>{{$store.state.homePage.featured.title}}</h2>
+            <h2 v-if="$store.state.homePage.recent.length>0">Recently played</h2>
         </div>
+
+        <album-row class="album-row"
+                   v-if="$store.state.homePage.recent.length>0"
+                   :albums="$store.state.homePage.recent"
+                   type="playlist"
+        ></album-row>
+
+        <h2 class="padded">{{$store.state.homePage.featured.title}}</h2>
         <album-row class="album-row"
                    :albums="$store.state.homePage.featured.playlists"
                    type="playlist"

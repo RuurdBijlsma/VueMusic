@@ -37,10 +37,21 @@ export default new Vuex.Store({
             newReleases: [],
             personalized: [],
         },
+        browse: {
+            categories: [],
+            genres: [],
+        },
     },
     mutations: {
+        browseCategories: (state, categories) => state.browse.categories = categories,
+        browseGenres: (state, genres) => state.browse.genres = genres,
+
+        homeFeatured: (state, featured) => state.homePage.featured = featured,
+        homeRecent: (state, recent) => state.homePage.recent = recent,
+        homeNew: (state, newReleases) => state.homePage.newReleases = newReleases,
+        homePersonalized: (state, personalized) => state.homePage.personalized = personalized,
+
         isRefreshingPlaylists: (state, value) => state.library.isRefreshingPlaylists = value,
-        homePage: (state, homePage) => state.homePage = homePage,
         windowWidth: (state, windowWidth) => state.windowWidth = windowWidth,
         addUserPlaylist: (state, playlist) => state.library.playlists.push(playlist),
         userPlaylists: (state, playlists) => state.library.playlists = playlists,
@@ -187,18 +198,13 @@ export default new Vuex.Store({
         },
         refreshHomePage: async ({commit, dispatch, state}) => {
             await dispatch('awaitAuth');
-            let homePage = {
-                featured: {title: '', playlists: []},
-                recent: [],
-                newReleases: [],
-                personalized: [],
-            };
-            commit('homePage', homePage);
 
             //Featured playlists
             let featured = await state.api.getFeaturedPlaylists({limit: 50});
-            homePage.featured.title = featured.message;
-            homePage.featured.playlists.push(...featured.playlists.items);
+            commit('homeFeatured', {
+                title: featured.message,
+                playlists: featured.playlists.items,
+            });
 
             //Personalized playlists
             let personalized;
@@ -219,17 +225,33 @@ export default new Vuex.Store({
                 });
                 if (personalized.length > 0) {
                     localStorage.discoverPlaylists = JSON.stringify(personalized);
-                    homePage.personalized.push(...personalized);
+                    commit('homePersonalized', personalized);
                 }
             } else {
-                homePage.personalized.push(...JSON.parse(localStorage.discoverPlaylists));
+                commit('homePersonalized', JSON.parse(localStorage.discoverPlaylists));
             }
-            console.log(homePage.personalized)
 
             //New releases
             let newReleases = await state.api.getNewReleases({limit: 50});
-            console.log(newReleases);
-            homePage.newReleases.push(...newReleases.albums.items);
+            commit('homeNew', newReleases.albums.items);
+
+            //Recently played playlists or albums
+            if (localStorage.getItem('recentlyPlayed') !== null)
+                commit('homeRecent', JSON.parse(localStorage.recentlyPlayed));
+        },
+        refreshBrowsePage: async ({dispatch, commit, state}) => {
+            state.api.getCategories({limit: 50})
+                .then(c => commit('browseCategories', c.categories.items));
+            state.api.getAvailableGenreSeeds().then(g => {
+                commit('browseGenres', g.genres.map(genre =>
+                    genre.split('-')
+                        .map(w => w
+                                .substr(0, 1)
+                                .toUpperCase() +
+                            w.substr(1))
+                        .join(' ')
+                ));
+            });
         },
     },
     modules: {platform, media}
