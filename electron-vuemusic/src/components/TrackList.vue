@@ -1,25 +1,6 @@
 <template>
     <div class="track-list" ref="trackList">
         <v-divider></v-divider>
-        <recycle-scroller
-                class="scroller"
-                :items="tracks"
-                :item-size="51"
-                :buffer="300"
-                key-field="id"
-                v-slot="{item}"
-        >
-            <div class="scroll-item">
-                <track-item
-                        :no-album="noAlbum || albumList"
-                        :compact-menu="compactMenu"
-                        :album-list="albumList"
-                        :key="item.id"
-                        :track="item"></track-item>
-                <v-divider></v-divider>
-                <!--                {{item.name}}-->
-            </div>
-        </recycle-scroller>
     </div>
 </template>
 

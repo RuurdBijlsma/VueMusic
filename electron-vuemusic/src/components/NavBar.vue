@@ -77,11 +77,9 @@
 </template>
 
 <script>
-    import vueCustomScrollbar from 'vue-custom-scrollbar'
-
     export default {
         name: "NavBar",
-        components: {vueCustomScrollbar},
+        components: {},
         data: () => ({
             userPlaylists: ['360 Dance', 'Housewerk', 'Rock This']//zet dit in vuex
         })

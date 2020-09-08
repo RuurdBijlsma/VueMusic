@@ -5,8 +5,6 @@
                 class="navBar"
                 v-if="$store.state.windowWidth > 670"
                 v-model="drawer"
-                :expand-on-hover="false"
-                :right="false"
                 :permanent="true"
                 app
                 absolute>
@@ -68,6 +66,7 @@
     import MediaSeek from "./components/MediaSeek";
 
     //TOOD:
+    //Fix recycle scroller when albumart is above the rest of the stuff (add albumart to playlist meta.vue, and update size)
     //Responsive playlist page
     //Reuse/create components from playlist page to make album page
     //Library pages(albums,songs,artists)

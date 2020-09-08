@@ -9,20 +9,18 @@
                  }"></div>
             <div class="album-art album-normal" :style="{backgroundImage: `url(${playlist.images[0].url})`}"></div>
         </div>
-        <perfect-scrollbar class="tracks-section" v-if="$store.state.windowWidth >= 1030">
-            <track-section :fg-legible="fgLegible" :playlist="playlist"></track-section>
-        </perfect-scrollbar>
-        <div v-else class="tracks-section">
-            <div class="art-section art-center" v-if="$store.state.windowWidth < 1030">
-                <div class="album-art album-background"
-                     :style="{
-                    backgroundImage: `url(${playlist.images[0].url})`,
-                    opacity: $vuetify.theme.dark ? 0.4 : 0.7,
-                 }"></div>
-                <div class="album-art album-normal" :style="{backgroundImage: `url(${playlist.images[0].url})`}"></div>
-            </div>
-            <track-section :fg-legible="fgLegible" :playlist="playlist"></track-section>
-        </div>
+        <track-section :fg-legible="fgLegible" :playlist="playlist"></track-section>
+<!--        <div v-else class="tracks-section">-->
+<!--            <div class="art-section art-center" v-if="$store.state.windowWidth < 1030">-->
+<!--                <div class="album-art album-background"-->
+<!--                     :style="{-->
+<!--                    backgroundImage: `url(${playlist.images[0].url})`,-->
+<!--                    opacity: $vuetify.theme.dark ? 0.4 : 0.7,-->
+<!--                 }"></div>-->
+<!--                <div class="album-art album-normal" :style="{backgroundImage: `url(${playlist.images[0].url})`}"></div>-->
+<!--            </div>-->
+<!--            <track-section :fg-legible="fgLegible" :playlist="playlist"></track-section>-->
+<!--        </div>-->
     </div>
 </template>
 
@@ -87,7 +85,7 @@
 <style scoped>
     .playlist {
         display: flex;
-        padding: 30px 20px 0 30px;
+        padding: 30px 0 0 30px;
         max-width: 1500px;
         /*height: 100%;*/
     }

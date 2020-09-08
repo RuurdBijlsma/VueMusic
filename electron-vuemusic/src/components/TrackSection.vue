@@ -1,22 +1,35 @@
 <template>
-    <div v-if="playlist">
-        <playlist-meta :playlist="playlist" :fg-legible="fgLegible"></playlist-meta>
-        <div class="track-list">
-            <track-list :compact-menu="$store.state.windowWidth < 740"
-                        :no-album="hideAlbum"
+    <div v-if="playlist" class="track-section">
+        <recycle-scroller
+                class="scroller"
+                :items="tracks"
+                key-field="id"
+                size-field="size"
+                v-slot="{item, index}"
+        >
+            <playlist-meta class="playlist-meta" v-if="index===0" :playlist="playlist"
+                           :fg-legible="fgLegible"></playlist-meta>
+            <div class="scroll-item" v-else>
+                <track-item
+                        :no-album="hideAlbum || isAlbum"
+                        :compact-menu="$store.state.windowWidth < 740"
                         :album-list="isAlbum"
-                        :tracks="tracks"></track-list>
-        </div>
+                        :key="item.id"
+                        :track="item"></track-item>
+                <v-divider></v-divider>
+            </div>
+        </recycle-scroller>
     </div>
 </template>
 
 <script>
     import TrackList from "./TrackList";
     import PlaylistMeta from "./PlaylistMeta";
+    import TrackItem from "./TrackItem";
 
     export default {
         name: "TrackSection",
-        components: {PlaylistMeta, TrackList},
+        components: {PlaylistMeta, TrackList, TrackItem},
         props: {
             fgLegible: {
                 type: Boolean,
@@ -36,13 +49,36 @@
                 return this.playlist.type === 'album';
             },
             tracks() {
-                return this.isAlbum ? this.playlist.tracks : this.playlist.tracks.map(t => t.track)
+                let tracks = this.isAlbum ?
+                    this.playlist.tracks.map(t => ({...t, size: 51})) :
+                    this.playlist.tracks.map(t => ({...t.track, size: 51}));
+                console.log(tracks);
+                return [{id: '0', size: 230}, ...tracks];
             },
         }
     }
 </script>
 
 <style scoped>
+    .track-section {
+        height: 100%;
+        width: 100%;
+    }
+
+    .scroller {
+        height: 100%;
+    }
+
+    .playlist-meta {
+        padding-top: 30px;
+        height: 200px;
+    }
+
+
+    .scroll-item {
+        height: 51px;
+    }
+
     .track-list {
         margin-top: 20px;
     }
