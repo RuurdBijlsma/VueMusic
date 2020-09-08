@@ -1,8 +1,20 @@
 <template>
     <div class="album-square">
-        <router-link tag="span" :to="`/${type}${album.hasOwnProperty('id')?`?id=${album.id}`:''}`">
-            <div :class="{image: true, big}"
-                 :style="{backgroundImage: `url(${image})`}"></div>
+        <router-link tag="span" :to="`/${type}/${$store.getters.urlName(album.name)}/${album.id}`">
+            <div class="image" :class="{big}"
+                 :style="{
+                    backgroundImage: `url(${image})`,
+                    borderRadius: type === 'artist' ? '50%' : '5px',
+                 }">
+            </div>
+            <div class="play-button" :class="{big}"
+                 :style="{
+                    borderRadius: type === 'artist' ? '50%' : '5px',
+                 }">
+                <v-btn :loading="playLoading" fab small color="primary" @click="play">
+                    <v-icon color="white">mdi-play</v-icon>
+                </v-btn>
+            </div>
             <div class="text" :class="{big}">
                 <p class="preview-title">{{album.name}}</p>
                 <p
@@ -10,12 +22,15 @@
                         v-if="album.hasOwnProperty('description')"
                         class="preview-description"
                         v-html="album.description"/>
+                <p class="preview-year" v-if="showYear">{{new Date(album.release_date).getFullYear()}}</p>
             </div>
         </router-link>
     </div>
 </template>
 
 <script>
+    import Utils from "../js/Utils";
+
     export default {
         name: "AlbumSquare",
         props: {
@@ -27,6 +42,23 @@
             type: {
                 type: String,
                 default: 'album',
+            },
+            showYear: {
+                type: Boolean,
+                default: false,
+            },
+        },
+        data: () => ({
+            playLoading: false,
+        }),
+        methods: {
+            urlName(artist) {
+                return Utils.urlName(artist);
+            },
+            play(e) {
+                this.playLoading = true;
+                e.stopPropagation();
+                console.log("Play")
             },
         },
         computed: {
@@ -60,11 +92,39 @@
         background-position: center;
         background-repeat: no-repeat;
         border-radius: 5px;
+        box-shadow: 0 4px 10px 0 rgba(0, 0, 0, 0.1);
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 
     .image.big {
         height: 240px !important;
         width: 240px !important;
+    }
+
+    .play-button:hover {
+        opacity: 1;
+    }
+
+    .play-button {
+        background-color: rgba(0, 0, 0, 0.3);
+        border-radius: 5px;
+        opacity: 0;
+        width: 180px;
+        height: 180px;
+        margin-top: -180px;
+        display: flex;
+        justify-content: start;
+        align-items: flex-end;
+        transition: opacity 0.2s;
+        padding: 15px;
+    }
+
+    .play-button.big {
+        height: 240px !important;
+        width: 240px !important;
+        margin-top: -240px;
     }
 
     .text {
@@ -92,6 +152,18 @@
         opacity: 0.7;
         font-weight: normal;
         margin-top: 3px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        margin-bottom: 0px;
+    }
+
+    .preview-year {
+        font-size: 14px;
+        opacity: 0.7;
+        font-weight: normal;
+        margin-top: 3px;
+        margin-bottom: 0px;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;

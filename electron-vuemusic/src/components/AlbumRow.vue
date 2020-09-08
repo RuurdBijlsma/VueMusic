@@ -5,6 +5,7 @@
             <album-square v-for="album in albumGroup"
                           :big="big"
                           :type="type"
+                          :show-year="showYear"
                           class="single-album"
                           :album="album"></album-square>
         </div>
@@ -33,7 +34,11 @@
             rows: {
                 type: Number,
                 default: 1,
-            }
+            },
+            showYear: {
+                type: Boolean,
+                default: false,
+            },
         },
         computed: {
             albumGroups() {

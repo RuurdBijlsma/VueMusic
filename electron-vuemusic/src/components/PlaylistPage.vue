@@ -1,6 +1,5 @@
 <template>
-    <div class="playlist" v-if="playlist !== null"
-         :style="{paddingTop:$store.state.windowWidth >= 1030?'0':'30px'}">
+    <div class="playlist" v-if="playlist !== null">
         <div class="art-section" v-if="$store.state.windowWidth >= 1030">
             <div class="album-art album-background"
                  :style="{
@@ -9,18 +8,8 @@
                  }"></div>
             <div class="album-art album-normal" :style="{backgroundImage: `url(${playlist.images[0].url})`}"></div>
         </div>
-        <track-section :fg-legible="fgLegible" :playlist="playlist"></track-section>
-<!--        <div v-else class="tracks-section">-->
-<!--            <div class="art-section art-center" v-if="$store.state.windowWidth < 1030">-->
-<!--                <div class="album-art album-background"-->
-<!--                     :style="{-->
-<!--                    backgroundImage: `url(${playlist.images[0].url})`,-->
-<!--                    opacity: $vuetify.theme.dark ? 0.4 : 0.7,-->
-<!--                 }"></div>-->
-<!--                <div class="album-art album-normal" :style="{backgroundImage: `url(${playlist.images[0].url})`}"></div>-->
-<!--            </div>-->
-<!--            <track-section :fg-legible="fgLegible" :playlist="playlist"></track-section>-->
-<!--        </div>-->
+        <track-section :show-art="$store.state.windowWidth < 1030" :fg-legible="fgLegible"
+                       :playlist="playlist"></track-section>
     </div>
 </template>
 
@@ -51,20 +40,13 @@
             },
         },
         methods: {
-            revertThemeColor() {
-                if (this.previousColors !== null) {
-                    this.$vuetify.theme.themes.dark.primary = this.previousColors.primaryDark;
-                    this.$vuetify.theme.themes.light.primary = this.previousColors.primaryLight;
-                    this.$vuetify.theme.themes.light.primarySeek = this.previousColors.primarySeekLight;
-                }
-            }
-        },
-        watch: {
-            playlist() {
+            checkForThemeColorChange() {
                 if (this.playlist && this.playlist.primary_color) {
                     let {bgLegible, fgLegible} = Utils.isLegible(this.playlist.primary_color, this.$vuetify.theme);
-                    if (!bgLegible)
+                    if (!bgLegible) {
+                        this.revertThemeColor();
                         return;
+                    }
                     this.fgLegible = fgLegible;
 
                     this.previousColors = {
@@ -78,6 +60,22 @@
                     this.$vuetify.theme.themes.light.primarySeek = this.playlist.primary_color;
                 }
             },
+            revertThemeColor() {
+                this.fgLegible = true;
+                if (this.previousColors !== null) {
+                    this.$vuetify.theme.themes.dark.primary = this.previousColors.primaryDark;
+                    this.$vuetify.theme.themes.light.primary = this.previousColors.primaryLight;
+                    this.$vuetify.theme.themes.light.primarySeek = this.previousColors.primarySeekLight;
+                }
+            },
+        },
+        watch: {
+            playlist() {
+                this.checkForThemeColorChange();
+            },
+            '$vuetify.theme.dark'() {
+                this.checkForThemeColorChange();
+            }
         },
     }
 </script>
@@ -85,9 +83,14 @@
 <style scoped>
     .playlist {
         display: flex;
-        padding: 30px 0 0 30px;
+        padding: 0 0 0 30px;
         max-width: 1500px;
-        /*height: 100%;*/
+    }
+
+    @media (max-width: 680px) {
+        .playlist {
+            padding: 0 0 0 5px;
+        }
     }
 
     @media (min-width: 1760px) {
@@ -102,12 +105,6 @@
         margin-right: 30px;
         display: flex;
         justify-content: center;
-        /*align-items: center;*/
-    }
-
-    .art-center {
-        margin-bottom: 30px;
-        width: 100% !important;
     }
 
     .album-art {
@@ -132,14 +129,6 @@
         left: -175px;
     }
 
-    .tracks-section {
-        flex-grow: 1;
-        padding-right: 10px;
-        padding-bottom: 30px;
-        width: 100%;
-        margin-top: 30px;
-    }
-
     @media (max-width: 1450px) {
         .art-section {
             width: 300px;
@@ -153,7 +142,6 @@
 
         .album-normal {
             left: -150px;
-            /*top: -300px;*/
         }
     }
 
@@ -170,7 +158,6 @@
 
         .album-normal {
             left: -125px;
-            /*top: -250px;*/
         }
     }
 
@@ -189,13 +176,5 @@
         .album-normal {
             left: -175px;
         }
-
-        .tracks-section {
-            margin-top: 0;
-        }
-    }
-
-    @media (max-width: 1030px) {
-
     }
 </style>

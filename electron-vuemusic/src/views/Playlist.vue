@@ -12,11 +12,12 @@
         components: {PlaylistPage, TrackSection, TrackList},
         data: () => ({}),
         async mounted() {
+            console.log(this.$route);
             await this.$store.dispatch('loadPlaylist', this.id);
         },
         computed: {
             id() {
-                return this.$route.query.id;
+                return this.$route.params.id;
             },
             playlist() {
                 console.log('Playlist', this.$store.state.playlist[this.id]);
@@ -24,7 +25,7 @@
             },
         },
         watch: {
-            async '$route.query'() {
+            async '$route.params.id'() {
                 this.$refs.playlistPage.revertThemeColor();
                 await this.$store.dispatch('loadPlaylist', this.id);
             },

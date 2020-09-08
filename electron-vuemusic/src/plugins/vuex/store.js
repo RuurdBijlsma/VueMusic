@@ -43,12 +43,17 @@ export default new Vuex.Store({
         },
         playlist: {},
         album: {},
+        artist: {},
     },
     mutations: {
         loadPlaylist: (state, {id, playlist}) => Vue.set(state.playlist, id, playlist),
         extendPlaylist: (state, {id, tracks}) => state.playlist[id].tracks.push(...tracks),
         loadAlbum: (state, {id, album}) => Vue.set(state.album, id, album),
         extendAlbum: (state, {id, tracks}) => state.album[id].tracks.push(...tracks),
+        loadArtist: (state, {id, artist}) => Vue.set(state.artist, id, {artist, related: [], tracks: [], albums: {}}),
+        loadArtistRelated: (state, {id, related}) => state.artist[id].related = related,
+        loadArtistTracks: (state, {id, tracks}) => state.artist[id].tracks = tracks,
+        loadArtistAlbums: (state, {id, albums}) => state.artist[id].albums = albums,
 
         browseCategories: (state, categories) => state.browse.categories = categories,
         browseGenres: (state, genres) => state.browse.genres = genres,
@@ -84,6 +89,9 @@ export default new Vuex.Store({
             }
             return new Date > state.auth.expiryDate;
         },
+        urlName: () => name => {
+            return encodeURIComponent(name.toLowerCase().replace(/ /gi, '-'));
+        }
     },
     actions: {
         initialize: async ({dispatch}) => {
@@ -291,6 +299,24 @@ export default new Vuex.Store({
                     commit('loadAlbum', {id, album});
                 }
             }
+        },
+        loadArtist: async ({dispatch, commit, state}, id) => {
+            let artist = await state.api.getArtist(id);
+            commit('loadArtist', {id, artist});
+            state.api.getArtistRelatedArtists(id).then(related => {
+                commit('loadArtistRelated', {id, related: related.artists});
+            });
+
+            state.api.getArtistTopTracks(id, 'from_token').then(tracks => {
+                commit('loadArtistTracks', {id, tracks: tracks.tracks});
+            });
+
+            let retrieval = () => state.api.getArtistAlbums(id);
+            let albums = []
+            for await(let batch of await dispatch('retrieveSpotifyArray', [retrieval])) {
+                albums.push(...batch.items);
+            }
+            commit('loadArtistAlbums', {id, albums});
         },
     },
     modules: {platform, media}

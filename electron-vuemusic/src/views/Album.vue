@@ -16,7 +16,7 @@
         },
         computed: {
             id() {
-                return this.$route.query.id;
+                return this.$route.params.id;
             },
             playlist() {
                 console.log('Album', this.$store.state.album[this.id]);
@@ -24,7 +24,7 @@
             },
         },
         watch: {
-            async '$route.query'() {
+            async '$route.params.id'() {
                 this.$refs.playlistPage.revertThemeColor();
                 await this.$store.dispatch('loadAlbum', this.id);
             },

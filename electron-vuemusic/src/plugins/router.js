@@ -21,14 +21,19 @@ const routes = [
         component: () => import('../views/Browse')
     },
     {
-        path: '/album',
+        path: '/album/:name/:id',
         name: 'Album',
         component: () => import('../views/Album')
     },
     {
-        path: '/playlist',
+        path: '/playlist/:name/:id',
         name: 'Playlist',
         component: () => import('../views/Playlist')
+    },
+    {
+        path: '/artist/:name/:id',
+        name: 'Artist',
+        component: () => import('../views/Artist')
     },
 ]
 

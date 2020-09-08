@@ -1,5 +1,13 @@
 <template>
     <div class="playlist-meta">
+        <div class="art-section art-center" v-if="showArt">
+            <div class="album-art album-background"
+                 :style="{
+                    backgroundImage: `url(${playlist.images[0].url})`,
+                    opacity: $vuetify.theme.dark ? 0.4 : 0.7,
+                 }"></div>
+            <div class="album-art album-normal" :style="{backgroundImage: `url(${playlist.images[0].url})`}"></div>
+        </div>
         <h2 class="name">{{playlist.name}}</h2>
         <p class="sub-caption">
             <span v-if="isAlbum">
@@ -44,6 +52,7 @@
 <script>
     import Utils from "../js/Utils";
     import TrackList from "./TrackList";
+
     export default {
         name: "PlaylistMeta",
         components: {TrackList},
@@ -55,6 +64,10 @@
             playlist: {
                 type: Object,
                 default: null,
+            },
+            showArt: {
+                type: Boolean,
+                default: false,
             },
         },
         computed: {
@@ -78,6 +91,41 @@
 </script>
 
 <style scoped>
+    .art-section {
+        margin-top: 30px;
+        width: 350px;
+        margin-right: 30px;
+        display: flex;
+        justify-content: center;
+        /*align-items: center;*/
+    }
+
+    .art-center {
+        margin-bottom: 30px;
+        width: 100% !important;
+    }
+
+    .album-art {
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        min-width: 350px;
+        height: 350px;
+        border-radius: 5px;
+    }
+
+    .album-background {
+        filter: blur(20px);
+        transform: scale(0.95);
+        position: relative;
+        right: -175px;
+        top: 20px;
+    }
+
+    .album-normal {
+        position: relative;
+        left: -175px;
+    }
 
     .name {
         font-weight: bold;

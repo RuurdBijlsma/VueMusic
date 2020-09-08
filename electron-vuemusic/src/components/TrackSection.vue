@@ -7,15 +7,17 @@
                 size-field="size"
                 v-slot="{item, index}"
         >
-            <playlist-meta class="playlist-meta" v-if="index===0" :playlist="playlist"
+            <playlist-meta :style="{paddingTop: showArt?'0':'30px'}" class="playlist-meta" :show-art="showArt"
+                           v-if="index===0" :playlist="playlist"
                            :fg-legible="fgLegible"></playlist-meta>
-            <div class="scroll-item" v-else>
-                <track-item
+            <v-divider></v-divider>
+            <div class="scroll-item" v-if="index>0">
+                <track-row
                         :no-album="hideAlbum || isAlbum"
-                        :compact-menu="$store.state.windowWidth < 740"
+                        :compact-menu="compactMenu"
                         :album-list="isAlbum"
                         :key="item.id"
-                        :track="item"></track-item>
+                        :track="item"></track-row>
                 <v-divider></v-divider>
             </div>
         </recycle-scroller>
@@ -25,11 +27,11 @@
 <script>
     import TrackList from "./TrackList";
     import PlaylistMeta from "./PlaylistMeta";
-    import TrackItem from "./TrackItem";
+    import TrackRow from "./TrackRow";
 
     export default {
         name: "TrackSection",
-        components: {PlaylistMeta, TrackList, TrackItem},
+        components: {TrackRow, PlaylistMeta, TrackList},
         props: {
             fgLegible: {
                 type: Boolean,
@@ -39,8 +41,15 @@
                 type: Object,
                 default: null,
             },
+            showArt: {
+                type: Boolean,
+                default: false,
+            },
         },
         computed: {
+            compactMenu() {
+                return (this.$store.state.windowWidth < 759 && this.$store.state.windowWidth > 680) || this.$store.state.windowWidth < 455;
+            },
             hideAlbum() {
                 let width = this.$store.state.windowWidth;
                 return width < 960 || (width >= 1030 && width < 1237);
@@ -52,8 +61,11 @@
                 let tracks = this.isAlbum ?
                     this.playlist.tracks.map(t => ({...t, size: 51})) :
                     this.playlist.tracks.map(t => ({...t.track, size: 51}));
-                console.log(tracks);
-                return [{id: '0', size: 230}, ...tracks];
+                let artHeight = this.showArt ? 350 : 0;
+                let descriptionHeight = this.isAlbum ? 0 : 80;
+                let metaHeight = 150;
+                let dividerHeight = 1;
+                return [{id: '0', size: artHeight + descriptionHeight + metaHeight + dividerHeight}, ...tracks];
             },
         }
     }
@@ -67,11 +79,17 @@
 
     .scroller {
         height: 100%;
+        padding-right: 30px;
+    }
+
+    @media (max-width: 680px) {
+        .scroller {
+            padding-right: 5px;
+        }
     }
 
     .playlist-meta {
-        padding-top: 30px;
-        height: 200px;
+        height: 230px;
     }
 
 
@@ -79,7 +97,9 @@
         height: 51px;
     }
 
-    .track-list {
-        margin-top: 20px;
+    @media (max-width: 1030px) {
+        .track-section {
+            margin-top: 0;
+        }
     }
 </style>

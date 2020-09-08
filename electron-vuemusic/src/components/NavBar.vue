@@ -64,7 +64,7 @@
 
             <v-subheader v-if="$store.state.library.playlists.length > 0">Playlists</v-subheader>
             <v-list-item v-for="playlist in $store.state.library.playlists" :key="playlist.id"
-                         :to="`/playlist?id=${playlist.id}`" exact>
+                         :to="`/playlist/${$store.getters.urlName(playlist.name)}/${playlist.id}`" exact>
                 <v-list-item-icon>
                     <v-icon>mdi-playlist-music</v-icon>
                 </v-list-item-icon>

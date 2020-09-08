@@ -3,7 +3,7 @@
         <v-navigation-drawer
                 color="navBackground"
                 class="navBar"
-                v-if="$store.state.windowWidth > 670"
+                v-if="$store.state.windowWidth > 680"
                 v-model="drawer"
                 :permanent="true"
                 app
@@ -11,7 +11,7 @@
             <nav-bar></nav-bar>
         </v-navigation-drawer>
 
-        <v-app-bar v-if="$store.state.windowWidth > 670" app class="toolbar" elevation="1">
+        <v-app-bar v-if="$store.state.windowWidth > 680" app class="toolbar" elevation="1">
             <tool-bar></tool-bar>
         </v-app-bar>
 
@@ -21,7 +21,7 @@
             </perfect-scrollbar>
         </v-main>
 
-        <v-card flat class="bottom-media-control" v-if="$store.state.windowWidth <= 670" color="primaryLight">
+        <v-card flat class="bottom-media-control" v-if="$store.state.windowWidth <= 680" color="primaryLight">
             <media-info></media-info>
             <div class="full-controls">
                 <media-controls :full="$store.state.windowWidth > 430"></media-controls>
@@ -36,7 +36,7 @@
                 color="primary"
                 grow
                 :shift="$store.state.windowWidth <= 430"
-                v-if="$store.state.windowWidth <= 670"
+                v-if="$store.state.windowWidth <= 680"
                 app>
             <v-btn value="now" to="/" exact>
                 <span>Listen Now</span>
@@ -52,7 +52,11 @@
             </v-btn>
             <v-btn value="account" to="/settings" exact>
                 <span>Account</span>
-                <v-icon>mdi-account-circle-outline</v-icon>
+                <v-icon>mdi-cog-outline</v-icon>
+            </v-btn>
+            <v-btn value="search" to="/search" exact>
+                <span>Account</span>
+                <v-icon>mdi-magnify</v-icon>
             </v-btn>
         </v-bottom-navigation>
     </v-app>
@@ -66,9 +70,6 @@
     import MediaSeek from "./components/MediaSeek";
 
     //TOOD:
-    //Fix recycle scroller when albumart is above the rest of the stuff (add albumart to playlist meta.vue, and update size)
-    //Responsive playlist page
-    //Reuse/create components from playlist page to make album page
     //Library pages(albums,songs,artists)
     //Search
     //Category page

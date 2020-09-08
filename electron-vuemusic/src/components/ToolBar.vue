@@ -175,8 +175,8 @@
     }
 
     .top-seeker {
-        width: calc(100% - 68px);
-        margin-left: 58px;
+        width: calc(100% - 48px);
+        margin-left: 48px;
         position: relative;
         top: 39px;
         z-index: 5;
@@ -227,7 +227,7 @@
 
         .top-seeker {
             margin-left: 51px;
-            width: calc(100% - 61px);
+            width: calc(100% - 51px);
         }
     }
 
