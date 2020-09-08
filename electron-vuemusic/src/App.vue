@@ -70,6 +70,7 @@
     import MediaSeek from "./components/MediaSeek";
 
     //TOOD:
+    //Album page is messed up on some(all?) window widths
     //Library pages(albums,songs,artists)
     //Search
     //Category page
