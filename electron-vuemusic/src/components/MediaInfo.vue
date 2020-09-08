@@ -115,7 +115,7 @@
         }
     }
 
-    @media (max-width: 645px) {
+    @media (max-width: 670px) {
         .controls {
             display: none !important;
         }

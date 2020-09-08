@@ -140,6 +140,7 @@
         display: flex;
         justify-content: center;
         align-items: center;
+        margin-right:10px;
     }
 
     .controls > * {
@@ -149,7 +150,6 @@
     .media-info {
         -webkit-app-region: no-drag;
         flex-grow: 10;
-        margin: 0 10px;
         max-width: 500px;
     }
 
@@ -171,6 +171,7 @@
         max-width: 160px;
         height: 32px;
         flex-grow: 1;
+        margin-left:10px;
     }
 
     .buttons {
@@ -181,7 +182,7 @@
         -webkit-app-region: no-drag;
     }
 
-    @media (max-width: 959px) {
+    @media (max-width: 1000px) {
         .volume {
             display: none;
         }
@@ -203,7 +204,7 @@
         }
     }
 
-    @media (max-width: 760px) {
+    @media (max-width: 800px) {
         .favorite-button {
             display: none;
         }

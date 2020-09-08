@@ -3,7 +3,7 @@
         <v-navigation-drawer
                 color="navBackground"
                 class="navBar"
-                v-if="$store.state.windowWidth > 645"
+                v-if="$store.state.windowWidth > 670"
                 v-model="drawer"
                 :expand-on-hover="false"
                 :right="false"
@@ -13,7 +13,7 @@
             <nav-bar></nav-bar>
         </v-navigation-drawer>
 
-        <v-app-bar v-if="$store.state.windowWidth > 645" app class="toolbar" elevation="1">
+        <v-app-bar v-if="$store.state.windowWidth > 670" app class="toolbar" elevation="1">
             <tool-bar></tool-bar>
         </v-app-bar>
 
@@ -23,7 +23,7 @@
             </perfect-scrollbar>
         </v-main>
 
-        <v-card flat class="bottom-media-control" v-if="$store.state.windowWidth <= 645" color="primaryLight">
+        <v-card flat class="bottom-media-control" v-if="$store.state.windowWidth <= 670" color="primaryLight">
             <media-info></media-info>
             <div class="full-controls">
                 <media-controls :full="$store.state.windowWidth > 430"></media-controls>
@@ -38,7 +38,7 @@
                 color="primary"
                 grow
                 :shift="$store.state.windowWidth <= 430"
-                v-if="$store.state.windowWidth <= 645"
+                v-if="$store.state.windowWidth <= 670"
                 app>
             <v-btn value="now" to="/" exact>
                 <span>Listen Now</span>

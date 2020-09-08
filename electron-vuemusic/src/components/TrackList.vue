@@ -1,6 +1,15 @@
 <template>
     <div>
-        <track-item v-for="track in tracks" :key="track.id" :track="track.track"></track-item>
+        <div v-for="(track, i) in tracks">
+            <v-divider v-if="i===0"></v-divider>
+            <track-item
+                    :no-album="noAlbum || albumList"
+                    :key="track.id"
+                    :compact-menu="compactMenu"
+                    :album-list="albumList"
+                    :track="track"></track-item>
+            <v-divider></v-divider>
+        </div>
     </div>
 </template>
 
@@ -14,11 +23,23 @@
             tracks: {
                 type: Array,
                 default: () => [],
-            }
+            },
+            noAlbum: {
+                type: Boolean,
+                default: false,
+            },
+            compactMenu: {
+                type: Boolean,
+                default: false,
+            },
+            albumList: {
+                type: Boolean,
+                default: false,
+            },
         },
         data: () => ({}),
         mounted() {
-            console.log("Tracks", this.tracks);
+
         }
     }
 </script>

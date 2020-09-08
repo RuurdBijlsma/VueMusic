@@ -1,7 +1,8 @@
 <template>
     <div class="track-item" v-if="track!==null">
         <div class="track-left">
-            <div class="album-art" :style="{backgroundImage: `url(${image})`}"></div>
+            <div v-if="!albumList" class="album-art" :style="{backgroundImage: `url(${image})`}"></div>
+            <div v-else class="album-number">{{track.track_number}}</div>
             <div class="track-info">
                 <div class="track-title" :title="track.name">{{track.name}}</div>
                 <div class="track-artist">
@@ -14,8 +15,8 @@
             </router-link>
         </div>
         <div class="track-right">
-            <div class="track-duration">{{duration}}</div>
-            <v-btn icon>
+            <div v-if="!compactMenu" class="track-duration">{{duration}}</div>
+            <v-btn v-if="!compactMenu" icon>
                 <v-icon>mdi-heart-outline</v-icon>
             </v-btn>
             <v-btn icon>
@@ -38,6 +39,14 @@
                 default: null,
             },
             noAlbum: {
+                type: Boolean,
+                default: false,
+            },
+            compactMenu: {
+                type: Boolean,
+                default: false,
+            },
+            albumList: {
                 type: Boolean,
                 default: false,
             },
@@ -81,6 +90,16 @@
         border-radius: 5px;
     }
 
+    .album-number {
+        height: 40px;
+        text-align: center;
+        line-height: 40px;
+        vertical-align: center;
+        font-weight: bold;
+        font-size: 14px;
+        opacity: 0.5;
+    }
+
     .track-info {
         margin-left: 15px;
         line-height: 17px;
@@ -92,7 +111,7 @@
         overflow: hidden;
         white-space: nowrap;
         width: 100%;
-        max-width: 250px;
+        max-width: 245px;
     }
 
     .artists-span >>> a {

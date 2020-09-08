@@ -1,7 +1,11 @@
 <template>
-    <span>
+    <span class="artists" :title="artists.map(a=>a.name).join(', ')">
         <span v-for="(artist, i) in artists" :key="artist.id">
-            <router-link :tag="grey ? 'span' : 'a'" :style="{opacity: grey ? 0.7 : 1}" class="artist" :to="artist.id">{{artist.name}}</router-link>
+            <router-link
+                    :tag="grey ? 'span' : 'a'"
+                    :style="{opacity: grey ? 0.7 : 1}"
+                    class="artist"
+                    :to="artist.id">{{artist.name}}</router-link>
             <span v-if="i!==artists.length - 1">, </span>
         </span>
     </span>
@@ -24,6 +28,14 @@
 </script>
 
 <style scoped>
+    .artists {
+        max-width: 245px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        display: block;
+    }
+
     .artist {
         font-weight: 500 !important;
         cursor: pointer;

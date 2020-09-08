@@ -20,8 +20,8 @@ function createWindow() {
     // Create the browser window.
     let icon = path.join(__static, 'img/logo-gradient.png');
     win = new BrowserWindow({
-        width: 1600,
-        height: 700,
+        width: 1270,
+        height: 800,
         autoHideMenuBar: true,
         icon,
         frame: false,

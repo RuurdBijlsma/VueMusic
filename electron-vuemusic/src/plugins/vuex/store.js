@@ -282,9 +282,13 @@ export default new Vuex.Store({
             let nextProperty = r => r.tracks.next;
             for await(let batch of await dispatch('retrieveSpotifyArray', [retrieval, nextProperty])) {
                 if (batch.items) {
+                    batch.items.forEach(i => i.album = state.album[id]);
                     commit('extendAlbum', {id, tracks: batch.items});
                 } else {
-                    commit('loadAlbum', {id, album: {...batch, tracks: batch.tracks.items}});
+                    let album = {...batch};
+                    album.tracks.items.forEach(i => i.album = album);
+                    album.tracks = album.tracks.items;
+                    commit('loadAlbum', {id, album});
                 }
             }
         },
