@@ -30,8 +30,12 @@
         </p>
         <div class="buttons">
             <div>
-                <v-btn small :color="fgLegible ? 'primary' : 'default'">
+                <v-btn class="play-button" small :color="fgLegible ? 'primary' : 'default'">
                     <v-icon>mdi-play</v-icon>
+                    Play
+                </v-btn>
+                <v-btn small :color="fgLegible ? 'primary' : 'default'">
+                    <v-icon small>mdi-shuffle</v-icon>
                     Shuffle
                 </v-btn>
             </div>
@@ -146,6 +150,10 @@
         align-items: center;
         display: flex;
         justify-content: space-between;
+    }
+
+    .play-button {
+        margin-right: 10px;
     }
 
     .right-buttons {

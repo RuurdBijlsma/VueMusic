@@ -70,7 +70,6 @@
     import MediaSeek from "./components/MediaSeek";
 
     //TOOD:
-    //Album page is messed up on some(all?) window widths
     //When a request is an update request (ie the artist data is already there) don't commit an empty artist object, commit all at once
     //Library pages(albums,songs,artists)
     //Search

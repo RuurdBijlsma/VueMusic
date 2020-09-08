@@ -108,7 +108,7 @@
     }
 
     .play-button {
-        background-color: rgba(0, 0, 0, 0.3);
+        background-color: rgba(0, 0, 0, 0.2);
         border-radius: 5px;
         opacity: 0;
         width: 180px;

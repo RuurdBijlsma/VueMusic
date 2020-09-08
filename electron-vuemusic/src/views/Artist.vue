@@ -16,7 +16,7 @@
             <div class="banner-content">
                 <div class="buttons">
                     <div class="left-banner-content">
-                        <v-btn small color="primary" fab>
+                        <v-btn small color="primary" fab v-if="topTracks.length > 0">
                             <v-icon>mdi-play</v-icon>
                         </v-btn>
                         <h1>{{artist.name}}</h1>
@@ -41,7 +41,7 @@
                     <h3>Latest release</h3>
                     <album-square :album="albums[0]"></album-square>
                 </div>
-                <div class="tracks-container">
+                <div class="tracks-container" v-if="topTracks.length > 0">
                     <h3>Top tracks</h3>
                     <div class="top-tracks">
                         <track-item v-for="track in topTracks" :key="track.id" :track="track"
@@ -62,7 +62,7 @@
                 <h3>Appears on</h3>
                 <album-row :albums="appearsOn" show-year class="album-row"></album-row>
             </div>
-            <div>
+            <div v-if="related.length > 0">
                 <h3>Related artists</h3>
                 <album-row :albums="related" type="artist" class="album-row"></album-row>
             </div>

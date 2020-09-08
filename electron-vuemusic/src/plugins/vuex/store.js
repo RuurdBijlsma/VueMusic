@@ -50,7 +50,13 @@ export default new Vuex.Store({
         extendPlaylist: (state, {id, tracks}) => state.playlist[id].tracks.push(...tracks),
         loadAlbum: (state, {id, album}) => Vue.set(state.album, id, album),
         extendAlbum: (state, {id, tracks}) => state.album[id].tracks.push(...tracks),
-        loadArtist: (state, {id, artist}) => Vue.set(state.artist, id, {artist, related: [], tracks: [], albums: {}}),
+        loadInitialArtist: (state, {id, artist}) => Vue.set(state.artist, id, {
+            artist,
+            related: [],
+            tracks: [],
+            albums: {},
+        }),
+        loadArtist: (state, {id, artist}) => state.artist[id].artist = artist,
         loadArtistRelated: (state, {id, related}) => state.artist[id].related = related,
         loadArtistTracks: (state, {id, tracks}) => state.artist[id].tracks = tracks,
         loadArtistAlbums: (state, {id, albums}) => state.artist[id].albums = albums,
@@ -301,8 +307,14 @@ export default new Vuex.Store({
             }
         },
         loadArtist: async ({dispatch, commit, state}, id) => {
+            let isInitial = !state.artist.hasOwnProperty(id);
+
             let artist = await state.api.getArtist(id);
-            commit('loadArtist', {id, artist});
+            if (isInitial)
+                commit('loadInitialArtist', {id, artist});
+            else
+                commit('loadArtist', {id, artist});
+
             state.api.getArtistRelatedArtists(id).then(related => {
                 commit('loadArtistRelated', {id, related: related.artists});
             });

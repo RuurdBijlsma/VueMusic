@@ -1,6 +1,6 @@
 <template>
     <div class="playlist" v-if="playlist !== null">
-        <div class="art-section" v-if="$store.state.windowWidth >= 1030">
+        <div class="art-section" v-if="$store.state.windowWidth > 1030">
             <div class="album-art album-background"
                  :style="{
                     backgroundImage: `url(${playlist.images[0].url})`,
@@ -8,7 +8,7 @@
                  }"></div>
             <div class="album-art album-normal" :style="{backgroundImage: `url(${playlist.images[0].url})`}"></div>
         </div>
-        <track-section :show-art="$store.state.windowWidth < 1030" :fg-legible="fgLegible"
+        <track-section :show-art="$store.state.windowWidth <= 1030" :fg-legible="fgLegible"
                        :playlist="playlist"></track-section>
     </div>
 </template>

@@ -1,7 +1,19 @@
 <template>
     <div class="track-item" v-if="track!==null">
-        <div v-if="!albumList" class="album-art" :style="{backgroundImage: `url(${image})`}"></div>
-        <div v-else class="album-number">{{track.track_number}}</div>
+        <div class="left-square">
+            <div v-if="!albumList" class="album-art" :style="{backgroundImage: `url(${image})`}"></div>
+            <div v-else class="album-number">{{track.track_number}}</div>
+            <v-card v-if="albumList" class="play-button" flat>
+                <v-btn icon>
+                    <v-icon>mdi-play</v-icon>
+                </v-btn>
+            </v-card>
+            <div v-else class="play-button">
+                <v-btn icon color="white">
+                    <v-icon>mdi-play</v-icon>
+                </v-btn>
+            </div>
+        </div>
         <div class="track-info">
             <div class="track-title" :title="track.name">{{track.name}}</div>
             <div class="track-artist">
@@ -46,13 +58,24 @@
         max-width: 300px;
     }
 
-    .album-art {
+    .left-square {
         min-width: 40px;
         height: 40px;
+        border-radius: 5px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .album-art {
+        min-height: 40px;
+        min-width: 40px;
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
         border-radius: 5px;
+        pointer-events: none;
+        transition: opacity 0.2s;
     }
 
     .album-number {
@@ -63,6 +86,26 @@
         font-weight: bold;
         font-size: 14px;
         opacity: 0.5;
+        pointer-events: none;
+        transition: opacity 0.2s;
+    }
+
+    .play-button:hover {
+        opacity: 1;
+    }
+
+    .play-button {
+        border-radius: 5px;
+        background-color: rgba(0, 0, 0, 0.3);
+        min-width: 40px;
+        min-height: 40px;
+        position: relative;
+        top: -40px;
+        transition: opacity 0.2s;
+        opacity: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 
     .track-info {

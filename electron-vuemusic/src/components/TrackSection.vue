@@ -10,7 +10,7 @@
             <playlist-meta :style="{paddingTop: showArt?'0':'30px'}" class="playlist-meta" :show-art="showArt"
                            v-if="index===0" :playlist="playlist"
                            :fg-legible="fgLegible"></playlist-meta>
-            <v-divider></v-divider>
+<!--            <v-divider></v-divider>-->
             <div class="scroll-item" v-if="index>0">
                 <track-row
                         :no-album="hideAlbum || isAlbum"
@@ -61,7 +61,7 @@
                 let tracks = this.isAlbum ?
                     this.playlist.tracks.map(t => ({...t, size: 51})) :
                     this.playlist.tracks.map(t => ({...t.track, size: 51}));
-                let artHeight = this.showArt ? 350 : 0;
+                let artHeight = this.showArt ? 380 : 0;
                 let descriptionHeight = this.isAlbum ? 0 : 80;
                 let metaHeight = 150;
                 let dividerHeight = 1;
@@ -89,7 +89,7 @@
     }
 
     .playlist-meta {
-        height: 230px;
+        /*height: 230px;*/
     }
 
 
@@ -101,5 +101,9 @@
         .track-section {
             margin-top: 0;
         }
+
+        /*.playlist-meta {*/
+        /*    height: 100px;*/
+        /*}*/
     }
 </style>
