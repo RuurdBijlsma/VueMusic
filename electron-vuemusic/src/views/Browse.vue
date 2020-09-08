@@ -68,6 +68,7 @@
 
     .category {
         margin-bottom: 15px;
+        filter:brightness(2);
     }
 
     .genres {
@@ -92,7 +93,7 @@
     .genre-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        gap: 10px;
+        gap: 17px;
     }
 
     @media (max-width: 1090px) {

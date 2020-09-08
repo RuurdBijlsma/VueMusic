@@ -9,6 +9,10 @@ import PerfectScrollbar from 'vue2-perfect-scrollbar'
 import 'vue2-perfect-scrollbar/dist/vue2-perfect-scrollbar.css'
 Vue.use(PerfectScrollbar)
 
+import {RecycleScroller} from 'vue-virtual-scroller';
+Vue.component('RecycleScroller', RecycleScroller);
+import 'vue-virtual-scroller/dist/vue-virtual-scroller.css';
+
 Vue.config.productionTip = false
 
 new Vue({

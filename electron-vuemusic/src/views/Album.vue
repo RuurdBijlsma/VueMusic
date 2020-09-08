@@ -23,6 +23,12 @@
                 return this.$store.state.album[this.id]
             },
         },
+        watch: {
+            async '$route.query'() {
+                this.$refs.playlistPage.revertThemeColor();
+                await this.$store.dispatch('loadAlbum', this.id);
+            },
+        },
         beforeRouteLeave(to, from, next) {
             this.$refs.playlistPage.revertThemeColor();
             next();

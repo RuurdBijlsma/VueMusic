@@ -23,7 +23,7 @@
             <v-btn icon>
                 <v-icon>mdi-format-list-bulleted</v-icon>
             </v-btn>
-            <v-menu offset-y>
+            <v-menu offset-y :close-on-content-click="true">
                 <template v-slot:activator="{ on, attrs }">
                     <v-btn
                             color="primary"
@@ -70,6 +70,19 @@
                             <v-list-item-title>Login</v-list-item-title>
                         </v-list-item-content>
                     </v-list-item>
+                    <v-list-item @click="toggleTheme" color="primary">
+                        <v-list-item-icon>
+                            <v-icon>mdi-brightness-6</v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-content>
+                            <v-list-item-title class="theme-switch">
+                                <span>Dark theme</span>
+                            </v-list-item-title>
+                        </v-list-item-content>
+                        <v-list-item-action>
+                            <v-switch v-model="$vuetify.theme.dark"></v-switch>
+                        </v-list-item-action>
+                    </v-list-item>
                 </v-list>
             </v-menu>
             <v-btn v-if="$store.state.platform.type==='electron'" icon
@@ -105,6 +118,14 @@
                     this.volume = this.prevVolume;
                 }
             },
+            toggleTheme() {
+
+            },
+        },
+        watch: {
+            '$vuetify.theme.dark'() {
+                localStorage.darkTheme = this.$vuetify.theme.dark;
+            },
         },
         computed: {
             volumeIcon() {
@@ -129,8 +150,8 @@
         display: flex;
         justify-content: space-between;
         width: calc(100% + 32px);
-        height: calc(100% + 8px);
-        margin: -8px -16px;
+        height: calc(100% + 2px);
+        margin: -2px -16px;
         align-items: center;
     }
 
@@ -140,7 +161,7 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        margin-right:10px;
+        margin-right: 10px;
     }
 
     .controls > * {
@@ -171,7 +192,7 @@
         max-width: 160px;
         height: 32px;
         flex-grow: 1;
-        margin-left:10px;
+        margin-left: 10px;
     }
 
     .buttons {
@@ -180,6 +201,12 @@
 
     .buttons > * {
         -webkit-app-region: no-drag;
+    }
+
+    .theme-switch {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
     }
 
     @media (max-width: 1000px) {
@@ -208,6 +235,7 @@
         .favorite-button {
             display: none;
         }
+
         .minimize-button {
             display: none;
         }

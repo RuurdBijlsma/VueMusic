@@ -79,7 +79,7 @@
                     this.$vuetify.theme.themes.light.primary = this.playlist.primary_color;
                     this.$vuetify.theme.themes.light.primarySeek = this.playlist.primary_color;
                 }
-            }
+            },
         },
     }
 </script>

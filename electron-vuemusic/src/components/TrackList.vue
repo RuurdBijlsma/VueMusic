@@ -1,15 +1,25 @@
 <template>
-    <div>
-        <div v-for="(track, i) in tracks">
-            <v-divider v-if="i===0"></v-divider>
-            <track-item
-                    :no-album="noAlbum || albumList"
-                    :key="track.id"
-                    :compact-menu="compactMenu"
-                    :album-list="albumList"
-                    :track="track"></track-item>
-            <v-divider></v-divider>
-        </div>
+    <div class="track-list" ref="trackList">
+        <v-divider></v-divider>
+        <recycle-scroller
+                class="scroller"
+                :items="tracks"
+                :item-size="51"
+                :buffer="300"
+                key-field="id"
+                v-slot="{item}"
+        >
+            <div class="scroll-item">
+                <track-item
+                        :no-album="noAlbum || albumList"
+                        :compact-menu="compactMenu"
+                        :album-list="albumList"
+                        :key="item.id"
+                        :track="item"></track-item>
+                <v-divider></v-divider>
+                <!--                {{item.name}}-->
+            </div>
+        </recycle-scroller>
     </div>
 </template>
 
@@ -39,11 +49,20 @@
         },
         data: () => ({}),
         mounted() {
-
-        }
+            console.log(this.$refs.trackList);
+        },
     }
 </script>
 
 <style scoped>
+    .scroller {
+        height: 100%;
+        position: relative;
+        display: block;
+    }
 
+    .scroll-item {
+        display: block;
+        height: 51px;
+    }
 </style>

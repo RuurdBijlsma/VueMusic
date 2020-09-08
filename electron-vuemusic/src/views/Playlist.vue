@@ -23,6 +23,12 @@
                 return this.$store.state.playlist[this.id]
             },
         },
+        watch: {
+            async '$route.query'() {
+                this.$refs.playlistPage.revertThemeColor();
+                await this.$store.dispatch('loadPlaylist', this.id);
+            },
+        },
         beforeRouteLeave(to, from, next) {
             this.$refs.playlistPage.revertThemeColor();
             next();

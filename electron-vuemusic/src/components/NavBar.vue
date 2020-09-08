@@ -2,7 +2,9 @@
     <perfect-scrollbar class="nav-bar">
         <div class="nav-top">
             <div class="logo">
-                <img class="logo-image" src="../assets/full-black-medium.png" alt="logo image"/>
+                <img class="logo-image"
+                     :src="$vuetify.theme.dark ? 'img/full-white-medium.png':'img/full-black-medium.png' "
+                     alt="logo image"/>
                 <span>
                     Vue Music
                 </span>
@@ -88,8 +90,8 @@
 
 <style scoped>
     .nav-bar {
-        height:100%;
-        width:100%;
+        height: 100%;
+        width: 100%;
     }
 
     .nav-top {
