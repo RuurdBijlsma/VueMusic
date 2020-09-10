@@ -80,13 +80,11 @@
 
     //TOOD:
     //When a request is an update request (ie the artist data is already there) don't commit an empty artist object, commit all at once
-    //Library pages(albums,songs,artists)
+    //Library pages(albums,tracks)
     //Search
-    //Category page
     //Tune page (from browse)
     //Radio page
     //user page (is in api, for "created by" click)
-    //Fix clicking link to query not changing content of page (ie click on playlist link when in playlist)
 
     //After that, add functionality xd
 
