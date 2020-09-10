@@ -47,7 +47,7 @@
         },
         computed: {
             compactMenu() {
-                return (this.$store.state.windowWidth < 759 && this.$store.state.windowWidth > 680) || this.$store.state.windowWidth < 455;
+                return (this.$store.state.windowWidth < 759 && this.$store.state.windowWidth > 680) || this.$store.state.windowWidth < 430;
             },
             hideAlbum() {
                 let width = this.$store.state.windowWidth;
@@ -83,7 +83,7 @@
 
     @media (max-width: 680px) {
         .scroller {
-            padding-right: 5px;
+            padding-right: 10px;
         }
     }
 

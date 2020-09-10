@@ -95,7 +95,7 @@
 
     @media (max-width: 680px) {
         .playlist {
-            padding: 0 0 0 5px;
+            padding: 0 0 0 10px;
         }
     }
 
