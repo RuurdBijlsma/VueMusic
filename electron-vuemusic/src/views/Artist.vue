@@ -21,17 +21,7 @@
                         </v-btn>
                         <h1>{{artist.name}}</h1>
                     </div>
-                    <v-menu>
-                        <template v-slot:activator="{ on, attrs }">
-                            <v-btn color="primary" icon v-on="on">
-                                <v-icon>mdi-dots-horizontal</v-icon>
-                            </v-btn>
-                        </template>
-                        <v-list dense>
-                            <share-menu-item :item="artist"></share-menu-item>
-                            <follow-menu-item :item="artist"></follow-menu-item>
-                        </v-list>
-                    </v-menu>
+                    <item-menu :item="artist" color="primary"></item-menu>
                 </div>
             </div>
         </div>
@@ -72,7 +62,7 @@
             </div>
             <div v-if="related.length > 0">
                 <h3>Related artists</h3>
-                <album-row :albums="related" type="artist" class="album-row"></album-row>
+                <album-row :albums="related" class="album-row"></album-row>
             </div>
         </v-card>
     </div>
@@ -85,10 +75,11 @@
     import AlbumSquare from "../components/AlbumSquare";
     import ShareMenuItem from "../components/ShareMenuItem";
     import FollowMenuItem from "../components/FollowMenuItem";
+    import ItemMenu from "../components/ItemMenu";
 
     export default {
         name: "Artist",
-        components: {FollowMenuItem, ShareMenuItem, AlbumSquare, AlbumRow, TrackItem},
+        components: {ItemMenu, FollowMenuItem, ShareMenuItem, AlbumSquare, AlbumRow, TrackItem},
         data: () => ({}),
         async mounted() {
             await this.$store.dispatch('loadArtist', this.id);

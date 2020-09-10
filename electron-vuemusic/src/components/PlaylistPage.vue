@@ -15,12 +15,11 @@
 
 <script>
     import Utils from "../js/Utils";
-    import TrackList from "../components/TrackList";
     import TrackSection from "../components/TrackSection";
 
     export default {
         name: "PlaylistPage",
-        components: {TrackSection, TrackList},
+        components: {TrackSection},
         data: () => ({
             previousColors: null,
             fgLegible: true,

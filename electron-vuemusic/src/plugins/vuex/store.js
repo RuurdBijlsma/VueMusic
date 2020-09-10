@@ -125,7 +125,8 @@ export default new Vuex.Store({
             return encodeURIComponent(name.toLowerCase().replace(/ /gi, '-'));
         },
         shareUrl: () => (item) => {
-            return 'https://idk.com/' + item.type + '/' + item.name;
+            let type = item.type || 'category';
+            return 'https://idk.com/' + type + '/' + item.name;
         },
         isArtistFollowed: state => artist => state.library.artists.find(a => a.id === artist.id),
         isTrackFollowed: state => track => state.library.tracks.find(a => a.id === track.id),
@@ -247,15 +248,17 @@ export default new Vuex.Store({
         initializeSpotify: async ({state, commit, dispatch}) => {
             await dispatch('refreshUserInfo');
             let doneCount = 0;
+            let libLoaded = state.library.tracks.length !== 0;
             let checkDone = () => {
-                if (++doneCount === 4) {
+                doneCount++;
+                if (doneCount === libLoaded ? 3 : 4) {
                     localStorage.library = JSON.stringify(state.library);
                 }
             }
             dispatch('refreshUserData').then(checkDone);
             dispatch('refreshUserData', 'artist').then(checkDone);
             dispatch('refreshUserData', 'album').then(checkDone);
-            if (state.library.tracks.length === 0) {
+            if (!libLoaded) {
                 dispatch('refreshUserData', 'track').then(checkDone);
             }
         },

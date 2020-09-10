@@ -1,5 +1,5 @@
 <template>
-    <div class="track-item" v-if="track!==null">
+    <div class="track-item" v-if="track!==null" :style="{width: menu ? '100%' : '300px'}">
         <div class="track-content" :style="{maxWidth:menu?'228px':'300px'}">
             <div class="left-square">
                 <div v-if="!albumList" class="album-art" :style="{backgroundImage: `url(${image})`}"></div>
@@ -27,17 +27,7 @@
         </div>
         <div class="icons" v-if="menu">
             <follow-button :item="track"></follow-button>
-            <v-menu>
-                <template v-slot:activator="{ on, attrs }">
-                    <v-btn icon v-on="on">
-                        <v-icon>mdi-dots-horizontal</v-icon>
-                    </v-btn>
-                </template>
-                <v-list dense>
-                    <share-menu-item :item="track"></share-menu-item>
-                    <follow-menu-item :item="track"></follow-menu-item>
-                </v-list>
-            </v-menu>
+            <item-menu :item="track"></item-menu>
         </div>
     </div>
 </template>
@@ -47,10 +37,11 @@
     import ShareMenuItem from "./ShareMenuItem";
     import FollowMenuItem from "./FollowMenuItem";
     import FollowButton from "./FollowButton";
+    import ItemMenu from "./ItemMenu";
 
     export default {
         name: "TrackItem",
-        components: {FollowButton, FollowMenuItem, ShareMenuItem, ArtistsSpan},
+        components: {ItemMenu, FollowButton, FollowMenuItem, ShareMenuItem, ArtistsSpan},
         props: {
             track: {
                 type: Object,
@@ -79,7 +70,6 @@
 <style scoped>
     .track-item {
         display: flex;
-        width: 100%;
         justify-content: space-between;
     }
 

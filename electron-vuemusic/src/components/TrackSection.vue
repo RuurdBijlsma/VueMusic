@@ -25,13 +25,12 @@
 </template>
 
 <script>
-    import TrackList from "./TrackList";
     import PlaylistMeta from "./PlaylistMeta";
     import TrackRow from "./TrackRow";
 
     export default {
         name: "TrackSection",
-        components: {TrackRow, PlaylistMeta, TrackList},
+        components: {TrackRow, PlaylistMeta},
         props: {
             fgLegible: {
                 type: Boolean,

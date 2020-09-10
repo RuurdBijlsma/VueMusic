@@ -64,7 +64,7 @@
 
             <div class="playlist-header">
                 <v-subheader v-if="$store.state.library.playlists.length > 0">Playlists</v-subheader>
-                <v-btn icon small title="Create new playlist">
+                <v-btn icon small title="Create new playlist" class="add-playlist">
                     <v-icon small>mdi-plus</v-icon>
                 </v-btn>
             </div>
@@ -123,5 +123,9 @@
         display: flex;
         /*justify-content: space-between;*/
         align-items: center;
+    }
+
+    .add-playlist {
+        opacity: 0.7;
     }
 </style>

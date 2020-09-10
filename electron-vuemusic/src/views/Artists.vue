@@ -4,23 +4,13 @@
         <div v-for="(artist, i) in $store.state.library.artists" :key="artist.id">
             <v-divider v-if="i === 0"></v-divider>
             <div class="artist">
-                <album-square small :album="artist" type="artist" no-title></album-square>
+                <album-square hide-menu small :album="artist" no-title></album-square>
                 <router-link tag="span" :to="`/artist/${artist.name}/${artist.id}`" class="artist-title">
                     {{artist.name}}
                 </router-link>
                 <div class="icons">
                     <follow-button :item="artist"></follow-button>
-                    <v-menu>
-                        <template v-slot:activator="{ on, attrs }">
-                            <v-btn icon v-on="on">
-                                <v-icon>mdi-dots-horizontal</v-icon>
-                            </v-btn>
-                        </template>
-                        <v-list dense>
-                            <share-menu-item :item="artist"></share-menu-item>
-                            <follow-menu-item :item="artist"></follow-menu-item>
-                        </v-list>
-                    </v-menu>
+                    <item-menu :item="artist"></item-menu>
                 </div>
             </div>
             <v-divider></v-divider>
@@ -33,10 +23,11 @@
     import ShareMenuItem from "../components/ShareMenuItem";
     import FollowMenuItem from "../components/FollowMenuItem";
     import FollowButton from "../components/FollowButton";
+    import ItemMenu from "../components/ItemMenu";
 
     export default {
         name: "Artists",
-        components: {FollowButton, FollowMenuItem, ShareMenuItem, AlbumSquare},
+        components: {ItemMenu, FollowButton, FollowMenuItem, ShareMenuItem, AlbumSquare},
         data: () => ({}),
         async mounted() {
             await this.$store.dispatch("refreshUserData", 'artist');

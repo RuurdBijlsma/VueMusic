@@ -41,26 +41,7 @@
             </div>
             <div class="right-buttons">
                 <follow-button :item="playlist"></follow-button>
-                <v-menu>
-                    <template v-slot:activator="{ on, attrs }">
-                        <v-btn icon v-on="on">
-                            <v-icon>mdi-dots-horizontal</v-icon>
-                        </v-btn>
-                    </template>
-                    <v-list dense>
-                        <share-menu-item :item="playlist"></share-menu-item>
-                        <follow-menu-item :item="playlist"></follow-menu-item>
-                        <v-list-item @click="deletePlaylist"
-                                     v-if="!isAlbum && playlist.owner.id===$store.state.userInfo.id">
-                            <v-list-item-icon color="error">
-                                <v-icon>mdi-delete</v-icon>
-                            </v-list-item-icon>
-                            <v-list-item-title>
-                                Delete
-                            </v-list-item-title>
-                        </v-list-item>
-                    </v-list>
-                </v-menu>
+                <item-menu :item="playlist"></item-menu>
             </div>
         </div>
         <p v-if="!isAlbum" class="description" v-html="playlist.description"></p>
@@ -69,14 +50,14 @@
 
 <script>
     import Utils from "../js/Utils";
-    import TrackList from "./TrackList";
     import ShareMenuItem from "./ShareMenuItem";
     import FollowButton from "./FollowButton";
     import FollowMenuItem from "./FollowMenuItem";
+    import ItemMenu from "./ItemMenu";
 
     export default {
         name: "PlaylistMeta",
-        components: {FollowMenuItem, FollowButton, ShareMenuItem, TrackList},
+        components: {ItemMenu, FollowMenuItem, FollowButton, ShareMenuItem},
         props: {
             fgLegible: {
                 type: Boolean,

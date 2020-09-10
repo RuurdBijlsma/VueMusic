@@ -9,17 +9,7 @@
         </div>
         <div class="track-right">
             <div v-if="!compactMenu" class="track-duration">{{duration}}</div>
-            <v-menu>
-                <template v-slot:activator="{ on, attrs }">
-                    <v-btn icon v-on="on">
-                        <v-icon>mdi-dots-horizontal</v-icon>
-                    </v-btn>
-                </template>
-                <v-list dense>
-                    <share-menu-item :item="track"></share-menu-item>
-                    <follow-menu-item :item="track"></follow-menu-item>
-                </v-list>
-            </v-menu>
+            <item-menu :item="track"></item-menu>
         </div>
     </div>
 </template>
@@ -31,10 +21,11 @@
     import FollowButton from "./FollowButton";
     import ShareMenuItem from "./ShareMenuItem";
     import FollowMenuItem from "./FollowMenuItem";
+    import ItemMenu from "./ItemMenu";
 
     export default {
         name: "TrackRow",
-        components: {FollowMenuItem, ShareMenuItem, FollowButton, TrackItem, ArtistsSpan},
+        components: {ItemMenu, FollowMenuItem, ShareMenuItem, FollowButton, TrackItem, ArtistsSpan},
         props: {
             track: {
                 type: Object,

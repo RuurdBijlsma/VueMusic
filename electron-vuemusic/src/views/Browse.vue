@@ -1,6 +1,7 @@
 <template>
     <div class="browse">
         <h1 class="page-title">Browse</h1>
+        <v-divider class="divider"></v-divider>
         <div class="dual-container">
             <div class="categories">
                 <h2>Curated lists</h2>
@@ -37,7 +38,6 @@
         name: "Browse",
         components: {AlbumSquare},
         mounted() {
-            console.log("helll")
             this.$store.dispatch('refreshBrowsePage');
         }
     }
@@ -52,6 +52,10 @@
         font-size: 2.4rem;
     }
 
+    .divider {
+        margin-bottom: 20px;
+    }
+
     .dual-container {
         display: flex;
     }
@@ -64,11 +68,12 @@
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(185px, 1fr));
         min-width: 186px;
+        justify-items: center;
     }
 
     .category {
         margin-bottom: 15px;
-        filter:brightness(2);
+        /*filter: brightness(2);*/
     }
 
     .genres {

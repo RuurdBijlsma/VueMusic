@@ -1,7 +1,7 @@
 <template>
     <div class="settings">
         <h1 class="page-title">Settings</h1>
-        <v-divider></v-divider>
+        <v-divider class="divider"></v-divider>
         <div class="secrets" v-if="$store.state.platform.shouldSetKey">
             <h2>Secrets</h2>
             <p class="caption">These values must be set before using the application. Order: Spotify id, Spotify secret,
@@ -100,6 +100,11 @@
 
     .page-title {
         font-size: 2.4rem;
+    }
+
+
+    .divider {
+        margin-bottom: 20px;
     }
 
     .secret-help {

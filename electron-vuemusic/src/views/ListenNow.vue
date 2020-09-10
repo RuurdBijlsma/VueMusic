@@ -12,7 +12,7 @@
                    type="playlist"
         ></album-row>
 
-        <h2 class="padded">{{$store.state.homePage.featured.title}}</h2>
+        <h2 class="padded">{{$store.state.homePage.featured.title.replace(/\\/gi,'')}}</h2>
         <album-row class="album-row"
                    :albums="$store.state.homePage.featured.playlists"
                    type="playlist"

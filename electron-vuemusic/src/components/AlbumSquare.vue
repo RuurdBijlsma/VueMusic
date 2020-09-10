@@ -14,8 +14,10 @@
                 <v-btn :loading="playLoading" fab small color="primary" @click="play">
                     <v-icon color="white">mdi-play</v-icon>
                 </v-btn>
+                <item-menu color="white" :fab="type==='artist'" v-if="!hideMenu" :item="album"></item-menu>
             </div>
-            <div class="text" v-if="!noTitle" :class="{big,small}">
+            <div class="text" v-if="!noTitle" :class="{big,small}"
+                 :style="{textAlign: type==='artist'?'center':'left'}">
                 <p class="preview-title">{{album.name}}</p>
                 <p
                         :title="album.description"
@@ -30,9 +32,13 @@
 
 <script>
     import Utils from "../js/Utils";
+    import ShareMenuItem from "./ShareMenuItem";
+    import FollowMenuItem from "./FollowMenuItem";
+    import ItemMenu from "./ItemMenu";
 
     export default {
         name: "AlbumSquare",
+        components: {ItemMenu, FollowMenuItem, ShareMenuItem},
         props: {
             big: {
                 type: Boolean,
@@ -42,16 +48,19 @@
                 type: Boolean,
                 default: false,
             },
-            album: Object,
-            type: {
-                type: String,
-                default: 'album',
+            album: {
+                type: Object,
+                default: null,
             },
             showYear: {
                 type: Boolean,
                 default: false,
             },
             noTitle: {
+                type: Boolean,
+                default: false,
+            },
+            hideMenu: {
                 type: Boolean,
                 default: false,
             },
@@ -70,6 +79,11 @@
             },
         },
         computed: {
+            type() {
+                if (!this.album.type)
+                    return 'category';
+                return this.album.type;
+            },
             image() {
                 if (this.type === 'category') {
                     if (this.album.icons.length > 0)
@@ -128,7 +142,7 @@
         height: 180px;
         margin-top: -180px;
         display: flex;
-        justify-content: start;
+        justify-content: space-between;
         align-items: flex-end;
         transition: opacity 0.2s;
         padding: 15px;
