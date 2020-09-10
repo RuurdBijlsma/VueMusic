@@ -2,7 +2,7 @@
     <div v-if="playlist" class="track-section">
         <recycle-scroller
                 class="scroller"
-                :items="tracks"
+                :items="tracks.filter(t=>!t.is_local)"
                 key-field="id"
                 size-field="size"
                 v-slot="{item, index}"
@@ -10,7 +10,7 @@
             <playlist-meta :style="{paddingTop: showArt?'0':'30px'}" class="playlist-meta" :show-art="showArt"
                            v-if="index===0" :playlist="playlist"
                            :fg-legible="fgLegible"></playlist-meta>
-<!--            <v-divider></v-divider>-->
+            <!--            <v-divider></v-divider>-->
             <div class="scroll-item" v-if="index>0">
                 <track-row
                         :no-album="hideAlbum || isAlbum"
@@ -62,7 +62,7 @@
                     this.playlist.tracks.map(t => ({...t, size: 51})) :
                     this.playlist.tracks.map(t => ({...t.track, size: 51}));
                 let artHeight = this.showArt ? 380 : 0;
-                let descriptionHeight = this.isAlbum ? 0 : 80;
+                let descriptionHeight = this.isAlbum || this.playlist.description.length === 0 ? 0 : 80;
                 let metaHeight = 150;
                 let dividerHeight = 1;
                 return [{id: '0', size: artHeight + descriptionHeight + metaHeight + dividerHeight}, ...tracks];

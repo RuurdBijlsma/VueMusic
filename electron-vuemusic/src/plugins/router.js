@@ -35,6 +35,21 @@ const routes = [
         name: 'Artist',
         component: () => import('../views/Artist')
     },
+    {
+        path: '/artists',
+        name: 'Artists',
+        component: () => import('../views/Artists')
+    },
+    {
+        path: '/albums',
+        name: 'Albums',
+        component: () => import('../views/Albums')
+    },
+    {
+        path: '/tracks',
+        name: 'Tracks',
+        component: () => import('../views/Tracks')
+    },
 ]
 
 const router = new VueRouter({

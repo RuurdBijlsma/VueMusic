@@ -3,10 +3,10 @@
         <div class="art-section art-center" v-if="showArt">
             <div class="album-art album-background"
                  :style="{
-                    backgroundImage: `url(${playlist.images[0].url})`,
+                    backgroundImage: `url(${image})`,
                     opacity: $vuetify.theme.dark ? 0.4 : 0.7,
                  }"></div>
-            <div class="album-art album-normal" :style="{backgroundImage: `url(${playlist.images[0].url})`}"></div>
+            <div class="album-art album-normal" :style="{backgroundImage: `url(${image})`}"></div>
         </div>
         <h2 class="name">{{playlist.name}}</h2>
         <p class="sub-caption">
@@ -34,19 +34,33 @@
                     <v-icon>mdi-play</v-icon>
                     Play
                 </v-btn>
-                <v-btn small :color="fgLegible ? 'primary' : 'default'">
+                <v-btn v-if="playlist.tracks.length > 1" small :color="fgLegible ? 'primary' : 'default'">
                     <v-icon small>mdi-shuffle</v-icon>
                     Shuffle
                 </v-btn>
             </div>
             <div class="right-buttons">
-                <v-btn icon>
-                    <v-icon>mdi-heart-outline</v-icon>
-                </v-btn>
-                <v-btn icon>
-                    <v-icon>mdi-dots-horizontal</v-icon>
-                    <!--                        Make menu to share playlist-->
-                </v-btn>
+                <follow-button :item="playlist"></follow-button>
+                <v-menu>
+                    <template v-slot:activator="{ on, attrs }">
+                        <v-btn icon v-on="on">
+                            <v-icon>mdi-dots-horizontal</v-icon>
+                        </v-btn>
+                    </template>
+                    <v-list dense>
+                        <share-menu-item :item="playlist"></share-menu-item>
+                        <follow-menu-item :item="playlist"></follow-menu-item>
+                        <v-list-item @click="deletePlaylist"
+                                     v-if="!isAlbum && playlist.owner.id===$store.state.userInfo.id">
+                            <v-list-item-icon color="error">
+                                <v-icon>mdi-delete</v-icon>
+                            </v-list-item-icon>
+                            <v-list-item-title>
+                                Delete
+                            </v-list-item-title>
+                        </v-list-item>
+                    </v-list>
+                </v-menu>
             </div>
         </div>
         <p v-if="!isAlbum" class="description" v-html="playlist.description"></p>
@@ -56,10 +70,13 @@
 <script>
     import Utils from "../js/Utils";
     import TrackList from "./TrackList";
+    import ShareMenuItem from "./ShareMenuItem";
+    import FollowButton from "./FollowButton";
+    import FollowMenuItem from "./FollowMenuItem";
 
     export default {
         name: "PlaylistMeta",
-        components: {TrackList},
+        components: {FollowMenuItem, FollowButton, ShareMenuItem, TrackList},
         props: {
             fgLegible: {
                 type: Boolean,
@@ -72,6 +89,18 @@
             showArt: {
                 type: Boolean,
                 default: false,
+            },
+        },
+        data: () => ({}),
+        async mounted() {
+        },
+        methods: {
+            async sharePlaylist() {
+                let url = 'https://whaturlshouldthisbe.com/spotify?or=vuemusic';
+                await this.$store.dispatch('share', {url, copy: this.$copyText});
+            },
+            deletePlaylist() {
+
             },
         },
         computed: {
@@ -88,8 +117,15 @@
                 return this.playlist.type === 'album';
             },
             fullDuration() {
+                if (this.tracks.length === 0)
+                    return Utils.secondsToHms(0);
                 return Utils.secondsToHms(this.tracks.map(t => t.duration_ms / 1000).reduce((a, b) => a + b));
             },
+            image() {
+                if (this.playlist.images.length > 0)
+                    return this.playlist.images[0].url;
+                return this.$store.getters.notFoundImage;
+            }
         }
     }
 </script>

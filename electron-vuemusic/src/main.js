@@ -13,6 +13,10 @@ import {RecycleScroller} from 'vue-virtual-scroller';
 Vue.component('RecycleScroller', RecycleScroller);
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css';
 
+
+import VueClipboard from 'vue-clipboard2'
+Vue.use(VueClipboard)
+
 Vue.config.productionTip = false
 
 new Vue({

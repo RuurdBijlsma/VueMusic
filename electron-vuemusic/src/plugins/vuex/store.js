@@ -18,19 +18,9 @@ export default new Vuex.Store({
             expiryDate: null,
         },
         timeout: -1,
-        userInfo: {
-            id: '',
-            name: '',
-            mail: '',
-            country: '',
-            followers: 0,
-            avatar: 'img/no-user.jpg',
-        },
+        snackbars: [],
+
         api: new SpotifyWebApi(),
-        library: {
-            isRefreshingPlaylists: false,
-            playlists: [],
-        },
         homePage: {
             featured: {title: '', playlists: []},
             recent: [],
@@ -41,11 +31,34 @@ export default new Vuex.Store({
             categories: [],
             genres: [],
         },
+        userInfo: {
+            id: '',
+            name: '',
+            mail: '',
+            country: '',
+            followers: 0,
+            avatar: 'img/no-user.jpg',
+        },
+        library: localStorage.getItem('library') === null ? {
+            isRefreshing: {
+                playlists: false,
+                albums: false,
+                artists: false,
+                tracks: false,
+            },
+            playlists: [],
+            artists: [],
+            albums: [],
+            tracks: [],
+        } : JSON.parse(localStorage.library),
         playlist: {},
         album: {},
         artist: {},
     },
     mutations: {
+        addSnackObject: (state, snack) => state.snackbars.push(snack),
+        removeSnack: (state, snack) => state.snackbars.splice(state.snackbars.indexOf(snack), 1),
+
         loadPlaylist: (state, {id, playlist}) => Vue.set(state.playlist, id, playlist),
         extendPlaylist: (state, {id, tracks}) => state.playlist[id].tracks.push(...tracks),
         loadAlbum: (state, {id, album}) => Vue.set(state.album, id, album),
@@ -69,12 +82,21 @@ export default new Vuex.Store({
         homeNew: (state, newReleases) => state.homePage.newReleases = newReleases,
         homePersonalized: (state, personalized) => state.homePage.personalized = personalized,
 
-        isRefreshingPlaylists: (state, value) => state.library.isRefreshingPlaylists = value,
-        windowWidth: (state, windowWidth) => state.windowWidth = windowWidth,
+        isRefreshing: (state, {type, value}) => state.library.isRefreshing[type] = value,
         addUserPlaylist: (state, playlist) => state.library.playlists.push(playlist),
         userPlaylists: (state, playlists) => state.library.playlists = playlists,
-        timeout: (state, id) => state.timeout = id,
+
+        addToLibrary: (state, {type, item}) => state.library[type + 's'].push(item),
+        removeFromLibrary: (state, {type, id}) => {
+            let index = state.library[type + 's'].findIndex(i => i.id === id)
+            if (index !== -1)
+                state.library[type + 's'].splice(index, 1)
+        },
+        setLibrary: (state, {type, items}) => state.library[type + 's'] = items,
         userInfo: (state, userInfo) => state.userInfo = userInfo,
+
+        timeout: (state, id) => state.timeout = id,
+        windowWidth: (state, windowWidth) => state.windowWidth = windowWidth,
         server: (state, server) => state.server = server,
         auth: (state, auth) => {
             localStorage.auth = JSON.stringify(auth);
@@ -82,6 +104,10 @@ export default new Vuex.Store({
         },
     },
     getters: {
+        notFoundImage: () => {
+            let i = Math.floor(Math.random() * 7) + 1;
+            return `img/notfound/${i}.png`;
+        },
         isLoggedIn: state => {
             return state.auth.code !== null &&
                 state.auth.token !== null &&
@@ -97,7 +123,14 @@ export default new Vuex.Store({
         },
         urlName: () => name => {
             return encodeURIComponent(name.toLowerCase().replace(/ /gi, '-'));
-        }
+        },
+        shareUrl: () => (item) => {
+            return 'https://idk.com/' + item.type + '/' + item.name;
+        },
+        isArtistFollowed: state => artist => state.library.artists.find(a => a.id === artist.id),
+        isTrackFollowed: state => track => state.library.tracks.find(a => a.id === track.id),
+        isPlaylistFollowed: state => playlist => state.library.playlists.find(a => a.id === playlist.id),
+        isAlbumFollowed: state => album => state.library.albums.find(a => a.id === album.id),
     },
     actions: {
         initialize: async ({dispatch}) => {
@@ -118,7 +151,7 @@ export default new Vuex.Store({
             console.log("Auth result from 'spotifyLogin'", auth);
             await dispatch('commitAuth', auth);
         },
-        loginByRefreshToken: async ({dispatch, state}) => {
+        loginByRefreshToken: async ({state, dispatch}) => {
             if (!state.auth.refresh) {
                 console.warn("Couldn't get new token, refresh token isn't set", state.auth);
                 return;
@@ -139,6 +172,28 @@ export default new Vuex.Store({
                 expiryDate: null,
             });
             commit('userPlaylists', []);
+        },
+        addSnack: async ({state, commit}, {text, timeout = 3000}) => {
+            let snack = {text, open: true, timeout};
+            commit('addSnackObject', snack);
+            return new Promise(resolve => {
+                setTimeout(() => {
+                    commit('removeSnack', snack);
+                    resolve();
+                }, timeout + 500);
+            });
+        },
+        share: async ({dispatch}, {url, copy}) => {
+            if (navigator.share instanceof Function) {
+                await navigator.share({
+                    name: this.playlist.name,
+                    text: this.playlist.description || '',
+                    url: url,
+                });
+            } else {
+                await copy(url);
+                await dispatch('addSnack', {text: 'Share URL copied to clipboard!'});
+            }
         },
         commitAuth: async ({dispatch, commit, state}, auth) => {
             commit('auth', auth);
@@ -169,7 +224,7 @@ export default new Vuex.Store({
                 return;
             return await dispatch('waitFor', 'accessToken');
         },
-        async * retrieveSpotifyArray({state}, [apiFunction, nextProperty = r => r.next]) {
+        async * retrieveSpotifyArray({state}, [apiFunction, pageObject = r => r]) {
             let getData = () => apiFunction()
 
             while (true) {
@@ -178,20 +233,31 @@ export default new Vuex.Store({
                 if (result !== null)
                     yield result;
 
-                if (result === null || nextProperty(result) === null)
+                if (result === null || pageObject(result).next === null)
                     break;
 
-                let nextUrl = nextProperty(result);
+                let nextUrl = pageObject(result).next;
                 if (nextUrl === undefined)
                     console.warn("next url is undefined");
 
                 getData = () => state.api.getGeneric(nextUrl);
-                nextProperty = r => r.next;
+                pageObject = r => r;
             }
         },
         initializeSpotify: async ({state, commit, dispatch}) => {
             await dispatch('refreshUserInfo');
-            dispatch('refreshUserPlaylists').then();
+            let doneCount = 0;
+            let checkDone = () => {
+                if (++doneCount === 4) {
+                    localStorage.library = JSON.stringify(state.library);
+                }
+            }
+            dispatch('refreshUserData').then(checkDone);
+            dispatch('refreshUserData', 'artist').then(checkDone);
+            dispatch('refreshUserData', 'album').then(checkDone);
+            if (state.library.tracks.length === 0) {
+                dispatch('refreshUserData', 'track').then(checkDone);
+            }
         },
         refreshUserInfo: async ({commit, state}) => {
             let me = await state.api.getMe();
@@ -204,26 +270,63 @@ export default new Vuex.Store({
                 avatar: me.images.length === 0 ? 'img/no-user.jpg' : me.images[0].url,
             });
         },
-        refreshUserPlaylists: async ({commit, state, dispatch}) => {
-            if (state.library.isRefreshingPlaylists) {
-                await dispatch('waitFor', 'refreshedPlaylists');
+        refreshUserData: async ({commit, state, dispatch}, type = 'playlist') => {
+            if (!['playlist', 'album', 'track', 'artist'].includes(type))
+                console.warn("Wrong type set for refreshUserData!");
+
+            if (state.library.isRefreshing[type]) {
+                await dispatch('waitFor', 'refreshed' + type);
                 return;
             }
-            commit('isRefreshingPlaylists', true);
-            commit('userPlaylists', []);
+            commit('isRefreshing', {type, value: true});
+
+            let isInitial = state.library[type + 's'].length === 0;
 
             if (state.userInfo.id === '')
                 await dispatch('refreshUserInfo');
 
-            let retrieval = () => state.api.getUserPlaylists(state.userInfo.id);
-            for await(let batch of await dispatch('retrieveSpotifyArray', [retrieval])) {
-                for (let playlist of batch.items)
-                    commit('addUserPlaylist', playlist);
+            let retrieval, page = r => r;
+            switch (type) {
+                case 'playlist':
+                    retrieval = () => state.api.getUserPlaylists(state.userInfo.id);
+                    break;
+                case 'album':
+                    retrieval = () => state.api.getMySavedAlbums();
+                    break;
+                case 'artist':
+                    retrieval = () => state.api.getFollowedArtists();
+                    page = r => r.artists;
+                    break;
+                case 'track':
+                    retrieval = () => state.api.getMySavedTracks();
+                    page = r => r;
+                    break;
             }
-            state.events.emit('refreshedPlaylists');
-            commit('isRefreshingPlaylists', false);
+
+            let items = [];
+            let addToLib = item => {
+                if (isInitial)
+                    commit('addToLibrary', {type, item});
+                else items.push(item);
+            }
+
+            for await(let batch of await dispatch('retrieveSpotifyArray', [retrieval, page])) {
+                for (let item of page(batch).items) {
+                    if (type === 'track')
+                        addToLib(item.track);
+                    else if (type === 'album')
+                        addToLib(item.album);
+                    else
+                        addToLib(item);
+                }
+            }
+            if (!isInitial)
+                commit('setLibrary', {type, items});
+
+            state.events.emit('refreshed' + type);
+            commit('isRefreshing', {type, value: false});
         },
-        refreshHomePage: async ({commit, dispatch, state}) => {
+        refreshHomePage: async ({commit, state, dispatch}) => {
             await dispatch('awaitAuth');
 
             //Featured playlists
@@ -237,7 +340,7 @@ export default new Vuex.Store({
             let personalized;
             if (localStorage.getItem('discoverPlaylists') === null) {
                 if (state.library.playlists.length === 0) {
-                    await dispatch('refreshUserPlaylists');
+                    await dispatch('refreshUserData');
                 }
                 const discoverNames = ['Discover Weekly', 'Release Radar', ...[...Array(10)].map((_, i) => 'Daily Mix ' + (i + 1))];
 
@@ -282,8 +385,8 @@ export default new Vuex.Store({
         },
         loadPlaylist: async ({dispatch, commit, state}, id) => {
             let retrieval = () => state.api.getPlaylist(id);
-            let nextProperty = r => r.tracks.next;
-            for await(let batch of await dispatch('retrieveSpotifyArray', [retrieval, nextProperty])) {
+            let pageObject = r => r.tracks;
+            for await(let batch of await dispatch('retrieveSpotifyArray', [retrieval, pageObject])) {
                 if (batch.items) {
                     commit('extendPlaylist', {id, tracks: batch.items});
                 } else {
@@ -293,8 +396,8 @@ export default new Vuex.Store({
         },
         loadAlbum: async ({dispatch, commit, state}, id) => {
             let retrieval = () => state.api.getAlbum(id);
-            let nextProperty = r => r.tracks.next;
-            for await(let batch of await dispatch('retrieveSpotifyArray', [retrieval, nextProperty])) {
+            let pageObject = r => r.tracks;
+            for await(let batch of await dispatch('retrieveSpotifyArray', [retrieval, pageObject])) {
                 if (batch.items) {
                     batch.items.forEach(i => i.album = state.album[id]);
                     commit('extendAlbum', {id, tracks: batch.items});
@@ -329,6 +432,38 @@ export default new Vuex.Store({
                 albums.push(...batch.items);
             }
             commit('loadArtistAlbums', {id, albums});
+        },
+        followPlaylist: async ({state, dispatch}, playlist) => {
+            await state.api.followPlaylist(playlist.id);
+            await dispatch('refreshUserData');
+        },
+        unfollowPlaylist: async ({state, dispatch}, playlist) => {
+            await state.api.unfollowPlaylist(playlist.id);
+            await dispatch('refreshUserData');
+        },
+        followArtist: async ({state, dispatch}, artist) => {
+            await state.api.followArtists([artist.id]);
+            await dispatch('refreshUserData', 'artist');
+        },
+        unfollowArtist: async ({state, dispatch}, artist) => {
+            await state.api.unfollowArtists([artist.id]);
+            await dispatch('refreshUserData', 'artist');
+        },
+        followAlbum: async ({state, dispatch}, album) => {
+            await state.api.addToMySavedAlbums([album.id]);
+            await dispatch('refreshUserData', 'album');
+        },
+        unfollowAlbum: async ({state, dispatch}, album) => {
+            await state.api.removeFromMySavedAlbums([album.id]);
+            await dispatch('refreshUserData', 'album');
+        },
+        followTrack: async ({state, dispatch, commit}, track) => {
+            await state.api.addToMySavedTracks([track.id]);
+            commit('addToLibrary', {type: 'track', item: track});
+        },
+        unfollowTrack: async ({state, dispatch, commit}, track) => {
+            await state.api.removeFromMySavedTracks([track.id]);
+            commit('removeFromLibrary', {type: 'track', id: track.id});
         },
     },
     modules: {platform, media}

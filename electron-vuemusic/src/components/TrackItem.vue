@@ -1,34 +1,56 @@
 <template>
     <div class="track-item" v-if="track!==null">
-        <div class="left-square">
-            <div v-if="!albumList" class="album-art" :style="{backgroundImage: `url(${image})`}"></div>
-            <div v-else class="album-number">{{track.track_number}}</div>
-            <v-card v-if="albumList" class="play-button" flat>
-                <v-btn icon>
-                    <v-icon>mdi-play</v-icon>
-                </v-btn>
-            </v-card>
-            <div v-else class="play-button">
-                <v-btn icon color="white">
-                    <v-icon>mdi-play</v-icon>
-                </v-btn>
+        <div class="track-content" :style="{maxWidth:menu?'228px':'300px'}">
+            <div class="left-square">
+                <div v-if="!albumList" class="album-art" :style="{backgroundImage: `url(${image})`}"></div>
+                <div v-else class="album-number">{{track.track_number}}</div>
+                <v-card v-if="albumList" class="play-button" flat>
+                    <v-btn icon>
+                        <v-icon>mdi-play</v-icon>
+                    </v-btn>
+                </v-card>
+                <div v-else class="play-button art-button">
+                    <v-btn icon color="white">
+                        <v-icon>mdi-play</v-icon>
+                    </v-btn>
+                </div>
+            </div>
+            <div class="track-info">
+                <div class="track-title" :title="track.name" :style="{maxWidth:menu?'173px':'245px'}">
+                    {{track.name}}
+                </div>
+                <div class="track-artist">
+                    <artists-span grey class="artists-span" :artists="track.artists"
+                                  :style="{maxWidth:menu?'173px':'245px'}"></artists-span>
+                </div>
             </div>
         </div>
-        <div class="track-info">
-            <div class="track-title" :title="track.name">{{track.name}}</div>
-            <div class="track-artist">
-                <artists-span grey class="artists-span" :artists="track.artists"></artists-span>
-            </div>
+        <div class="icons" v-if="menu">
+            <follow-button :item="track"></follow-button>
+            <v-menu>
+                <template v-slot:activator="{ on, attrs }">
+                    <v-btn icon v-on="on">
+                        <v-icon>mdi-dots-horizontal</v-icon>
+                    </v-btn>
+                </template>
+                <v-list dense>
+                    <share-menu-item :item="track"></share-menu-item>
+                    <follow-menu-item :item="track"></follow-menu-item>
+                </v-list>
+            </v-menu>
         </div>
     </div>
 </template>
 
 <script>
     import ArtistsSpan from "./ArtistsSpan";
+    import ShareMenuItem from "./ShareMenuItem";
+    import FollowMenuItem from "./FollowMenuItem";
+    import FollowButton from "./FollowButton";
 
     export default {
         name: "TrackItem",
-        components: {ArtistsSpan},
+        components: {FollowButton, FollowMenuItem, ShareMenuItem, ArtistsSpan},
         props: {
             track: {
                 type: Object,
@@ -38,13 +60,17 @@
                 type: Boolean,
                 default: false,
             },
+            menu: {
+                type: Boolean,
+                default: false,
+            },
         },
         computed: {
             image() {
                 if (this.track.hasOwnProperty('album') && this.track.album.images.length > 0) {
                     return this.track.album.images[0].url;
                 }
-                return 'img/notfound.png';
+                return this.$store.getters.notFoundImage;
             },
         }
     }
@@ -53,9 +79,14 @@
 <style scoped>
     .track-item {
         display: flex;
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .track-content {
+        display: flex;
         flex-grow: 10;
         align-items: center;
-        max-width: 300px;
     }
 
     .left-square {
@@ -96,7 +127,6 @@
 
     .play-button {
         border-radius: 5px;
-        background-color: rgba(0, 0, 0, 0.3);
         min-width: 40px;
         min-height: 40px;
         position: relative;
@@ -106,6 +136,10 @@
         display: flex;
         justify-content: center;
         align-items: center;
+    }
+
+    .art-button {
+        background-color: rgba(0, 0, 0, 0.3);
     }
 
     .track-info {
@@ -119,6 +153,5 @@
         overflow: hidden;
         white-space: nowrap;
         width: 100%;
-        max-width: 245px;
     }
 </style>

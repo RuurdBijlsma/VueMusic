@@ -8,7 +8,7 @@
                 :permanent="true"
                 app
                 absolute>
-            <nav-bar></nav-bar>
+            <nav-content></nav-content>
         </v-navigation-drawer>
 
         <v-app-bar v-if="$store.state.windowWidth > 680" app class="toolbar" elevation="1">
@@ -31,6 +31,15 @@
                 </v-btn>
             </div>
         </v-card>
+        <v-snackbar v-for="snack in $store.state.snackbars" app v-model="snack.open" :timeout="snack.timeout"
+                    :outlined="!$vuetify.theme.dark" color="primary">
+            {{ snack.text }}
+            <template v-slot:action="{ attrs }">
+                <v-btn text v-bind="attrs" :color="$vuetify.theme.dark ? 'default' : 'primary'" @click="snack.open = false">
+                    Dismiss
+                </v-btn>
+            </template>
+        </v-snackbar>
 
         <v-bottom-navigation
                 color="primary"
@@ -64,10 +73,10 @@
 
 <script>
     import ToolBar from "@/components/ToolBar";
-    import NavBar from "@/components/NavBar";
     import MediaInfo from "./components/MediaInfo";
     import MediaControls from "./components/MediaControls";
     import MediaSeek from "./components/MediaSeek";
+    import NavContent from "./components/NavContent";
 
     //TOOD:
     //When a request is an update request (ie the artist data is already there) don't commit an empty artist object, commit all at once
@@ -84,7 +93,7 @@
 
     export default {
         name: 'App',
-        components: {MediaSeek, MediaControls, MediaInfo, NavBar, ToolBar},
+        components: {NavContent, MediaSeek, MediaControls, MediaInfo, ToolBar},
         data: () => ({
             drawer: true,
         }),

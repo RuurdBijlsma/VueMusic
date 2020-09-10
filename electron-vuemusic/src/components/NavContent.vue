@@ -27,7 +27,7 @@
                     <v-list-item-title>Listen Now</v-list-item-title>
                 </v-list-item-content>
             </v-list-item>
-            <v-list-item to="browse" exact>
+            <v-list-item to="/browse" exact>
                 <v-list-item-icon>
                     <v-icon color="primary">mdi-grid-large</v-icon>
                 </v-list-item-icon>
@@ -37,7 +37,7 @@
             </v-list-item>
 
             <v-subheader>Library</v-subheader>
-            <v-list-item to="artists">
+            <v-list-item to="/artists">
                 <v-list-item-icon>
                     <v-icon color="primary">mdi-microphone-variant</v-icon>
                 </v-list-item-icon>
@@ -45,7 +45,7 @@
                     <v-list-item-title>Artists</v-list-item-title>
                 </v-list-item-content>
             </v-list-item>
-            <v-list-item to="albums">
+            <v-list-item to="/albums">
                 <v-list-item-icon>
                     <v-icon color="primary">mdi-record-circle-outline</v-icon>
                 </v-list-item-icon>
@@ -53,16 +53,21 @@
                     <v-list-item-title>Albums</v-list-item-title>
                 </v-list-item-content>
             </v-list-item>
-            <v-list-item to="songs">
+            <v-list-item to="/tracks">
                 <v-list-item-icon>
                     <v-icon color="primary">mdi-music-note</v-icon>
                 </v-list-item-icon>
                 <v-list-item-content>
-                    <v-list-item-title>Songs</v-list-item-title>
+                    <v-list-item-title>Tracks</v-list-item-title>
                 </v-list-item-content>
             </v-list-item>
 
-            <v-subheader v-if="$store.state.library.playlists.length > 0">Playlists</v-subheader>
+            <div class="playlist-header">
+                <v-subheader v-if="$store.state.library.playlists.length > 0">Playlists</v-subheader>
+                <v-btn icon small title="Create new playlist">
+                    <v-icon small>mdi-plus</v-icon>
+                </v-btn>
+            </div>
             <v-list-item v-for="playlist in $store.state.library.playlists" :key="playlist.id"
                          :to="`/playlist/${$store.getters.urlName(playlist.name)}/${playlist.id}`" exact>
                 <v-list-item-icon>
@@ -78,11 +83,9 @@
 
 <script>
     export default {
-        name: "NavBar",
+        name: "NavContent",
         components: {},
-        data: () => ({
-            userPlaylists: ['360 Dance', 'Housewerk', 'Rock This']//zet dit in vuex
-        })
+        data: () => ({})
     }
 </script>
 
@@ -114,5 +117,11 @@
     .search-input {
         margin: 15px !important;
         margin-bottom: 0 !important;
+    }
+
+    .playlist-header {
+        display: flex;
+        /*justify-content: space-between;*/
+        align-items: center;
     }
 </style>

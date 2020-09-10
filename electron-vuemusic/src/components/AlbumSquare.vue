@@ -1,13 +1,13 @@
 <template>
     <div class="album-square">
         <router-link tag="span" :to="`/${type}/${$store.getters.urlName(album.name)}/${album.id}`">
-            <div class="image" :class="{big}"
+            <div class="image" :class="{big, small}"
                  :style="{
                     backgroundImage: `url(${image})`,
                     borderRadius: type === 'artist' ? '50%' : '5px',
                  }">
             </div>
-            <div class="play-button" :class="{big}"
+            <div class="play-button" :class="{big, small}"
                  :style="{
                     borderRadius: type === 'artist' ? '50%' : '5px',
                  }">
@@ -15,7 +15,7 @@
                     <v-icon color="white">mdi-play</v-icon>
                 </v-btn>
             </div>
-            <div class="text" :class="{big}">
+            <div class="text" v-if="!noTitle" :class="{big,small}">
                 <p class="preview-title">{{album.name}}</p>
                 <p
                         :title="album.description"
@@ -38,12 +38,20 @@
                 type: Boolean,
                 default: false,
             },
+            small: {
+                type: Boolean,
+                default: false,
+            },
             album: Object,
             type: {
                 type: String,
                 default: 'album',
             },
             showYear: {
+                type: Boolean,
+                default: false,
+            },
+            noTitle: {
                 type: Boolean,
                 default: false,
             },
@@ -67,12 +75,12 @@
                     if (this.album.icons.length > 0)
                         return this.album.icons[0].url;
                     else
-                        return 'img/notfound.png';
+                        return this.$store.getters.notFoundImage;
                 } else {
                     if (this.album.images.length > 0)
                         return this.album.images[0].url;
                     else
-                        return 'img/notfound.png';
+                        return this.$store.getters.notFoundImage;
                 }
             }
         }
@@ -103,6 +111,11 @@
         width: 240px !important;
     }
 
+    .image.small {
+        height: 80px !important;
+        width: 80px !important;
+    }
+
     .play-button:hover {
         opacity: 1;
     }
@@ -121,6 +134,14 @@
         padding: 15px;
     }
 
+    .play-button.small {
+        height: 80px !important;
+        width: 80px !important;
+        margin-top: -80px;
+        justify-content: center;
+        align-items: center;
+    }
+
     .play-button.big {
         height: 240px !important;
         width: 240px !important;
@@ -135,6 +156,11 @@
 
     .text.big {
         max-width: 240px;
+        line-height: 14px;
+    }
+
+    .text.small {
+        max-width: 80px;
         line-height: 14px;
     }
 

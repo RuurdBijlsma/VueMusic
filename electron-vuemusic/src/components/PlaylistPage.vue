@@ -3,10 +3,10 @@
         <div class="art-section" v-if="$store.state.windowWidth > 1030">
             <div class="album-art album-background"
                  :style="{
-                    backgroundImage: `url(${playlist.images[0].url})`,
+                    backgroundImage: `url(${image})`,
                     opacity: $vuetify.theme.dark ? 0.4 : 0.7,
                  }"></div>
-            <div class="album-art album-normal" :style="{backgroundImage: `url(${playlist.images[0].url})`}"></div>
+            <div class="album-art album-normal" :style="{backgroundImage: `url(${image})`}"></div>
         </div>
         <track-section :show-art="$store.state.windowWidth <= 1030" :fg-legible="fgLegible"
                        :playlist="playlist"></track-section>
@@ -77,6 +77,13 @@
                 this.checkForThemeColorChange();
             }
         },
+        computed:{
+            image() {
+                if (this.playlist.images.length > 0)
+                    return this.playlist.images[0].url;
+                return this.$store.getters.notFoundImage;
+            }
+        }
     }
 </script>
 
