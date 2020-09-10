@@ -35,9 +35,9 @@
             </div>
             <v-divider class="divider"></v-divider>
             <div class="release-flex">
-                <div class="latest-release" v-if="albums.length > 0">
+                <div class="latest-release" v-if="latestRelease !== null">
                     <h3>Latest release</h3>
-                    <album-square :album="albums[0]"></album-square>
+                    <album-square :album="latestRelease"></album-square>
                 </div>
                 <div class="tracks-container" v-if="topTracks.length > 0">
                     <h3>Top tracks</h3>
@@ -48,7 +48,7 @@
                 </div>
             </div>
             <v-divider class="divider"></v-divider>
-            <div v-if="albums.length > 1">
+            <div v-if="albums.length > 0">
                 <h3>Albums</h3>
                 <album-row :albums="albums" show-year class="album-row"></album-row>
             </div>
@@ -116,15 +116,26 @@
                     return this.data.albums.filter(a => a.album_group === 'appears_on').slice(0, 50);
                 return [];
             },
+            latestRelease() {
+                if (this.albums.length === 0 && this.singles.length > 0)
+                    return this.singles[0];
+                if (this.albums.length > 0 && this.singles.length === 0)
+                    return this.albums[0];
+                if (this.albums.length === 0 && this.singles.length === 0)
+                    return null;
+                let latestAlbum = new Date(this.albums[0].release_date);
+                let latestSingle = new Date(this.singles[0].release_date);
+                if (latestAlbum > latestSingle)
+                    return this.albums[0];
+                return this.singles[0];
+            },
         },
         watch: {
             async '$route.query'() {
-                // this.$refs.playlistPage.revertThemeColor();
                 await this.$store.dispatch('loadArtist', this.id);
             },
         },
         beforeRouteLeave(to, from, next) {
-            // this.$refs.playlistPage.revertThemeColor();
             next();
         },
     }

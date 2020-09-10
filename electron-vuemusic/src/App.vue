@@ -79,12 +79,12 @@
     import NavContent from "./components/NavContent";
 
     //TOOD:
-    //When a request is an update request (ie the artist data is already there) don't commit an empty artist object, commit all at once
-    //Library pages(albums,tracks)
-    //Search
-    //Tune page (from browse)
-    //Radio page
+    //Cached requests like location estimatr
+    //Category page
     //user page (is in api, for "created by" click)
+    //Search
+    //Radio page
+    //Tune page (from browse)
 
     //After that, add functionality xd
 

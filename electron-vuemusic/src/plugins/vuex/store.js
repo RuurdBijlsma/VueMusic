@@ -39,13 +39,13 @@ export default new Vuex.Store({
             followers: 0,
             avatar: 'img/no-user.jpg',
         },
+        isRefreshing: {
+            playlist: false,
+            album: false,
+            artist: false,
+            track: false,
+        },
         library: localStorage.getItem('library') === null ? {
-            isRefreshing: {
-                playlists: false,
-                albums: false,
-                artists: false,
-                tracks: false,
-            },
             playlists: [],
             artists: [],
             albums: [],
@@ -82,7 +82,7 @@ export default new Vuex.Store({
         homeNew: (state, newReleases) => state.homePage.newReleases = newReleases,
         homePersonalized: (state, personalized) => state.homePage.personalized = personalized,
 
-        isRefreshing: (state, {type, value}) => state.library.isRefreshing[type] = value,
+        isRefreshing: (state, {type, value}) => state.isRefreshing[type] = value,
         addUserPlaylist: (state, playlist) => state.library.playlists.push(playlist),
         userPlaylists: (state, playlists) => state.library.playlists = playlists,
 
@@ -277,7 +277,8 @@ export default new Vuex.Store({
             if (!['playlist', 'album', 'track', 'artist'].includes(type))
                 console.warn("Wrong type set for refreshUserData!");
 
-            if (state.library.isRefreshing[type]) {
+            if (state.isRefreshing[type]) {
+                console.info("This library type is already refreshing, waiting for that to finish");
                 await dispatch('waitFor', 'refreshed' + type);
                 return;
             }

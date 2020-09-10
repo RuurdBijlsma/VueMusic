@@ -23,6 +23,11 @@
                     <span>{{tracks.length}} tracks</span>
                     <span class="dot">•</span>
                     <span>{{fullDuration}}</span>
+                    <span v-if="loading" class="loading-indicator">
+                        <span class="dot">•</span>
+                        <v-progress-circular class="spinner" indeterminate size="10" width="1"></v-progress-circular>
+                        <span>Refreshing</span>
+                    </span>
                 </div>
                 <v-divider></v-divider>
             </div>
@@ -47,7 +52,14 @@
     export default {
         name: "Tracks",
         components: {TrackRow},
+        data: () => ({}),
+        async mounted() {
+            await this.$store.dispatch('refreshUserData', 'track');
+        },
         computed: {
+            loading() {
+                return this.$store.state.isRefreshing.track;
+            },
             compactMenu() {
                 let width = this.$store.state.windowWidth;
                 return width < 735 && (width > 680 || width < 436);
@@ -118,7 +130,19 @@
         font-weight: bolder;
         opacity: 0.7;
     }
+
     .dot {
         margin: 0 10px;
+    }
+
+    .loading-indicator {
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        vertical-align: top;
+    }
+
+    .spinner {
+        margin-right: 5px;
     }
 </style>
