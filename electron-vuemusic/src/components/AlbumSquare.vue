@@ -1,6 +1,6 @@
 <template>
     <div class="album-square">
-        <router-link tag="span" :to="`/${type}/${$store.getters.urlName(album.name)}/${album.id}`">
+        <router-link tag="span" :to="url">
             <div class="image" :class="{big, small}"
                  :style="{
                     backgroundImage: `url(${image})`,
@@ -79,6 +79,11 @@
             },
         },
         computed: {
+            url() {
+                if (this.type === 'category')
+                    return `/category/${this.album.id}`;
+                return `/${this.type}/${this.$store.getters.urlName(this.album.name)}/${this.album.id}`;
+            },
             type() {
                 if (!this.album.type)
                     return 'category';
@@ -165,7 +170,6 @@
     .text {
         max-width: 180px;
         padding: 5px;
-        max-height: 40px;
     }
 
     .text.big {

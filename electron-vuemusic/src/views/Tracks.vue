@@ -41,7 +41,6 @@
                 <v-divider></v-divider>
             </div>
         </recycle-scroller>
-        <!--        <track-row v-for="track in $store.state.library.tracks" :track="track"></track-row>-->
     </div>
 </template>
 

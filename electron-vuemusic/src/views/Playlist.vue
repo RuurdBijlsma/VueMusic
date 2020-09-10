@@ -11,7 +11,6 @@
         components: {PlaylistPage, TrackSection},
         data: () => ({}),
         async mounted() {
-            console.log(this.$route);
             await this.$store.dispatch('loadPlaylist', this.id);
         },
         computed: {

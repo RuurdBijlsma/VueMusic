@@ -11,16 +11,21 @@ export default new Vuex.Store({
     state: {
         events: new EventEmitter(),
         windowWidth: window.innerWidth,
+        timeout: -1,
+        snackbars: [],
+        api: new SpotifyWebApi(),
+        isRefreshing: {
+            playlist: false,
+            album: false,
+            artist: false,
+            track: false,
+        },
         auth: {
             code: null,
             token: null,
             refresh: null,
             expiryDate: null,
         },
-        timeout: -1,
-        snackbars: [],
-
-        api: new SpotifyWebApi(),
         homePage: {
             featured: {title: '', playlists: []},
             recent: [],
@@ -39,12 +44,6 @@ export default new Vuex.Store({
             followers: 0,
             avatar: 'img/no-user.jpg',
         },
-        isRefreshing: {
-            playlist: false,
-            album: false,
-            artist: false,
-            track: false,
-        },
         library: localStorage.getItem('library') === null ? {
             playlists: [],
             artists: [],
@@ -54,11 +53,21 @@ export default new Vuex.Store({
         playlist: {},
         album: {},
         artist: {},
+        category: {},
     },
     mutations: {
+        restoreFromCache: (state) => {
+            let cache = localStorage.getItem('stateCache') === null ? {} : JSON.parse(localStorage.stateCache);
+            console.log("Restoring from cache", cache);
+            for (let key in cache)
+                if (cache.hasOwnProperty(key))
+                    state[key] = cache[key];
+        },
         addSnackObject: (state, snack) => state.snackbars.push(snack),
         removeSnack: (state, snack) => state.snackbars.splice(state.snackbars.indexOf(snack), 1),
 
+        loadCategory: (state, {id, category}) => Vue.set(state.category, id, category),
+        extendCategory: (state, {id, playlists}) => state.category[id].playlists.push(...playlists),
         loadPlaylist: (state, {id, playlist}) => Vue.set(state.playlist, id, playlist),
         extendPlaylist: (state, {id, tracks}) => state.playlist[id].tracks.push(...tracks),
         loadAlbum: (state, {id, album}) => Vue.set(state.album, id, album),
@@ -134,6 +143,9 @@ export default new Vuex.Store({
         isAlbumFollowed: state => album => state.library.albums.find(a => a.id === album.id),
     },
     actions: {
+        cacheAll() {
+
+        },
         initialize: async ({dispatch}) => {
             if (localStorage.getItem('auth') !== null) {
                 let auth;
@@ -225,16 +237,52 @@ export default new Vuex.Store({
                 return;
             return await dispatch('waitFor', 'accessToken');
         },
-        async * retrieveSpotifyArray({state}, [apiFunction, pageObject = r => r]) {
+        getCached: ({}, {key, getFunction, lifeTimeMs = 1000 * 60 * 60}) => {
+
+        },
+        findPagination: ({}, object) => {
+            if (object === null)
+                return false;
+
+            let getKeyPath;
+            getKeyPath = ({keys: keyPath = [], o}) => {
+                if (o !== null && o.hasOwnProperty('next') && o.hasOwnProperty('items'))
+                    return [true, keyPath];
+                if (typeof o !== 'object' || o === null)
+                    return [false, keyPath.slice(0, -1)];
+
+                for (let key in o) {
+                    if (!o.hasOwnProperty(key))
+                        continue;
+                    let result;
+                    [result, keyPath] = getKeyPath({keys: keyPath.concat(key), o: o[key]});
+                    if (result)
+                        return [true, keyPath];
+                }
+                return [false, keyPath.slice(0, -1)];
+            }
+
+            let [success, keyPath] = getKeyPath({o: object});
+
+            if (!success)
+                return false;
+            return r => {
+                for (let key of keyPath)
+                    r = r[key];
+                return r;
+            }
+        },
+        async * retrieveSpotifyArray({state, dispatch}, apiFunction) {
             let getData = () => apiFunction()
 
             while (true) {
                 let result = await getData();
+                let pageObject = await dispatch('findPagination', result);
 
                 if (result !== null)
                     yield result;
 
-                if (result === null || pageObject(result).next === null)
+                if (result === null || pageObject === false || pageObject(result).next === null)
                     break;
 
                 let nextUrl = pageObject(result).next;
@@ -242,7 +290,6 @@ export default new Vuex.Store({
                     console.warn("next url is undefined");
 
                 getData = () => state.api.getGeneric(nextUrl);
-                pageObject = r => r;
             }
         },
         initializeSpotify: async ({state, commit, dispatch}) => {
@@ -303,7 +350,6 @@ export default new Vuex.Store({
                     break;
                 case 'track':
                     retrieval = () => state.api.getMySavedTracks();
-                    page = r => r;
                     break;
             }
 
@@ -314,7 +360,7 @@ export default new Vuex.Store({
                 else items.push(item);
             }
 
-            for await(let batch of await dispatch('retrieveSpotifyArray', [retrieval, page])) {
+            for await(let batch of await dispatch('retrieveSpotifyArray', retrieval)) {
                 for (let item of page(batch).items) {
                     if (type === 'track')
                         addToLib(item.track);
@@ -389,8 +435,7 @@ export default new Vuex.Store({
         },
         loadPlaylist: async ({dispatch, commit, state}, id) => {
             let retrieval = () => state.api.getPlaylist(id);
-            let pageObject = r => r.tracks;
-            for await(let batch of await dispatch('retrieveSpotifyArray', [retrieval, pageObject])) {
+            for await(let batch of await dispatch('retrieveSpotifyArray', retrieval)) {
                 if (batch.items) {
                     commit('extendPlaylist', {id, tracks: batch.items});
                 } else {
@@ -400,8 +445,7 @@ export default new Vuex.Store({
         },
         loadAlbum: async ({dispatch, commit, state}, id) => {
             let retrieval = () => state.api.getAlbum(id);
-            let pageObject = r => r.tracks;
-            for await(let batch of await dispatch('retrieveSpotifyArray', [retrieval, pageObject])) {
+            for await(let batch of await dispatch('retrieveSpotifyArray', retrieval)) {
                 if (batch.items) {
                     batch.items.forEach(i => i.album = state.album[id]);
                     commit('extendAlbum', {id, tracks: batch.items});
@@ -410,6 +454,21 @@ export default new Vuex.Store({
                     album.tracks.items.forEach(i => i.album = album);
                     album.tracks = album.tracks.items;
                     commit('loadAlbum', {id, album});
+                }
+            }
+        },
+        loadCategory: async ({state, commit, dispatch}, id) => {
+            if (!state.category.hasOwnProperty(id)) {
+                let category = {playlists: [], ...(await state.api.getCategory(id))};
+                commit('loadCategory', {id, category});
+            }
+
+            let retrieval = () => state.api.getCategoryPlaylists(id);
+            for await(let batch of await dispatch('retrieveSpotifyArray', retrieval)) {
+                if (batch.playlists) {
+                    commit('extendCategory', {id, playlists: batch.playlists.items});
+                } else {
+                    commit('extendCategory', {id, playlists: batch.items});
                 }
             }
         },
@@ -432,7 +491,7 @@ export default new Vuex.Store({
 
             let retrieval = () => state.api.getArtistAlbums(id);
             let albums = []
-            for await(let batch of await dispatch('retrieveSpotifyArray', [retrieval])) {
+            for await(let batch of await dispatch('retrieveSpotifyArray', retrieval)) {
                 albums.push(...batch.items);
             }
             commit('loadArtistAlbums', {id, albums});
