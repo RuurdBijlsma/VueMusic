@@ -78,8 +78,6 @@
     import NavContent from "./components/NavContent";
 
     //TOOD:
-    //Cached requests like location estimatr
-    //Category page
     //user page (is in api, for "created by" click)
     //Search
     //Radio page
