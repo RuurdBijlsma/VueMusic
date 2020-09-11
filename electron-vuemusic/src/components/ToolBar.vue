@@ -1,12 +1,12 @@
 <template>
     <div class="toolbar">
-        <div></div>
-        <media-controls full class="controls"></media-controls>
-        <div class="media-info">
+        <logo class="logo" v-if="mobile"></logo>
+        <media-controls full class="controls" v-if="!mobile"></media-controls>
+        <div class="media-info" v-if="!mobile">
             <media-seek class="top-seeker" no-background small-time></media-seek>
             <media-info class="top-info"></media-info>
         </div>
-        <div class="volume">
+        <div class="volume" v-if="!mobile">
             <v-slider
                     :min="0"
                     :max="1"
@@ -70,7 +70,7 @@
                             <v-list-item-title>Login</v-list-item-title>
                         </v-list-item-content>
                     </v-list-item>
-                    <v-list-item @click="toggleTheme" color="primary">
+                    <v-list-item color="primary">
                         <v-list-item-icon>
                             <v-icon>mdi-brightness-6</v-icon>
                         </v-list-item-icon>
@@ -101,14 +101,21 @@
     import MediaInfo from "./MediaInfo";
     import MediaControls from "./MediaControls";
     import MediaSeek from "./MediaSeek";
+    import Logo from "./Logo";
 
     export default {
         name: "ToolBar",
-        components: {MediaSeek, MediaControls, MediaInfo},
+        components: {Logo, MediaSeek, MediaControls, MediaInfo},
         data: () => ({
             volume: 1,
             prevVolume: 1,
         }),
+        props: {
+            mobile: {
+                type: Boolean,
+                default: false,
+            },
+        },
         methods: {
             toggleMute() {
                 if (this.volume > 0) {
@@ -117,9 +124,6 @@
                 } else {
                     this.volume = this.prevVolume;
                 }
-            },
-            toggleTheme() {
-
             },
         },
         watch: {
@@ -238,6 +242,18 @@
 
         .minimize-button {
             display: none;
+        }
+    }
+
+    @media (max-width: 680px){
+        .minimize-button {
+            display: inline-flex !important;
+        }
+    }
+
+    @media (max-width: 457px){
+        .logo{
+            display:none !important;
         }
     }
 </style>

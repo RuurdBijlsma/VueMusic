@@ -1,14 +1,7 @@
 <template>
     <perfect-scrollbar class="nav-bar">
         <div class="nav-top">
-            <div class="logo">
-                <img class="logo-image"
-                     :src="$vuetify.theme.dark ? 'img/full-white-medium.png':'img/full-black-medium.png' "
-                     alt="logo image"/>
-                <span>
-                    Vue Music
-                </span>
-            </div>
+            <logo></logo>
             <v-text-field
                     outlined
                     label="Search"
@@ -62,8 +55,8 @@
                 </v-list-item-content>
             </v-list-item>
 
-            <div class="playlist-header">
-                <v-subheader v-if="$store.state.library.playlists.length > 0">Playlists</v-subheader>
+            <div class="playlist-header" v-if="$store.state.library.playlists.length > 0">
+                <v-subheader>Playlists</v-subheader>
                 <v-btn icon small title="Create new playlist" class="add-playlist">
                     <v-icon small>mdi-plus</v-icon>
                 </v-btn>
@@ -82,9 +75,10 @@
 </template>
 
 <script>
+    import Logo from "./Logo";
     export default {
         name: "NavContent",
-        components: {},
+        components: {Logo},
         data: () => ({})
     }
 </script>
@@ -93,25 +87,6 @@
     .nav-bar {
         height: 100%;
         width: 100%;
-    }
-
-    .nav-top {
-    }
-
-    .logo {
-        margin-top: 2px;
-        margin-left: 2px;
-        padding: 15px;
-        font-weight: bold;
-        display: flex;
-        justify-content: center;
-        -webkit-app-region: drag;
-    }
-
-    .logo-image {
-        height: 20px;
-        margin-right: 10px;
-        pointer-events: none;
     }
 
     .search-input {

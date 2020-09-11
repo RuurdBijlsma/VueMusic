@@ -11,8 +11,8 @@
             <nav-content></nav-content>
         </v-navigation-drawer>
 
-        <v-app-bar v-if="$store.state.windowWidth > 680" app class="toolbar" elevation="1">
-            <tool-bar></tool-bar>
+        <v-app-bar app class="toolbar" elevation="1">
+            <tool-bar :mobile="$store.state.windowWidth <= 680"></tool-bar>
         </v-app-bar>
 
         <v-main class="scroll-container">
@@ -22,20 +22,23 @@
         </v-main>
 
         <v-card flat class="bottom-media-control" v-if="$store.state.windowWidth <= 680" color="primaryLight">
-            <media-info></media-info>
+            <div class="info-pane">
+                <media-info class="media-info"></media-info>
+                <v-btn class="favorite-heart" icon>
+                    <v-icon>mdi-heart-outline</v-icon>
+                </v-btn>
+            </div>
             <div class="full-controls">
                 <media-controls :full="$store.state.windowWidth > 430"></media-controls>
                 <media-seek class="seeker"></media-seek>
-                <v-btn icon v-if="$store.state.windowWidth > 400">
-                    <v-icon>mdi-heart</v-icon>
-                </v-btn>
             </div>
         </v-card>
         <v-snackbar v-for="snack in $store.state.snackbars" app v-model="snack.open" :timeout="snack.timeout"
                     :outlined="!$vuetify.theme.dark" color="primary">
             {{ snack.text }}
             <template v-slot:action="{ attrs }">
-                <v-btn text v-bind="attrs" :color="$vuetify.theme.dark ? 'default' : 'primary'" @click="snack.open = false">
+                <v-btn text v-bind="attrs" :color="$vuetify.theme.dark ? 'default' : 'primary'"
+                       @click="snack.open = false">
                     Dismiss
                 </v-btn>
             </template>
@@ -59,12 +62,8 @@
                 <span>Library</span>
                 <v-icon>mdi-record-circle-outline</v-icon>
             </v-btn>
-            <v-btn value="account" to="/settings" exact>
-                <span>Account</span>
-                <v-icon>mdi-cog-outline</v-icon>
-            </v-btn>
             <v-btn value="search" to="/search" exact>
-                <span>Account</span>
+                <span>Search</span>
                 <v-icon>mdi-magnify</v-icon>
             </v-btn>
         </v-bottom-navigation>
@@ -94,13 +93,27 @@
         components: {NavContent, MediaSeek, MediaControls, MediaInfo, ToolBar},
         data: () => ({
             drawer: true,
+            cacheInterval: -1,
         }),
         async mounted() {
+            await this.$store.dispatch('initialize');
+
             document.addEventListener('keypress', this.devListener);
             window.addEventListener('resize', this.resizeListener);
 
+            window.onbeforeunload = e => {
+                this.$store.commit('cacheAll');
+                delete e['returnValue'];
+            };
+            let ipc = window.require('electron').ipcRenderer;
+            ipc.on('before-quit', () => {
+                this.$store.commit('cacheAll');
+            });
+            this.cacheInterval = setInterval(() => {
+                this.$store.commit('cacheAll');
+            }, 1000 * 60 * 5);//Cache every 5 minutes
+
             console.log(this.$store);
-            await this.$store.dispatch('initialize');
             if (!this.$store.getters.isKeySet) {
                 if (this.$store.state.shouldSetKey && this.$route.name !== 'Settings') {
                     await this.$router.push('/settings');
@@ -110,6 +123,7 @@
             }
         },
         beforeDestroy() {
+            clearInterval(this.cacheInterval);
             document.removeEventListener('keypress', this.devListener);
             window.removeEventListener('resize', this.resizeListener);
         },
@@ -169,6 +183,20 @@
         padding: 5px;
         bottom: 56px;
         position: relative;
+    }
+
+    .info-pane {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .info-pane > .media-info {
+        flex-grow: 1;
+    }
+
+    .favorite-heart {
+        min-width: 50px;
     }
 
     .full-controls {

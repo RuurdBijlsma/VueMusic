@@ -44,18 +44,26 @@ export default new Vuex.Store({
             followers: 0,
             avatar: 'img/no-user.jpg',
         },
-        library: localStorage.getItem('library') === null ? {
+        library: {
             playlists: [],
             artists: [],
             albums: [],
             tracks: [],
-        } : JSON.parse(localStorage.library),
+        },
         playlist: {},
         album: {},
         artist: {},
         category: {},
     },
     mutations: {
+        cacheAll: state => {
+            let cachedFields = ["auth", "homePage", "browse", "userInfo", "library", "playlist", "album", "artist", "category"];
+            let cache = {};
+            for (let field of cachedFields)
+                cache[field] = state[field];
+            localStorage.stateCache = JSON.stringify(cache);
+            console.log("State cache complete");
+        },
         restoreFromCache: (state) => {
             let cache = localStorage.getItem('stateCache') === null ? {} : JSON.parse(localStorage.stateCache);
             console.log("Restoring from cache", cache);
@@ -107,10 +115,7 @@ export default new Vuex.Store({
         timeout: (state, id) => state.timeout = id,
         windowWidth: (state, windowWidth) => state.windowWidth = windowWidth,
         server: (state, server) => state.server = server,
-        auth: (state, auth) => {
-            localStorage.auth = JSON.stringify(auth);
-            state.auth = auth
-        },
+        auth: (state, auth) => state.auth = auth,
     },
     getters: {
         notFoundImage: () => {
@@ -143,28 +148,19 @@ export default new Vuex.Store({
         isAlbumFollowed: state => album => state.library.albums.find(a => a.id === album.id),
     },
     actions: {
-        cacheAll() {
-
-        },
-        initialize: async ({dispatch}) => {
-            if (localStorage.getItem('auth') !== null) {
-                let auth;
-                try {
-                    auth = JSON.parse(localStorage.getItem('auth'));
-                } catch (e) {
-                    console.warn("Couldn't set auth from localStorage.auth", e)
-                }
-                await dispatch('commitAuth', auth);
-            }
-
+        initialize: async ({commit, dispatch}) => {
+            commit('restoreFromCache');
+            await dispatch('processAuth');
             await dispatch('_initialize');
         },
-        spotifyLogin: async ({dispatch}) => {
+        spotifyLogin: async ({dispatch, commit}) => {
             let auth = await dispatch('firstLogin');
             console.log("Auth result from 'spotifyLogin'", auth);
-            await dispatch('commitAuth', auth);
+            commit('auth', auth);
+            await commit('cacheAll');
+            await dispatch('processAuth');
         },
-        loginByRefreshToken: async ({state, dispatch}) => {
+        loginByRefreshToken: async ({state, dispatch, commit}) => {
             if (!state.auth.refresh) {
                 console.warn("Couldn't get new token, refresh token isn't set", state.auth);
                 return;
@@ -173,18 +169,21 @@ export default new Vuex.Store({
             let auth = {...state.auth};
             auth.token = access_token;
             auth.expiryDate = (+new Date) + expires_in * 1000;
-            await dispatch('commitAuth', auth);
+            commit('auth', auth);
+            await commit('cacheAll');
+            await dispatch('processAuth');
         },
-        spotifyLogout: async ({state, commit}) => {
-            localStorage.removeItem('auth');
-            clearTimeout(state.timeout);
+        spotifyLogout: async ({state, commit, dispatch}) => {
             commit('auth', {
                 code: null,
                 token: null,
                 refresh: null,
                 expiryDate: null,
             });
-            commit('userPlaylists', []);
+            commit('userInfo', []);
+            commit('user', []);
+            await commit('cacheAll');
+            clearTimeout(state.timeout);
         },
         addSnack: async ({state, commit}, {text, timeout = 3000}) => {
             let snack = {text, open: true, timeout};
@@ -208,15 +207,13 @@ export default new Vuex.Store({
                 await dispatch('addSnack', {text: 'Share URL copied to clipboard!'});
             }
         },
-        commitAuth: async ({dispatch, commit, state}, auth) => {
-            commit('auth', auth);
-
+        processAuth: async ({dispatch, commit, state}) => {
             let now = new Date();
-            if (auth.expiryDate > now) {
-                state.api.setAccessToken(auth.token);
+            if (state.auth.expiryDate > now) {
+                state.api.setAccessToken(state.auth.token);
                 state.events.emit('accessToken');
 
-                let msUntilExpire = auth.expiryDate - now;
+                let msUntilExpire = state.auth.expiryDate - now;
                 await dispatch('initializeSpotify');
                 commit('timeout', setTimeout(async () => {
                     await dispatch('loginByRefreshToken');
@@ -298,8 +295,8 @@ export default new Vuex.Store({
             let libLoaded = state.library.tracks.length !== 0;
             let checkDone = () => {
                 doneCount++;
-                if (doneCount === libLoaded ? 3 : 4) {
-                    localStorage.library = JSON.stringify(state.library);
+                if (doneCount === (libLoaded ? 3 : 4)) {
+                    commit('cacheAll');
                 }
             }
             dispatch('refreshUserData').then(checkDone);

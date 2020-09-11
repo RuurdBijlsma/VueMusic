@@ -1,6 +1,6 @@
 'use strict'
 
-import {app, protocol, BrowserWindow, shell} from 'electron'
+import {app, protocol, BrowserWindow, ipcMain} from 'electron'
 import {createProtocol} from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, {VUEJS_DEVTOOLS} from 'electron-devtools-installer'
 import path from 'path';
@@ -11,7 +11,7 @@ const isDevelopment = process.env.NODE_ENV !== 'production'
 // be closed automatically when the JavaScript object is garbage collected.
 let win
 
-// Scheme must be registered before the app is ready
+// Scheme must be registered before the app is ready.
 protocol.registerSchemesAsPrivileged([
     {scheme: 'app', privileges: {secure: true, standard: true}}
 ])
@@ -20,7 +20,7 @@ function createWindow() {
     // Create the browser window.
     let icon = path.join(__static, 'img/logo-gradient.png');
     win = new BrowserWindow({
-        width: 1270,
+        width: 1570,
         height: 800,
         autoHideMenuBar: true,
         icon,
@@ -30,7 +30,7 @@ function createWindow() {
             webSecurity: false,
             allowRunningInsecureContent: true,
             nodeIntegration: true,
-        }
+        },
     })
 
     if (process.env.WEBPACK_DEV_SERVER_URL) {
@@ -45,10 +45,15 @@ function createWindow() {
 
     win.on('closed', () => {
         win = null
-    })
+    });
 }
 
-// Quit when all windows are closed..
+app.on('before-quit', e => {
+    e.preventDefault();
+    win.webContents.send('before-quit');
+});
+
+// Quit when all windows are closed...
 app.on('window-all-closed', () => {
     // On macOS it is common for applications and their menu bar
     // to stay active until the user quits explicitly with Cmd + Q
