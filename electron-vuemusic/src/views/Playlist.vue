@@ -3,12 +3,11 @@
 </template>
 
 <script>
-    import TrackSection from "../components/TrackSection";
     import PlaylistPage from "../components/PlaylistPage";
 
     export default {
         name: "Playlist",
-        components: {PlaylistPage, TrackSection},
+        components: {PlaylistPage},
         data: () => ({}),
         async mounted() {
             await this.$store.dispatch('loadPlaylist', this.id);

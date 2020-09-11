@@ -1,14 +1,9 @@
 <template>
     <div class="playlist" v-if="playlist !== null">
-        <div class="art-section" v-if="$store.state.windowWidth > 1030">
-            <div class="album-art album-background"
-                 :style="{
-                    backgroundImage: `url(${image})`,
-                    opacity: $vuetify.theme.dark ? 0.4 : 0.7,
-                 }"></div>
-            <div class="album-art album-normal" :style="{backgroundImage: `url(${image})`}"></div>
-        </div>
-        <track-section :show-art="$store.state.windowWidth <= 1030" :fg-legible="fgLegible"
+        <glow-image class="art-section" :url="image" :size="imageSize"
+                    v-if="$store.state.windowWidth > 1030"></glow-image>
+        <track-section :show-art="$store.state.windowWidth <= 1030"
+                       :fg-legible="fgLegible"
                        :playlist="playlist"></track-section>
     </div>
 </template>
@@ -16,10 +11,11 @@
 <script>
     import Utils from "../js/Utils";
     import TrackSection from "../components/TrackSection";
+    import GlowImage from "./GlowImage";
 
     export default {
         name: "PlaylistPage",
-        components: {TrackSection},
+        components: {GlowImage, TrackSection},
         data: () => ({
             previousColors: null,
             fgLegible: true,
@@ -76,12 +72,22 @@
                 this.checkForThemeColorChange();
             }
         },
-        computed:{
+        computed: {
             image() {
                 if (this.playlist.images.length > 0)
                     return this.playlist.images[0].url;
                 return this.$store.getters.notFoundImage;
-            }
+            },
+            imageSize() {
+                let width = this.$store.state.windowWidth;
+                if (width < 1030)
+                    return 350;
+                if (width < 1287)
+                    return 250;
+                if (width < 1450)
+                    return 300;
+                return 350;
+            },
         }
     }
 </script>
@@ -111,28 +117,6 @@
         margin-right: 30px;
         display: flex;
         justify-content: center;
-    }
-
-    .album-art {
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        min-width: 350px;
-        height: 350px;
-        border-radius: 5px;
-    }
-
-    .album-background {
-        filter: blur(20px);
-        transform: scale(0.95);
-        position: relative;
-        right: -175px;
-        top: 20px;
-    }
-
-    .album-normal {
-        position: relative;
-        left: -175px;
     }
 
     @media (max-width: 1450px) {

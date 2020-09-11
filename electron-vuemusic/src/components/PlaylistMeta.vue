@@ -1,13 +1,6 @@
 <template>
     <div class="playlist-meta">
-        <div class="art-section art-center" v-if="showArt">
-            <div class="album-art album-background"
-                 :style="{
-                    backgroundImage: `url(${image})`,
-                    opacity: $vuetify.theme.dark ? 0.4 : 0.7,
-                 }"></div>
-            <div class="album-art album-normal" :style="{backgroundImage: `url(${image})`}"></div>
-        </div>
+        <glow-image :size="imageSize" v-if="showArt" :url="image" class="art-section"></glow-image>
         <h2 class="name">{{playlist.name}}</h2>
         <p class="sub-caption">
             <span v-if="isAlbum">
@@ -20,7 +13,12 @@
             </span>
             <span v-else-if="!isAlbum">
                 <span>
-                    Created by <span class="primary--text">{{playlist.owner.display_name}}</span>
+                    <span>Created by </span>
+                    <router-link
+                            :to="`/user/${$store.getters.urlName(playlist.owner.display_name)}/${playlist.owner.id}`"
+                            class="primary--text">
+                        {{playlist.owner.display_name}}
+                    </router-link>
                 </span>
                 <span class="dot">•</span>
             </span>
@@ -54,10 +52,11 @@
     import FollowButton from "./FollowButton";
     import FollowMenuItem from "./FollowMenuItem";
     import ItemMenu from "./ItemMenu";
+    import GlowImage from "./GlowImage";
 
     export default {
         name: "PlaylistMeta",
-        components: {ItemMenu, FollowMenuItem, FollowButton, ShareMenuItem},
+        components: {GlowImage, ItemMenu, FollowMenuItem, FollowButton, ShareMenuItem},
         props: {
             fgLegible: {
                 type: Boolean,
@@ -76,13 +75,6 @@
         async mounted() {
         },
         methods: {
-            async sharePlaylist() {
-                let url = 'https://whaturlshouldthisbe.com/spotify?or=vuemusic';
-                await this.$store.dispatch('share', {url, copy: this.$copyText});
-            },
-            deletePlaylist() {
-
-            },
         },
         computed: {
             releaseYear() {
@@ -106,7 +98,17 @@
                 if (this.playlist.images.length > 0)
                     return this.playlist.images[0].url;
                 return this.$store.getters.notFoundImage;
-            }
+            },
+            imageSize() {
+                let width = this.$store.state.windowWidth;
+                if (width < 1030)
+                    return 350;
+                if (width < 1287)
+                    return 250;
+                if (width < 1450)
+                    return 300;
+                return 350;
+            },
         }
     }
 </script>
@@ -114,37 +116,9 @@
 <style scoped>
     .art-section {
         margin-top: 30px;
-        width: 350px;
         margin-right: 30px;
-        display: flex;
-        justify-content: center;
-    }
-
-    .art-center {
         margin-bottom: 30px;
         width: 100% !important;
-    }
-
-    .album-art {
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        min-width: 350px;
-        height: 350px;
-        border-radius: 5px;
-    }
-
-    .album-background {
-        filter: blur(20px);
-        transform: scale(0.95);
-        position: relative;
-        right: -175px;
-        top: 20px;
-    }
-
-    .album-normal {
-        position: relative;
-        left: -175px;
     }
 
     .name {
@@ -181,9 +155,5 @@
         max-width: 500px;
         margin: 20px 0;
         margin-bottom: 0px;
-    }
-
-    .track-list {
-        margin-top: 20px;
     }
 </style>

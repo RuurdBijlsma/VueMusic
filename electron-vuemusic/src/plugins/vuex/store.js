@@ -54,10 +54,11 @@ export default new Vuex.Store({
         album: {},
         artist: {},
         category: {},
+        user: {},
     },
     mutations: {
         cacheAll: state => {
-            let cachedFields = ["auth", "homePage", "browse", "userInfo", "library", "playlist", "album", "artist", "category"];
+            let cachedFields = ["auth", "homePage", "browse", "userInfo", "library", "playlist", "album", "artist", "category", "user"];
             let cache = {};
             for (let field of cachedFields)
                 cache[field] = state[field];
@@ -90,6 +91,8 @@ export default new Vuex.Store({
         loadArtistRelated: (state, {id, related}) => state.artist[id].related = related,
         loadArtistTracks: (state, {id, tracks}) => state.artist[id].tracks = tracks,
         loadArtistAlbums: (state, {id, albums}) => state.artist[id].albums = albums,
+        loadUser: (state, {id, user}) => Vue.set(state.user, id, user),
+        extendUser: (state, {id, playlists}) => state.user[id].playlists.push(...playlists),
 
         browseCategories: (state, categories) => state.browse.categories = categories,
         browseGenres: (state, genres) => state.browse.genres = genres,
@@ -118,6 +121,10 @@ export default new Vuex.Store({
         auth: (state, auth) => state.auth = auth,
     },
     getters: {
+        notFoundUser: () => {
+            let i = Math.floor(Math.random() * 7) + 1;
+            return `img/user/${i}.png`;
+        },
         notFoundImage: () => {
             let i = Math.floor(Math.random() * 7) + 1;
             return `img/notfound/${i}.png`;
@@ -306,7 +313,7 @@ export default new Vuex.Store({
                 dispatch('refreshUserData', 'track').then(checkDone);
             }
         },
-        refreshUserInfo: async ({commit, state}) => {
+        refreshUserInfo: async ({commit, state, getters}) => {
             let me = await state.api.getMe();
             commit('userInfo', {
                 id: me.id,
@@ -314,7 +321,7 @@ export default new Vuex.Store({
                 mail: me.email,
                 country: me.country,
                 followers: me.followers,
-                avatar: me.images.length === 0 ? 'img/no-user.jpg' : me.images[0].url,
+                avatar: me.images.length === 0 ? getters.notFoundUser : me.images[0].url,
             });
         },
         refreshUserData: async ({commit, state, dispatch}, type = 'playlist') => {
@@ -492,6 +499,19 @@ export default new Vuex.Store({
                 albums.push(...batch.items);
             }
             commit('loadArtistAlbums', {id, albums});
+        },
+        loadUser: async ({dispatch, commit, state}, id) => {
+            let isInitial = state.user[id] === undefined;
+            console.log({isInitial})
+            let user = await state.api.getUser(id);
+
+            if (isInitial)
+                commit('loadUser', {id, user: {...user, playlists: []}});
+            let playlists = (await state.api.getUserPlaylists(id, {limit: 50})).items;
+            if (isInitial)
+                commit('extendUser', {id, playlists});
+            else
+                commit('loadUser', {id, user: {...user, playlists}});
         },
         followPlaylist: async ({state, dispatch}, playlist) => {
             await state.api.followPlaylist(playlist.id);

@@ -2,16 +2,11 @@
     <div class="artist" v-if="$store.state.artist[id]">
         <div class="banner">
             <div class="banner-background" :style="{
-                backgroundImage: `url(${artist.images[0].url})`,
+                backgroundImage: `url(${image})`,
                 opacity: $vuetify.theme.dark ? 0.1 : 0.3,
             }"></div>
             <div class="artist-center">
-                <div class="artist-holder">
-                    <div class="artist-image artist-image-background"
-                         :style="{backgroundImage: `url(${artist.images[0].url})`}"></div>
-                    <div class="artist-image real-artist"
-                         :style="{backgroundImage: `url(${artist.images[0].url})`}"></div>
-                </div>
+                <glow-image rounded :url="image" :size="250"></glow-image>
             </div>
             <div class="banner-content">
                 <div class="buttons">
@@ -25,7 +20,7 @@
                 </div>
             </div>
         </div>
-        <v-card flat class="content">
+        <v-card tile flat class="content">
             <div class="sub-caption">
                 <span>{{artist.followers.total}} followers</span>
                 <span v-if="artist.genres.length>0">
@@ -76,10 +71,11 @@
     import ShareMenuItem from "../components/ShareMenuItem";
     import FollowMenuItem from "../components/FollowMenuItem";
     import ItemMenu from "../components/ItemMenu";
+    import GlowImage from "../components/GlowImage";
 
     export default {
         name: "Artist",
-        components: {ItemMenu, FollowMenuItem, ShareMenuItem, AlbumSquare, AlbumRow, TrackItem},
+        components: {GlowImage, ItemMenu, FollowMenuItem, ShareMenuItem, AlbumSquare, AlbumRow, TrackItem},
         data: () => ({}),
         async mounted() {
             await this.$store.dispatch('loadArtist', this.id);
@@ -128,6 +124,11 @@
                 if (latestAlbum > latestSingle)
                     return this.albums[0];
                 return this.singles[0];
+            },
+            image() {
+                if (this.artist.images.length === 0)
+                    return this.$store.getters.notFoundImage;
+                return this.artist.images[0].url
             },
         },
         watch: {
@@ -195,28 +196,6 @@
 
     .left-banner-content > *:last-child {
         margin-left: 20px;
-    }
-
-    .artist-image {
-        position: relative;
-        width: 250px;
-        height: 250px;
-        border-radius: 50%;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-size: cover;
-        top: -125px;
-    }
-
-    .real-artist {
-        box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.05);
-    }
-
-    .artist-image-background {
-        position: relative;
-        filter: blur(30px);
-        opacity: 0.6;
-        top: 135px;
     }
 
     .content {

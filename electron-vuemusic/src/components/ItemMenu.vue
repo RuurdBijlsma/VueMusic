@@ -7,7 +7,7 @@
         </template>
         <v-list dense>
             <share-menu-item :item="item"></share-menu-item>
-            <follow-menu-item v-if="type!=='category'" :item="item"></follow-menu-item>
+            <follow-menu-item v-if="type!=='category' && type!=='user'" :item="item"></follow-menu-item>
         </v-list>
     </v-menu>
 </template>
