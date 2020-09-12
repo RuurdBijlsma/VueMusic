@@ -16,9 +16,11 @@
         </v-app-bar>
 
         <v-main class="scroll-container">
-            <perfect-scrollbar class="perfect-scroller">
-                <router-view class="router-view"></router-view>
-            </perfect-scrollbar>
+            <div class="perfect-scroller">
+<!--                <perfect-scrollbar class="perfect-scroller">-->
+                    <router-view class="router-view"></router-view>
+<!--                </perfect-scrollbar>-->
+            </div>
         </v-main>
 
         <v-card flat class="bottom-media-control" v-if="$store.state.windowWidth <= 680" color="primaryLight">
@@ -163,12 +165,12 @@
         width: 100%;
         height: 100%;
         position: absolute;
+        overflow-y: auto;
     }
 
     .perfect-scroller {
 
         height: 100%;
-        overflow-y: auto;
     }
 
     .navBar {

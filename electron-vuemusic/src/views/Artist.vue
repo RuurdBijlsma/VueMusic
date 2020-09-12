@@ -34,12 +34,12 @@
                     <h3>Latest release</h3>
                     <item-square :item="latestRelease"></item-square>
                 </div>
-                <div class="tracks-container">
+                <div class="tracks-container" v-if="topTracks.length > 0">
                     <h3>Top tracks</h3>
-                    <tracks-grid :tracks="topTracks" v-if="topTracks.length > 0"></tracks-grid>
+                    <tracks-grid :tracks="topTracks"></tracks-grid>
                 </div>
             </div>
-            <v-divider class="divider"></v-divider>
+            <v-divider class="divider" v-if="topTracks.length > 0"></v-divider>
             <div v-if="albums.length > 0">
                 <h3>Albums</h3>
                 <item-row :items="albums" show-year class="item-row"></item-row>
