@@ -107,7 +107,7 @@ export default new Vuex.Store({
         addUserPlaylist: (state, playlist) => state.library.playlists.push(playlist),
         userPlaylists: (state, playlists) => state.library.playlists = playlists,
 
-        addToLibrary: (state, {type, item}) => state.library[type + 's'].push(item),
+        addToLibrary: (state, {type, item}) => state.library[type + 's'].unshift(item),
         removeFromLibrary: (state, {type, id}) => {
             let index = state.library[type + 's'].findIndex(i => i.id === id)
             if (index !== -1)
@@ -345,7 +345,7 @@ export default new Vuex.Store({
             let retrieval, page = r => r;
             switch (type) {
                 case 'playlist':
-                    retrieval = () => state.api.getUserPlaylists(state.userInfo.id);
+                    retrieval = () => state.api.getUserPlaylists(state.userInfo.id, {limit: 50});
                     break;
                 case 'album':
                     retrieval = () => state.api.getMySavedAlbums();
@@ -355,7 +355,7 @@ export default new Vuex.Store({
                     page = r => r.artists;
                     break;
                 case 'track':
-                    retrieval = () => state.api.getMySavedTracks();
+                    retrieval = () => state.api.getMySavedTracks({limit: 50});
                     break;
             }
 
