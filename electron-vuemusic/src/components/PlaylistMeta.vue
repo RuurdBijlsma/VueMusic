@@ -29,6 +29,10 @@
             <span>{{playlist.tracks.length}} tracks</span>
             <span class="dot">•</span>
             <span>{{fullDuration}}</span>
+            <span v-if="playlist.followers">
+                <span class="dot">•</span>
+                <span>{{playlist.followers.total}} followers</span>
+            </span>
         </p>
         <div class="buttons">
             <div>

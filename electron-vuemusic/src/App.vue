@@ -71,17 +71,18 @@
 </template>
 
 <script>
-    import ToolBar from "@/components/ToolBar";
+    import ToolBar from "./components/ToolBar";
     import MediaInfo from "./components/MediaInfo";
     import MediaControls from "./components/MediaControls";
     import MediaSeek from "./components/MediaSeek";
     import NavContent from "./components/NavContent";
 
     //TOOD:
-    //Search
     ///library page (for mobile)
     //Radio page
     //Tune page (from browse)
+    //Create playlist thing
+    //try to improve some performance with v-lazy (in album-row, heavy pages like listen now and browse, etc...)
 
     //After that, add functionality xd
 
