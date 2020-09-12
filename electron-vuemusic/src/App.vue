@@ -78,8 +78,8 @@
     import NavContent from "./components/NavContent";
 
     //TOOD:
-    //user page (is in api, for "created by" click)
     //Search
+    ///library page (for mobile)
     //Radio page
     //Tune page (from browse)
 
@@ -130,7 +130,6 @@
                 this.$store.commit('windowWidth', window.innerWidth);
             },
             devListener(e) {
-                console.log(e.key);
                 if (e.key === '`')
                     this.$store.dispatch('openDevTools');
                 if (e.key === 'r' && e.ctrlKey)

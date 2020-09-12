@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 import SpotifyWebApi from 'spotify-web-api-js';
 import platform from './electron-module';
 import media from './media-module';
+import search from './search-module';
 import EventEmitter from 'events';
 
 Vue.use(Vuex)
@@ -143,11 +144,12 @@ export default new Vuex.Store({
             return new Date > state.auth.expiryDate;
         },
         urlName: () => name => {
-            return encodeURIComponent(name.toLowerCase().replace(/ /gi, '-'));
+            return encodeURIComponent(name.toLowerCase().replace(/ /gi, '-').slice(0, 36));
         },
-        shareUrl: () => (item) => {
+        shareUrl: (state, getters) => (item) => {
             let type = item.type || 'category';
-            return 'https://idk.com/' + type + '/' + item.name;
+            let name = type === 'user' ? item.display_name : item.name;
+            return 'https://idk.com/' + type + '/' + getters.urlName(name) + '/' + item.id;
         },
         isArtistFollowed: state => artist => state.library.artists.find(a => a.id === artist.id),
         isTrackFollowed: state => track => state.library.tracks.find(a => a.id === track.id),
@@ -451,12 +453,20 @@ export default new Vuex.Store({
             let retrieval = () => state.api.getAlbum(id);
             for await(let batch of await dispatch('retrieveSpotifyArray', retrieval)) {
                 if (batch.items) {
-                    batch.items.forEach(i => i.album = state.album[id]);
+                    batch.items.forEach(i => i.album = {
+                        images: state.album[id].images,
+                        name: state.album[id].name,
+                        id: state.album[id].id,
+                    });
                     commit('extendAlbum', {id, tracks: batch.items});
                 } else {
                     let album = {...batch};
-                    album.tracks.items.forEach(i => i.album = album);
                     album.tracks = album.tracks.items;
+                    album.tracks.forEach(i => i.album = {
+                        images: album.images,
+                        name: album.name,
+                        id: album.id,
+                    });
                     commit('loadAlbum', {id, album});
                 }
             }
@@ -546,5 +556,5 @@ export default new Vuex.Store({
             commit('removeFromLibrary', {type: 'track', id: track.id});
         },
     },
-    modules: {platform, media}
+    modules: {platform, media, search}
 })

@@ -99,6 +99,9 @@
 
     .time {
         min-width: 40px;
+        font-size: 13px;
+        opacity: 0.6;
+        font-weight: 500;
     }
 
     .time:last-child {

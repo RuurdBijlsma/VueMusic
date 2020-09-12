@@ -251,9 +251,11 @@
         }
     }
 
-    @media (max-width: 457px){
+    @media (max-width: 352px){
         .logo{
-            display:none !important;
+            width:0;
+            overflow: hidden;
+            padding:0;
         }
     }
 </style>

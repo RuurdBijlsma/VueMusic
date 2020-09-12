@@ -1,5 +1,5 @@
 <template>
-    <div class="playlist" v-if="playlist !== null">
+    <div class="playlist" v-if="playlist">
         <glow-image class="art-section" :url="image" :size="imageSize"
                     v-if="$store.state.windowWidth > 1030"></glow-image>
         <track-section :show-art="$store.state.windowWidth <= 1030"

@@ -63,8 +63,12 @@
                 let artHeight = this.showArt ? 380 : 0;
                 let descriptionHeight = this.isAlbum || this.playlist.description.length === 0 ? 0 : 80;
                 let metaHeight = 150;
+                let artistHeight = this.isAlbum ? 36 : 0;
                 let dividerHeight = 1;
-                return [{id: '0', size: artHeight + descriptionHeight + metaHeight + dividerHeight}, ...tracks];
+                return [{
+                    id: '0',
+                    size: artHeight + descriptionHeight + metaHeight + artistHeight + dividerHeight
+                }, ...tracks];
             },
         }
     }

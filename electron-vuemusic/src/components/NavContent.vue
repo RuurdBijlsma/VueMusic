@@ -2,13 +2,7 @@
     <perfect-scrollbar class="nav-bar">
         <div class="nav-top">
             <logo></logo>
-            <v-text-field
-                    outlined
-                    label="Search"
-                    prepend-inner-icon="mdi-magnify"
-                    dense
-                    class="search-input"
-            ></v-text-field>
+            <search-input class="search-input"></search-input>
         </div>
 
         <v-list dense nav class="py-0">
@@ -76,10 +70,16 @@
 
 <script>
     import Logo from "./Logo";
+    import SearchInput from "./SearchInput";
+
     export default {
         name: "NavContent",
-        components: {Logo},
-        data: () => ({})
+        components: {SearchInput, Logo},
+        data: () => ({}),
+        mounted() {
+        },
+        methods: {},
+        watch: {},
     }
 </script>
 
@@ -89,15 +89,15 @@
         width: 100%;
     }
 
-    .search-input {
-        margin: 15px !important;
-        margin-bottom: 0 !important;
-    }
-
     .playlist-header {
         display: flex;
         /*justify-content: space-between;*/
         align-items: center;
+    }
+
+    .search-input {
+        margin: 15px !important;
+        margin-bottom: 0 !important;
     }
 
     .add-playlist {

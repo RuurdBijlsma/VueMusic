@@ -2,6 +2,13 @@
     <div class="playlist-meta">
         <glow-image :size="imageSize" v-if="showArt" :url="image" class="art-section"></glow-image>
         <h2 class="name">{{playlist.name}}</h2>
+        <h2 class="album-artist" v-if="isAlbum"
+            :title="playlist.artists.map(t=>t.name).join(', ')">
+            <span v-for="(artist, index) in playlist.artists" :key="artist.id">
+            <router-link class="artist-link" :to="`/artist/${$store.getters.urlName(artist.name)}/${artist.id}`">{{artist.name}}</router-link><span
+                    v-if="index < playlist.artists.length - 1">, </span>
+            </span>
+        </h2>
         <p class="sub-caption">
             <span v-if="isAlbum">
                 <span title="Year of release">{{releaseYear}}</span>
@@ -13,12 +20,9 @@
             </span>
             <span v-else-if="!isAlbum">
                 <span>
-                    <span>Created by </span>
-                    <router-link
-                            :to="`/user/${$store.getters.urlName(playlist.owner.display_name)}/${playlist.owner.id}`"
-                            class="primary--text">
-                        {{playlist.owner.display_name}}
-                    </router-link>
+                    <span>Created by </span><router-link class="user-link"
+                                                         :to="`/user/${$store.getters.urlName(playlist.owner.display_name)}/${playlist.owner.id}`"
+                >{{playlist.owner.display_name}}</router-link>
                 </span>
                 <span class="dot">•</span>
             </span>
@@ -74,8 +78,7 @@
         data: () => ({}),
         async mounted() {
         },
-        methods: {
-        },
+        methods: {},
         computed: {
             releaseYear() {
                 if (this.isAlbum) {
@@ -123,6 +126,24 @@
 
     .name {
         font-weight: bold;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .album-artist {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .artist-link {
+        text-decoration: none;
+        font-weight: 400;
+    }
+
+    .artist-link:hover {
+        text-decoration: underline;
     }
 
     .sub-caption {
@@ -134,6 +155,14 @@
 
     .dot {
         margin: 0 10px;
+    }
+
+    .user-link {
+        text-decoration: none;
+    }
+
+    .user-link:hover {
+        text-decoration: underline;
     }
 
     .buttons {

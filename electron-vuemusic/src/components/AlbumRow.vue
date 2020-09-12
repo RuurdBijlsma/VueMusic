@@ -4,6 +4,7 @@
              :class="{last: i===albums.length-1}">
             <album-square v-for="album in albumGroup"
                           :big="big"
+                          :small="small"
                           :show-year="showYear"
                           class="single-album"
                           :album="album"></album-square>
@@ -21,6 +22,10 @@
             albums: {
                 type: Array,
                 default: () => [],
+            },
+            small: {
+                type: Boolean,
+                default: false,
             },
             big: {
                 type: Boolean,

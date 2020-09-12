@@ -34,12 +34,9 @@
                     <h3>Latest release</h3>
                     <album-square :album="latestRelease"></album-square>
                 </div>
-                <div class="tracks-container" v-if="topTracks.length > 0">
+                <div class="tracks-container">
                     <h3>Top tracks</h3>
-                    <div class="top-tracks">
-                        <track-item v-for="track in topTracks" :key="track.id" :track="track"
-                                    :album-list="false" menu></track-item>
-                    </div>
+                    <tracks-grid :tracks="topTracks" v-if="topTracks.length > 0"></tracks-grid>
                 </div>
             </div>
             <v-divider class="divider"></v-divider>
@@ -72,10 +69,11 @@
     import FollowMenuItem from "../components/FollowMenuItem";
     import ItemMenu from "../components/ItemMenu";
     import GlowImage from "../components/GlowImage";
+    import TracksGrid from "../components/TracksGrid";
 
     export default {
         name: "Artist",
-        components: {GlowImage, ItemMenu, FollowMenuItem, ShareMenuItem, AlbumSquare, AlbumRow, TrackItem},
+        components: {TracksGrid, GlowImage, ItemMenu, FollowMenuItem, ShareMenuItem, AlbumSquare, AlbumRow, TrackItem},
         data: () => ({}),
         async mounted() {
             await this.$store.dispatch('loadArtist', this.id);
@@ -241,14 +239,6 @@
 
     .tracks-container {
         width: 100%;
-    }
-
-    .top-tracks {
-        width: 100%;
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 17px;
-        flex-grow: 1;
     }
 
     .album-row {

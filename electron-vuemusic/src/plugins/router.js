@@ -60,6 +60,11 @@ const routes = [
         name: 'Tracks',
         component: () => import('../views/Tracks')
     },
+    {
+        path: '/search',
+        name: 'Search',
+        component: () => import('../views/Search')
+    },
 ]
 
 const router = new VueRouter({
