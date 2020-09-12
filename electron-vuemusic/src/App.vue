@@ -17,9 +17,7 @@
 
         <v-main class="scroll-container">
             <div class="perfect-scroller">
-<!--                <perfect-scrollbar class="perfect-scroller">-->
-                    <router-view class="router-view"></router-view>
-<!--                </perfect-scrollbar>-->
+                <router-view class="router-view"></router-view>
             </div>
         </v-main>
 
@@ -146,6 +144,14 @@
 
     html, body {
         overflow-y: auto;
+    }
+
+    h1 {
+        font-size: 1.8rem;
+    }
+
+    h1, h2, h3, h4, h5 {
+        font-weight: bold;
     }
 
     .app {

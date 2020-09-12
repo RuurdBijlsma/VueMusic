@@ -69,7 +69,7 @@
             },
             scrollItems() {
                 let tracks = this.tracks.map(t => ({...t, size: 51}));
-                let titleHeight = 145;
+                let titleHeight = 131;
                 return [{id: '0', size: titleHeight}, ...tracks];
             },
             tracks() {
@@ -99,14 +99,6 @@
         .scroller {
             padding: 10px;
         }
-    }
-
-    .page-title-container {
-
-    }
-
-    .page-title {
-        font-size: 2.4rem;
     }
 
     .divider {

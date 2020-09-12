@@ -1,9 +1,7 @@
 <template>
     <div class="listen-now">
-        <div class="padded">
-            <h1 class="page-title">Listen Now</h1>
-            <v-divider></v-divider>
-            <h2 v-if="$store.state.homePage.recent.length>0">Recently played</h2>
+        <div class="padded" v-if="$store.state.homePage.recent.length>0">
+            <h2>Recently played</h2>
         </div>
 
         <item-row class="item-row"
@@ -56,10 +54,6 @@
 
     .padded {
         padding: 10px 30px;
-    }
-
-    .page-title {
-        font-size: 2.4rem;
     }
 
     .item-row {

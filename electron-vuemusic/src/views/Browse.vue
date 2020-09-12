@@ -1,7 +1,5 @@
 <template>
     <div class="browse">
-        <h1 class="page-title">Browse</h1>
-        <v-divider class="divider"></v-divider>
         <div class="dual-container">
             <div class="categories">
                 <h2>Curated lists</h2>
@@ -48,14 +46,6 @@
         padding: 30px;
     }
 
-    .page-title {
-        font-size: 2.4rem;
-    }
-
-    .divider {
-        margin-bottom: 20px;
-    }
-
     .dual-container {
         display: flex;
     }
@@ -69,6 +59,7 @@
         grid-template-columns: repeat(auto-fit, minmax(185px, 1fr));
         min-width: 186px;
         justify-items: center;
+        margin-top: 10px;
     }
 
     .category {

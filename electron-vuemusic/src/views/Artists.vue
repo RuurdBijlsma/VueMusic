@@ -42,10 +42,6 @@
         padding: 30px;
     }
 
-    .page-title {
-        font-size: 2.4rem;
-    }
-
     .artist {
         display: flex;
         margin: 15px 0;

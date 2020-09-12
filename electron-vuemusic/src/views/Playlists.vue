@@ -31,10 +31,6 @@
         padding: 30px;
     }
 
-    .page-title {
-        font-size: 2.4rem;
-    }
-
     .divider {
         margin-bottom: 20px;
     }
