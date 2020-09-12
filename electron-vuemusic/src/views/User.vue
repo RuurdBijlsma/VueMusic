@@ -24,7 +24,7 @@
             <v-divider class="divider"></v-divider>
             <h2 class="playlists-title" v-if="user.playlists.length > 0">User playlists</h2>
             <div class="playlists-grid">
-                <album-square v-for="playlist in user.playlists" :key="playlist.id" :album="playlist"></album-square>
+                <item-square v-for="playlist in user.playlists" :key="playlist.id" :item="playlist"></item-square>
             </div>
         </v-card>
     </div>
@@ -33,8 +33,8 @@
 <script>
 
     import TrackItem from "../components/TrackItem";
-    import AlbumRow from "../components/AlbumRow";
-    import AlbumSquare from "../components/AlbumSquare";
+    import ItemRow from "../components/ItemRow";
+    import ItemSquare from "../components/ItemSquare";
     import ShareMenuItem from "../components/ShareMenuItem";
     import FollowMenuItem from "../components/FollowMenuItem";
     import ItemMenu from "../components/ItemMenu";
@@ -42,7 +42,7 @@
 
     export default {
         name: "User",
-        components: {GlowImage, ItemMenu, FollowMenuItem, ShareMenuItem, AlbumSquare, AlbumRow, TrackItem},
+        components: {GlowImage, ItemMenu, FollowMenuItem, ShareMenuItem, ItemSquare, ItemRow, TrackItem},
         data: () => ({}),
         async mounted() {
             await this.$store.dispatch('loadUser', this.id);
@@ -57,7 +57,7 @@
             },
             image() {
                 if (this.user.images.length === 0)
-                    return this.$store.getters.notFoundImage;
+                    return this.$store.getters.notFoundUser;
                 return this.user.images[0].url
             },
         },

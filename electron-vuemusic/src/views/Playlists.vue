@@ -1,9 +1,10 @@
 <template>
-    <div class="albums">
-        <h1 class="page-title">Albums</h1>
+    <div class="playlists">
+        <h1 class="page-title">Playlists</h1>
         <v-divider class="divider"></v-divider>
-        <div class="album-grid">
-            <item-square show-year v-for="album in $store.state.library.albums" :key="album.id" :item="album"></item-square>
+        <div class="playlist-grid">
+            <item-square v-for="playlist in $store.state.library.playlists" :key="playlist.id"
+                         :item="playlist"></item-square>
         </div>
     </div>
 </template>
@@ -15,18 +16,18 @@
     import ItemSquare from "../components/ItemSquare";
 
     export default {
-        name: "Albums",
-        components: {FollowButton, FollowMenuItem, ShareMenuItem, ItemSquare},
+        name: "Playlists",
+        components: {ItemSquare, FollowButton, FollowMenuItem, ShareMenuItem},
         data: () => ({}),
         async mounted() {
-            await this.$store.dispatch("refreshUserData", 'album');
+            await this.$store.dispatch("refreshUserData", 'playlist');
         },
         methods: {}
     }
 </script>
 
 <style scoped>
-    .albums {
+    .playlists {
         padding: 30px;
     }
 
@@ -38,7 +39,7 @@
         margin-bottom: 20px;
     }
 
-    .album-grid {
+    .playlist-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(185px, 1fr));
         min-width: 186px;

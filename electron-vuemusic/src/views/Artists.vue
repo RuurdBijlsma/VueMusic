@@ -4,7 +4,7 @@
         <div v-for="(artist, i) in $store.state.library.artists" :key="artist.id">
             <v-divider v-if="i === 0"></v-divider>
             <div class="artist">
-                <album-square hide-menu small :album="artist" no-title></album-square>
+                <item-square hide-menu small :item="artist" no-title></item-square>
                 <router-link tag="span" :to="`/artist/${artist.name}/${artist.id}`" class="artist-title">
                     {{artist.name}}
                 </router-link>
@@ -19,7 +19,7 @@
 </template>
 
 <script>
-    import AlbumSquare from "../components/AlbumSquare";
+    import ItemSquare from "../components/ItemSquare";
     import ShareMenuItem from "../components/ShareMenuItem";
     import FollowMenuItem from "../components/FollowMenuItem";
     import FollowButton from "../components/FollowButton";
@@ -27,7 +27,7 @@
 
     export default {
         name: "Artists",
-        components: {ItemMenu, FollowButton, FollowMenuItem, ShareMenuItem, AlbumSquare},
+        components: {ItemMenu, FollowButton, FollowMenuItem, ShareMenuItem, ItemSquare},
         data: () => ({}),
         async mounted() {
             await this.$store.dispatch("refreshUserData", 'artist');

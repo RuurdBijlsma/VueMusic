@@ -1,5 +1,5 @@
 <template>
-    <div class="album-square">
+    <div class="item-square">
         <router-link tag="span" :to="url">
             <div class="image" :class="{big, small}"
                  :style="{
@@ -14,17 +14,17 @@
                 <v-btn :loading="playLoading" fab small color="primary" @click="play">
                     <v-icon color="white">mdi-play</v-icon>
                 </v-btn>
-                <item-menu color="white" :fab="type==='artist'" v-if="!hideMenu" :item="album"></item-menu>
+                <item-menu color="white" :fab="type==='artist'" v-if="!hideMenu" :item="item"></item-menu>
             </div>
             <div class="text" v-if="!noTitle" :class="{big,small}"
                  :style="{textAlign: type==='artist'?'center':'left'}">
-                <p class="preview-title">{{album.name}}</p>
+                <p class="preview-title">{{item.name}}</p>
                 <p
-                        :title="album.description"
-                        v-if="album.hasOwnProperty('description')"
+                        :title="item.description"
+                        v-if="item.hasOwnProperty('description')"
                         class="preview-description"
-                        v-html="album.description"/>
-                <p class="preview-year" v-if="showYear">{{new Date(album.release_date).getFullYear()}}</p>
+                        v-html="item.description"/>
+                <p class="preview-year" v-if="showYear">{{new Date(item.release_date).getFullYear()}}</p>
             </div>
         </router-link>
     </div>
@@ -37,7 +37,7 @@
     import ItemMenu from "./ItemMenu";
 
     export default {
-        name: "AlbumSquare",
+        name: "ItemSquare",
         components: {ItemMenu, FollowMenuItem, ShareMenuItem},
         props: {
             big: {
@@ -48,7 +48,7 @@
                 type: Boolean,
                 default: false,
             },
-            album: {
+            item: {
                 type: Object,
                 default: null,
             },
@@ -81,23 +81,23 @@
         computed: {
             url() {
                 if (this.type === 'category')
-                    return `/category/${this.album.id}`;
-                return `/${this.type}/${this.$store.getters.urlName(this.album.name)}/${this.album.id}`;
+                    return `/category/${this.item.id}`;
+                return `/${this.type}/${this.$store.getters.urlName(this.item.name)}/${this.item.id}`;
             },
             type() {
-                if (!this.album.type)
+                if (!this.item.type)
                     return 'category';
-                return this.album.type;
+                return this.item.type;
             },
             image() {
                 if (this.type === 'category') {
-                    if (this.album.icons.length > 0)
-                        return this.album.icons[0].url;
+                    if (this.item.icons.length > 0)
+                        return this.item.icons[0].url;
                     else
                         return this.$store.getters.notFoundImage;
                 } else {
-                    if (this.album.images.length > 0)
-                        return this.album.images[0].url;
+                    if (this.item.images.length > 0)
+                        return this.item.images[0].url;
                     else
                         return this.$store.getters.notFoundImage;
                 }
@@ -107,7 +107,7 @@
 </script>
 
 <style scoped>
-    .album-square {
+    .item-square {
         cursor: pointer;
         display: inline-flex;
     }

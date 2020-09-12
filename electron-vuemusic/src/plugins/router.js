@@ -56,6 +56,11 @@ const routes = [
         component: () => import('../views/Albums')
     },
     {
+        path: '/playlists',
+        name: 'Playlists',
+        component: () => import('../views/Playlists')
+    },
+    {
         path: '/tracks',
         name: 'Tracks',
         component: () => import('../views/Tracks')
@@ -64,6 +69,11 @@ const routes = [
         path: '/search',
         name: 'Search',
         component: () => import('../views/Search')
+    },
+    {
+        path: '/library',
+        name: 'Library',
+        component: () => import('../views/Library')
     },
 ]
 

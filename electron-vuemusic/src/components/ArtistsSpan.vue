@@ -29,7 +29,6 @@
 
 <style scoped>
     .artists {
-        max-width: 245px;
         white-space: nowrap;
         text-overflow: ellipsis;
         overflow: hidden;

@@ -1,25 +1,25 @@
 <template>
-    <perfect-scrollbar class="album-container">
-        <div class="column" v-for="(albumGroup, i) in albumGroups"
-             :class="{last: i===albums.length-1}">
-            <album-square v-for="album in albumGroup"
+    <perfect-scrollbar class="item-container">
+        <div class="column" v-for="(itemGroup, i) in itemGroups"
+             :class="{last: i===items.length-1}">
+            <item-square v-for="item in itemGroup"
                           :big="big"
                           :small="small"
                           :show-year="showYear"
-                          class="single-album"
-                          :album="album"></album-square>
+                          class="single-item"
+                          :item="item"></item-square>
         </div>
     </perfect-scrollbar>
 </template>
 
 <script>
-    import AlbumSquare from "./AlbumSquare";
+    import ItemSquare from "./ItemSquare";
 
     export default {
-        name: "AlbumRow",
-        components: {AlbumSquare},
+        name: "ItemRow",
+        components: {ItemSquare},
         props: {
-            albums: {
+            items: {
                 type: Array,
                 default: () => [],
             },
@@ -41,10 +41,10 @@
             },
         },
         computed: {
-            albumGroups() {
+            itemGroups() {
                 let groups = [];
-                for (let i = 0; i < this.albums.length; i += this.rows) {
-                    groups.push(this.albums.slice(i, i + this.rows));
+                for (let i = 0; i < this.items.length; i += this.rows) {
+                    groups.push(this.items.slice(i, i + this.rows));
                 }
                 return groups;
             }
@@ -53,7 +53,7 @@
 </script>
 
 <style scoped>
-    .album-container {
+    .item-container {
         position: relative;
         width: 100%;
         display: flex;
@@ -61,12 +61,12 @@
         padding-bottom: 15px;
     }
 
-    .single-album {
+    .single-item {
         display: inline-block;
         margin: 5px 15px;
     }
 
-    .single-album.last {
+    .single-item.last {
         padding-right: 30px;
     }
 

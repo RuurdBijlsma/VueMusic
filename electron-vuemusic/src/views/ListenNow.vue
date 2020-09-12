@@ -6,42 +6,42 @@
             <h2 v-if="$store.state.homePage.recent.length>0">Recently played</h2>
         </div>
 
-        <album-row class="album-row"
+        <item-row class="item-row"
                    v-if="$store.state.homePage.recent.length>0"
-                   :albums="$store.state.homePage.recent"
+                   :items="$store.state.homePage.recent"
                    type="playlist"
-        ></album-row>
+        ></item-row>
 
         <h2 class="padded">{{$store.state.homePage.featured.title.replace(/\\/gi,'')}}</h2>
-        <album-row class="album-row"
-                   :albums="$store.state.homePage.featured.playlists"
+        <item-row class="item-row"
+                   :items="$store.state.homePage.featured.playlists"
                    type="playlist"
                    big
-        ></album-row>
+        ></item-row>
 
         <h2 class="padded">Made for you</h2>
-        <album-row class="album-row"
-                   :albums="$store.state.homePage.personalized"
+        <item-row class="item-row"
+                   :items="$store.state.homePage.personalized"
                    type="playlist"
-        ></album-row>
+        ></item-row>
 
         <h2 class="padded">New releases</h2>
-        <album-row class="album-row"
-                   :albums="$store.state.homePage.newReleases"
+        <item-row class="item-row"
+                   :items="$store.state.homePage.newReleases"
                    type="album"
                    :rows="2"
                    big
-        ></album-row>
+        ></item-row>
     </div>
 </template>
 
 <script>
-    import AlbumSquare from "../components/AlbumSquare";
-    import AlbumRow from "../components/AlbumRow";
+    import ItemSquare from "../components/ItemSquare";
+    import ItemRow from "../components/ItemRow";
 
     export default {
         name: 'ListenNow',
-        components: {AlbumRow, AlbumSquare},
+        components: {ItemRow, ItemSquare},
         mounted() {
             this.$store.dispatch('refreshHomePage');
         }
@@ -62,7 +62,7 @@
         font-size: 2.4rem;
     }
 
-    .album-row {
+    .item-row {
 
     }
 </style>

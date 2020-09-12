@@ -12,13 +12,13 @@
                            :fg-legible="fgLegible"></playlist-meta>
             <!--            <v-divider></v-divider>-->
             <div class="scroll-item" v-if="index>0">
+                <v-divider></v-divider>
                 <track-row
                         :no-album="hideAlbum || isAlbum"
                         :compact-menu="compactMenu"
                         :album-list="isAlbum"
                         :key="item.id"
                         :track="item"></track-row>
-                <v-divider></v-divider>
             </div>
         </recycle-scroller>
     </div>

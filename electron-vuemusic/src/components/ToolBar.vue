@@ -34,15 +34,19 @@
                     </v-btn>
                 </template>
                 <v-list>
-                    <v-list-item two-line v-if="$store.getters.isLoggedIn">
-                        <v-list-item-avatar>
-                            <img :src="$store.state.userInfo.avatar" alt="User Avatar">
-                        </v-list-item-avatar>
-
-                        <v-list-item-content>
-                            <v-list-item-title>{{$store.state.userInfo.name}}</v-list-item-title>
-                            <v-list-item-subtitle>{{$store.state.userInfo.mail}}</v-list-item-subtitle>
-                        </v-list-item-content>
+                    <v-list-item two-line
+                                 v-if="$store.getters.isLoggedIn">
+                        <router-link class="list-link"
+                                     tag="div"
+                                     :to="`/user/${$store.getters.urlName($store.state.userInfo.name)}/${$store.state.userInfo.id}`">
+                            <v-list-item-avatar>
+                                <img :src="$store.state.userInfo.avatar" alt="User Avatar">
+                            </v-list-item-avatar>
+                            <v-list-item-content>
+                                <v-list-item-title>{{$store.state.userInfo.name}}</v-list-item-title>
+                                <v-list-item-subtitle>{{$store.state.userInfo.mail}}</v-list-item-subtitle>
+                            </v-list-item-content>
+                        </router-link>
                     </v-list-item>
                     <v-list-item to="/settings">
                         <v-list-item-icon>
@@ -207,6 +211,11 @@
         -webkit-app-region: no-drag;
     }
 
+    .list-link {
+        display: inline-flex;
+        cursor: pointer;
+    }
+
     .theme-switch {
         display: flex;
         align-items: center;
@@ -245,17 +254,17 @@
         }
     }
 
-    @media (max-width: 680px){
+    @media (max-width: 680px) {
         .minimize-button {
             display: inline-flex !important;
         }
     }
 
-    @media (max-width: 352px){
-        .logo{
-            width:0;
+    @media (max-width: 352px) {
+        .logo {
+            width: 0;
             overflow: hidden;
-            padding:0;
+            padding: 0;
         }
     }
 </style>

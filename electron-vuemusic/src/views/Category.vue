@@ -3,17 +3,17 @@
         <h1 class="page-title">{{category.name}}</h1>
         <v-divider class="divider"></v-divider>
         <div class="playlist-grid">
-            <album-square v-for="playlist in category.playlists" :album="playlist"></album-square>
+            <item-square v-for="playlist in category.playlists" :item="playlist"></item-square>
         </div>
     </div>
 </template>
 
 <script>
-    import AlbumSquare from "../components/AlbumSquare";
+    import ItemSquare from "../components/ItemSquare";
 
     export default {
         name: "Playlist",
-        components: {AlbumSquare},
+        components: {ItemSquare},
         data: () => ({}),
         async mounted() {
             await this.$store.dispatch('loadCategory', this.id);

@@ -32,7 +32,7 @@
             <div class="release-flex">
                 <div class="latest-release" v-if="latestRelease !== null">
                     <h3>Latest release</h3>
-                    <album-square :album="latestRelease"></album-square>
+                    <item-square :item="latestRelease"></item-square>
                 </div>
                 <div class="tracks-container">
                     <h3>Top tracks</h3>
@@ -42,19 +42,19 @@
             <v-divider class="divider"></v-divider>
             <div v-if="albums.length > 0">
                 <h3>Albums</h3>
-                <album-row :albums="albums" show-year class="album-row"></album-row>
+                <item-row :items="albums" show-year class="item-row"></item-row>
             </div>
             <div v-if="singles.length > 0">
                 <h3>Singles</h3>
-                <album-row :albums="singles" show-year class="album-row"></album-row>
+                <item-row :items="singles" show-year class="item-row"></item-row>
             </div>
             <div v-if="appearsOn.length > 0">
                 <h3>Appears on</h3>
-                <album-row :albums="appearsOn" show-year class="album-row"></album-row>
+                <item-row :items="appearsOn" show-year class="item-row"></item-row>
             </div>
             <div v-if="related.length > 0">
                 <h3>Related artists</h3>
-                <album-row :albums="related" class="album-row"></album-row>
+                <item-row :items="related" class="item-row"></item-row>
             </div>
         </v-card>
     </div>
@@ -63,8 +63,8 @@
 <script>
 
     import TrackItem from "../components/TrackItem";
-    import AlbumRow from "../components/AlbumRow";
-    import AlbumSquare from "../components/AlbumSquare";
+    import ItemRow from "../components/ItemRow";
+    import ItemSquare from "../components/ItemSquare";
     import ShareMenuItem from "../components/ShareMenuItem";
     import FollowMenuItem from "../components/FollowMenuItem";
     import ItemMenu from "../components/ItemMenu";
@@ -73,7 +73,7 @@
 
     export default {
         name: "Artist",
-        components: {TracksGrid, GlowImage, ItemMenu, FollowMenuItem, ShareMenuItem, AlbumSquare, AlbumRow, TrackItem},
+        components: {TracksGrid, GlowImage, ItemMenu, FollowMenuItem, ShareMenuItem, ItemSquare, ItemRow, TrackItem},
         data: () => ({}),
         async mounted() {
             await this.$store.dispatch('loadArtist', this.id);
@@ -241,7 +241,7 @@
         width: 100%;
     }
 
-    .album-row {
+    .item-row {
         margin-left: -30px;
         width: calc(100% + 60px);
     }

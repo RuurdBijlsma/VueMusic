@@ -6,11 +6,11 @@
             <div class="categories">
                 <h2>Curated lists</h2>
                 <div class="category-grid">
-                    <album-square
+                    <item-square
                             type="category"
-                            :album="category"
+                            :item="category"
                             class="category"
-                            v-for="category in $store.state.browse.categories"></album-square>
+                            v-for="category in $store.state.browse.categories"></item-square>
                 </div>
             </div>
             <div class="genres">
@@ -32,11 +32,11 @@
 </template>
 
 <script>
-    import AlbumSquare from "../components/AlbumSquare";
+    import ItemSquare from "../components/ItemSquare";
 
     export default {
         name: "Browse",
-        components: {AlbumSquare},
+        components: {ItemSquare},
         mounted() {
             this.$store.dispatch('refreshBrowsePage');
         }

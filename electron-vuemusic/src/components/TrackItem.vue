@@ -1,6 +1,6 @@
 <template>
-    <div class="track-item" v-if="track!==null" :style="{width: menu ? '100%' : '300px'}">
-        <div class="track-content" :style="{maxWidth:menu?'228px':'300px'}">
+    <div class="track-item" v-if="track!==null">
+        <div class="track-content">
             <div class="left-square">
                 <div v-if="!albumList" class="album-art" :style="{backgroundImage: `url(${image})`}"></div>
                 <div v-else class="album-number">{{track.track_number}}</div>
@@ -16,12 +16,11 @@
                 </div>
             </div>
             <div class="track-info">
-                <div class="track-title" :title="track.name" :style="{maxWidth:menu?'173px':'245px'}">
+                <div class="track-title" :title="track.name">
                     {{track.name}}
                 </div>
                 <div class="track-artist">
-                    <artists-span grey class="artists-span" :artists="track.artists"
-                                  :style="{maxWidth:menu?'173px':'245px'}"></artists-span>
+                    <artists-span grey class="artists-span" :artists="track.artists"></artists-span>
                 </div>
             </div>
         </div>
@@ -77,6 +76,8 @@
         display: flex;
         flex-grow: 10;
         align-items: center;
+        width: 100%;
+        overflow: hidden;
     }
 
     .left-square {
@@ -135,6 +136,8 @@
     .track-info {
         margin-left: 15px;
         line-height: 17px;
+        max-width: 100%;
+        overflow: hidden;
     }
 
     .track-title {
@@ -143,5 +146,9 @@
         overflow: hidden;
         white-space: nowrap;
         width: 100%;
+    }
+
+    .icons {
+        display: inline-flex;
     }
 </style>

@@ -3,12 +3,12 @@
         <div class="padded start-pad">
             <h3 v-if="result.artists.length > 0">Artists</h3>
         </div>
-        <album-row v-if="result.artists.length > 0" :albums="result.artists"></album-row>
+        <item-row v-if="result.artists.length > 0" :items="result.artists"></item-row>
         <div class="padded">
             <v-divider v-if="result.artists.length > 0"></v-divider>
             <h3 v-if="result.albums.length > 0">Albums</h3>
         </div>
-        <album-row v-if="result.albums.length > 0" :albums="result.albums"></album-row>
+        <item-row v-if="result.albums.length > 0" :items="result.albums"></item-row>
         <div class="padded">
             <v-divider v-if="result.albums.length > 0"></v-divider>
             <h3 v-if="result.tracks.length > 0">Tracks</h3>
@@ -16,17 +16,17 @@
             <v-divider v-if="result.tracks.length > 0"></v-divider>
             <h3 v-if="result.playlists.length > 0">Playlists</h3>
         </div>
-        <album-row v-if="result.playlists.length > 0" :albums="result.playlists"></album-row>
+        <item-row v-if="result.playlists.length > 0" :items="result.playlists"></item-row>
     </div>
 </template>
 
 <script>
-    import AlbumRow from "./AlbumRow";
+    import ItemRow from "./ItemRow";
     import TracksGrid from "./TracksGrid";
 
     export default {
         name: "SearchResults",
-        components: {TracksGrid, AlbumRow},
+        components: {TracksGrid, ItemRow},
         props: {
             result: {
                 type: Object,

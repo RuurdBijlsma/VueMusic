@@ -1,14 +1,14 @@
 <template>
-    <div class="track-row" v-if="track!==null">
-        <track-item :track="track" :album-list="albumList"></track-item>
-        <div v-if="!noAlbum" class="track-album" :title="track.album.name">
+    <div ref="trackRow" class="track-row" v-if="track!==null" :class="rowClass">
+        <track-item class="track-left" :track="track" :album-list="albumList"></track-item>
+        <div class="track-middle" :title="track.album.name">
             <router-link class="album-link" tag="span"
                          :to="`/album/${$store.getters.urlName(track.album.name)}/${track.album.id}`">
                 {{track.album.name}}
             </router-link>
         </div>
         <div class="track-right">
-            <div v-if="!compactMenu" class="track-duration">{{duration}}</div>
+            <div class="track-duration">{{duration}}</div>
             <item-menu :item="track"></item-menu>
         </div>
     </div>
@@ -31,20 +31,33 @@
                 type: Object,
                 default: null,
             },
-            noAlbum: {
-                type: Boolean,
-                default: false,
-            },
-            compactMenu: {
-                type: Boolean,
-                default: false,
-            },
             albumList: {
                 type: Boolean,
                 default: false,
             },
         },
+        data: () => ({
+            rowWidth: 0,
+        }),
+        mounted() {
+            this.windowResize();
+            window.addEventListener('resize', this.windowResize);
+        },
+        beforeDestroy() {
+            window.removeEventListener('resize', this.windowResize);
+        },
+        methods: {
+            windowResize() {
+                this.rowWidth = this.$refs.trackRow.getBoundingClientRect().width;
+            },
+        },
         computed: {
+            rowClass() {
+                if (this.rowWidth > 623) {
+                    return 'big';
+                }
+                return 'small';
+            },
             duration() {
                 return Utils.secondsToHms(this.track.duration_ms / 1000);
             }
@@ -61,21 +74,26 @@
         align-items: center;
     }
 
-    .artists-span >>> a {
-        text-decoration: none;
-        opacity: 0.7;
+    .track-left {
+        min-width: calc(50% - 47px + 50px);
     }
 
-    .track-album {
-        flex-grow: 1;
-        width: 100%;
+    .small .track-left {
+        min-width: calc(100% - 94px);
+    }
+
+    .track-middle {
         opacity: 0.7;
-        max-width: 200px;
-        margin-right: 15px;
         text-overflow: ellipsis;
         overflow: hidden;
         white-space: nowrap;
         font-weight: 500;
+        padding-left: 10px;
+        min-width: calc(50% - 47px - 50px);
+    }
+
+    .small .track-middle {
+        display: none;
     }
 
     .album-link {
@@ -89,6 +107,8 @@
     .track-right {
         display: flex;
         align-items: center;
+        justify-content: flex-end;
+        min-width: 94px;
     }
 
     .track-duration {
