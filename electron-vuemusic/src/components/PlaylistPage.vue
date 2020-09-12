@@ -42,6 +42,7 @@
                         this.revertThemeColor();
                         return;
                     }
+                    console.log("Applying theme color", this.playlist.primary_color);
                     this.fgLegible = fgLegible;
 
                     this.previousColors = {
