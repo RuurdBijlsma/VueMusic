@@ -5,23 +5,29 @@
             <v-divider class="divider"></v-divider>
             <div class="buttons">
                 <v-btn small color="primary">
-                    <v-icon>mdi-play</v-icon>
+                    <v-icon small class="mr-2">mdi-play</v-icon>
                     Play
                 </v-btn>
                 <v-btn small v-if="tracks.length > 1" color="primary">
-                    <v-icon small>mdi-shuffle</v-icon>
+                    <v-icon small class="mr-2">mdi-shuffle</v-icon>
                     Shuffle
                 </v-btn>
             </div>
             <div class="sub-caption">
+                <span v-if="loading" class="loading-indicator">
+                    <v-progress-circular class="spinner" indeterminate size="10" width="1"></v-progress-circular>
+                    <span>Creating radio</span>
+                </span>
+                <span v-else>
                 <span>{{tracks.length}} tracks</span>
                 <span class="dot">•</span>
                 <span>{{fullDuration}}</span>
+                </span>
             </div>
         </div>
         <div v-for="track in tracks" :key="track.id">
             <v-divider></v-divider>
-            <track-row :track="track"></track-row>
+            <track-row :context-item="{type: 'radio', id: 'radio', tracks}" :track="track"></track-row>
         </div>
     </div>
 </template>
@@ -35,12 +41,14 @@
         components: {TrackRow},
         data: () => ({
             tracks: [],
+            loading: false,
         }),
         async mounted() {
             await this.loadRadio();
         },
         methods: {
             async loadRadio() {
+                this.loading = true;
                 let options = this.$route.query;
                 for (let key in options) {
                     if (!options.hasOwnProperty(key))
@@ -51,6 +59,7 @@
                 }
 
                 this.tracks = await this.$store.dispatch('getRadioTracks', options);
+                this.loading = false;
             },
         },
         computed: {
@@ -101,5 +110,16 @@
 
     .dot {
         margin: 0 10px;
+    }
+
+    .loading-indicator {
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        vertical-align: top;
+    }
+
+    .spinner {
+        margin-right: 5px;
     }
 </style>

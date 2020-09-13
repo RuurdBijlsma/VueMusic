@@ -38,6 +38,7 @@
             contextItem: {
                 type: Object,
                 default: null,
+                required: true,
             },
         },
         data: () => ({

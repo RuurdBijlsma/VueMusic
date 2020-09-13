@@ -62,7 +62,7 @@
         methods: {
             play() {
                 console.log(this.contextItem);
-                this.$store.commit('track', this.track);
+                this.$store.commit('track', {track:this.track, contextItem: this.contextItem});
             }
         },
     }

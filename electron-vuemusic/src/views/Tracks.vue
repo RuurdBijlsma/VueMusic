@@ -11,11 +11,11 @@
                 <v-divider class="divider"></v-divider>
                 <div class="buttons">
                     <v-btn small color="primary">
-                        <v-icon>mdi-play</v-icon>
+                        <v-icon small class="mr-2">mdi-play</v-icon>
                         Play
                     </v-btn>
                     <v-btn small v-if="tracks.length > 1" color="primary">
-                        <v-icon small>mdi-shuffle</v-icon>
+                        <v-icon small class="mr-2">mdi-shuffle</v-icon>
                         Shuffle
                     </v-btn>
                 </div>
@@ -35,7 +35,7 @@
                 <track-row
                         :no-album="hideAlbum"
                         :compact-menu="compactMenu"
-                        :context-item="{type: 'liked', tracks}"
+                        :context-item="{type: 'liked', id: 'liked', tracks}"
                         :album-list="false"
                         :key="item.id"
                         :track="item"></track-row>

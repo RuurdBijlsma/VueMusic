@@ -56,6 +56,8 @@ export default new Vuex.Store({
         artist: {},
         category: {},
         user: {},
+
+        ...(localStorage.getItem('stateCache') === null ? {} : JSON.parse(localStorage.stateCache)),
     },
     mutations: {
         cacheAll: state => {
@@ -64,14 +66,8 @@ export default new Vuex.Store({
             for (let field of cachedFields)
                 cache[field] = state[field];
             localStorage.stateCache = JSON.stringify(cache);
+
             console.log("State cache complete");
-        },
-        restoreFromCache: (state) => {
-            let cache = localStorage.getItem('stateCache') === null ? {} : JSON.parse(localStorage.stateCache);
-            console.log("Restoring from cache", cache);
-            for (let key in cache)
-                if (cache.hasOwnProperty(key))
-                    state[key] = cache[key];
         },
         addSnackObject: (state, snack) => state.snackbars.push(snack),
         removeSnack: (state, snack) => state.snackbars.splice(state.snackbars.indexOf(snack), 1),
@@ -182,7 +178,6 @@ export default new Vuex.Store({
     },
     actions: {
         initialize: async ({commit, dispatch}) => {
-            commit('restoreFromCache');
             await dispatch('processAuth');
             await dispatch('_initialize');
         },

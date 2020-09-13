@@ -37,11 +37,11 @@
         <div class="buttons">
             <div>
                 <v-btn class="play-button" small :color="fgLegible ? 'primary' : 'default'">
-                    <v-icon>mdi-play</v-icon>
+                    <v-icon small class="mr-2">mdi-play</v-icon>
                     Play
                 </v-btn>
                 <v-btn v-if="playlist.tracks.length > 1" small :color="fgLegible ? 'primary' : 'default'">
-                    <v-icon small>mdi-shuffle</v-icon>
+                    <v-icon small class="mr-2">mdi-shuffle</v-icon>
                     Shuffle
                 </v-btn>
             </div>

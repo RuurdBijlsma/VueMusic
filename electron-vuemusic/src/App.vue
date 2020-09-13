@@ -82,7 +82,8 @@
     //TOOD:
     //load active track and queue when playing track
     //show queue
-    //
+    //maybe remove spotify stuff from store.js into spotify-module.js
+    //Delete cache every week or so to prevent massive cache causing lag
 
 
     export default {
@@ -100,6 +101,7 @@
 
             window.onbeforeunload = e => {
                 this.$store.commit('cacheAll');
+                this.$store.commit('cacheAllMedia');
                 delete e['returnValue'];
             };
 
@@ -110,6 +112,7 @@
             }
             this.cacheInterval = setInterval(() => {
                 this.$store.commit('cacheAll');
+                this.$store.commit('cacheAllMedia');
             }, 1000 * 60 * 5);//Cache every 5 minutes
 
             console.log(this.$store);
