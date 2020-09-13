@@ -21,12 +21,13 @@
             </div>
         </v-main>
 
-        <v-card flat class="bottom-media-control" v-if="$store.state.windowWidth <= 680" color="primaryLight">
+        <v-card flat class="bottom-media-control"
+                v-if="$store.state.windowWidth <= 680 && $store.getters.isTrackSet" color="primaryLight">
             <div class="info-pane">
                 <media-info class="media-info"></media-info>
-                <v-btn class="favorite-heart" icon>
-                    <v-icon>mdi-heart-outline</v-icon>
-                </v-btn>
+                <div class="favorite-button">
+                    <follow-button class="follow-button" :item="$store.state.media.track"></follow-button>
+                </div>
             </div>
             <div class="full-controls">
                 <media-controls :full="$store.state.windowWidth > 430"></media-controls>
@@ -76,14 +77,17 @@
     import MediaControls from "./components/MediaControls";
     import MediaSeek from "./components/MediaSeek";
     import NavContent from "./components/NavContent";
+    import FollowButton from "./components/FollowButton";
 
     //TOOD:
-    //After that, add functionality xd
+    //load active track and queue when playing track
+    //show queue
+    //
 
 
     export default {
         name: 'App',
-        components: {NavContent, MediaSeek, MediaControls, MediaInfo, ToolBar},
+        components: {FollowButton, NavContent, MediaSeek, MediaControls, MediaInfo, ToolBar},
         data: () => ({
             drawer: true,
             cacheInterval: -1,
@@ -197,8 +201,10 @@
         flex-grow: 1;
     }
 
-    .favorite-heart {
+    .favorite-button {
         min-width: 50px;
+        display: flex;
+        justify-content: center;
     }
 
     .full-controls {

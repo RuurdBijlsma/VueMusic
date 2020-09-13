@@ -2,11 +2,11 @@
     <div class="user" v-if="$store.state.user[id]">
         <div class="banner">
             <div class="banner-background" :style="{
-                backgroundImage: `url(${image})`,
+                backgroundImage: `url(${$store.getters.itemImage(user)})`,
                 opacity: $vuetify.theme.dark ? 0.1 : 0.3,
             }"></div>
             <div class="user-center">
-                <glow-image rounded :url="image" :size="250"></glow-image>
+                <glow-image rounded :url="$store.getters.itemImage(user)" :size="250"></glow-image>
             </div>
             <div class="banner-content">
                 <div class="buttons">
@@ -54,11 +54,6 @@
             user() {
                 console.log('User', this.$store.state.user[this.id]);
                 return this.$store.state.user[this.id];
-            },
-            image() {
-                if (this.user.images.length === 0)
-                    return this.$store.getters.notFoundUser;
-                return this.user.images[0].url
             },
         },
         watch: {

@@ -35,6 +35,7 @@
                 <track-row
                         :no-album="hideAlbum"
                         :compact-menu="compactMenu"
+                        :context-item="{type: 'liked', tracks}"
                         :album-list="false"
                         :key="item.id"
                         :track="item"></track-row>

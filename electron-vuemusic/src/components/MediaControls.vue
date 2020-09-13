@@ -1,5 +1,5 @@
 <template>
-    <div class="controls" :style="{minWidth: full? '156px':'96px'}">
+    <div class="controls" :style="{minWidth: full? '156px':'96px'}" v-if="$store.getters.isTrackSet">
         <v-btn icon small v-if="full">
             <v-icon small>mdi-shuffle</v-icon>
         </v-btn>

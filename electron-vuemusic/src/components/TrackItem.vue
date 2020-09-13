@@ -2,15 +2,15 @@
     <div class="track-item" v-if="track!==null">
         <div class="track-content">
             <div class="left-square">
-                <div v-if="!albumList" class="album-art" :style="{backgroundImage: `url(${image})`}"></div>
+                <div v-if="!albumList" class="album-art" :style="{backgroundImage: `url(${$store.getters.itemImage(track)})`}"></div>
                 <div v-else class="album-number">{{track.track_number}}</div>
                 <v-card v-if="albumList" class="play-button" flat>
-                    <v-btn icon>
+                    <v-btn icon @click="play">
                         <v-icon>mdi-play</v-icon>
                     </v-btn>
                 </v-card>
                 <div v-else class="play-button art-button">
-                    <v-btn icon color="white">
+                    <v-btn @click="play" icon color="white">
                         <v-icon>mdi-play</v-icon>
                     </v-btn>
                 </div>
@@ -59,14 +59,12 @@
                 default: null,
             },
         },
-        computed: {
-            image() {
-                if (this.track.hasOwnProperty('album') && this.track.album.images.length > 0) {
-                    return this.track.album.images[0].url;
-                }
-                return this.$store.getters.notFoundImage;
-            },
-        }
+        methods: {
+            play() {
+                console.log(this.contextItem);
+                this.$store.commit('track', this.track);
+            }
+        },
     }
 </script>
 

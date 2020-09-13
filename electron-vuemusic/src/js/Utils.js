@@ -72,10 +72,6 @@ export default class Utils {
         return array;
     }
 
-    static trackToQuery(track) {
-        return `${track.name} - ${track.artists.map(a => a.name).join(', ')}`;
-    }
-
     static bytesToReadable(bytes) {
         let length = Math.log10(bytes);
         if (length < 2) {

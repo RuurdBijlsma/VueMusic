@@ -130,6 +130,25 @@ export default new Vuex.Store({
             let i = Math.floor(Math.random() * 7) + 1;
             return `img/notfound/${i}.png`;
         },
+        itemImage: (state, getters) => item => {
+            let type = item.type || 'category';
+            if (type === 'category') {
+                if (item.icons.length > 0)
+                    return item.icons[0].url;
+                else
+                    return getters.notFoundImage;
+            } else if (type === 'track') {
+                if (item.album && item.album.images && item.album.images.length > 0)
+                    return item.album.images[0].url;
+                else
+                    return getters.notFoundImage;
+            } else {
+                if (item.images.length > 0)
+                    return item.images[0].url;
+                else
+                    return type === 'user' ? getters.notFoundUser : getters.notFoundImage;
+            }
+        },
         isLoggedIn: state => {
             return state.auth.code !== null &&
                 state.auth.token !== null &&
@@ -153,7 +172,7 @@ export default new Vuex.Store({
                 return `${type}/${item.id}`;
             return `/${type}/${getters.urlName(name)}/${item.id}`;
         },
-        shareUrl: (state, getters) => (item) => {
+        shareUrl: (state, getters) => item => {
             return `${location.origin}/#${getters.relativeItemUrl(item)}`;
         },
         isArtistFollowed: state => artist => state.library.artists.find(a => a.id === artist.id),
@@ -215,12 +234,13 @@ export default new Vuex.Store({
                 }, timeout + 500);
             });
         },
-        share: async ({dispatch}, {url, copy}) => {
+        share: async ({dispatch, getters}, {item, copy}) => {
+            let url = getters.shareUrl(item);
             if (navigator.share instanceof Function) {
                 await navigator.share({
-                    name: this.playlist.name,
-                    text: this.playlist.description || '',
-                    url: url,
+                    name: item.name || item.display_name,
+                    text: item.description || '',
+                    url,
                 });
             } else {
                 await copy(url);

@@ -1,10 +1,9 @@
 <template>
     <v-lazy class="item-square" :width="(big ? 240 : small ? 80 : 180)" :min-height="big ? 240 : small ? 80 : 180">
-        <!--    <div class="item-square">-->
         <router-link tag="span" :to="$store.getters.relativeItemUrl(item)">
             <div class="image" :class="{big, small}"
                  :style="{
-                    backgroundImage: `url(${image})`,
+                    backgroundImage: `url(${$store.getters.itemImage(item)})`,
                     borderRadius: type === 'artist' ? '50%' : '5px',
                  }">
             </div>
@@ -28,12 +27,10 @@
                 <p class="preview-year" v-if="showYear">{{new Date(item.release_date).getFullYear()}}</p>
             </div>
         </router-link>
-        <!--    </div>-->
     </v-lazy>
 </template>
 
 <script>
-    import Utils from "../js/Utils";
     import ShareMenuItem from "./ShareMenuItem";
     import FollowMenuItem from "./FollowMenuItem";
     import ItemMenu from "./ItemMenu";
@@ -83,19 +80,6 @@
                     return 'category';
                 return this.item.type;
             },
-            image() {
-                if (this.type === 'category') {
-                    if (this.item.icons.length > 0)
-                        return this.item.icons[0].url;
-                    else
-                        return this.$store.getters.notFoundImage;
-                } else {
-                    if (this.item.images.length > 0)
-                        return this.item.images[0].url;
-                    else
-                        return this.$store.getters.notFoundImage;
-                }
-            }
         }
     }
 </script>

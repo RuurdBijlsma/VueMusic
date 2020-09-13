@@ -1,6 +1,6 @@
 <template>
     <div class="playlist" v-if="playlist">
-        <glow-image class="art-section" :url="image" :size="imageSize"
+        <glow-image class="art-section" :url="$store.getters.itemImage(playlist)" :size="imageSize"
                     v-if="$store.state.windowWidth > 1030"></glow-image>
         <track-section :highlight-id="highlightId"
                        :show-art="$store.state.windowWidth <= 1030"
@@ -79,11 +79,6 @@
             }
         },
         computed: {
-            image() {
-                if (this.playlist.images.length > 0)
-                    return this.playlist.images[0].url;
-                return this.$store.getters.notFoundImage;
-            },
             imageSize() {
                 let width = this.$store.state.windowWidth;
                 if (width < 1030)

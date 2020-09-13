@@ -1,6 +1,6 @@
 <template>
     <div class="playlist-meta">
-        <glow-image :size="imageSize" v-if="showArt" :url="image" class="art-section"></glow-image>
+        <glow-image :size="imageSize" v-if="showArt" :url="$store.getters.itemImage(playlist)" class="art-section"></glow-image>
         <h2 class="name">{{playlist.name}}</h2>
         <h2 class="album-artist" v-if="isAlbum"
             :title="playlist.artists.map(t=>t.name).join(', ')">
@@ -100,11 +100,6 @@
                 if (this.tracks.length === 0)
                     return Utils.secondsToHms(0);
                 return Utils.secondsToHms(this.tracks.map(t => t.duration_ms / 1000).reduce((a, b) => a + b));
-            },
-            image() {
-                if (this.playlist.images.length > 0)
-                    return this.playlist.images[0].url;
-                return this.$store.getters.notFoundImage;
             },
             imageSize() {
                 let width = this.$store.state.windowWidth;

@@ -2,7 +2,7 @@
     <div class="toolbar">
         <logo class="logo" v-if="mobile"></logo>
         <media-controls full class="controls" v-if="!mobile"></media-controls>
-        <div class="media-info" v-if="!mobile">
+        <div class="media-info" v-if="!mobile && $store.getters.isTrackSet">
             <media-seek class="top-seeker" no-background small-time></media-seek>
             <media-info class="top-info"></media-info>
         </div>

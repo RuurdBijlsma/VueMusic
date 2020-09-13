@@ -2,7 +2,7 @@
     <div class="seek"
          @mousedown="seekDown"
          @touchstart="touchDown">
-        <span class="time" :class="smallTime ? 'smallTime':''">{{$store.getters.progressHms}}</span>
+        <span class="time" :class="smallTime ? 'smallTime':''">{{$store.getters.currentTimeHms}}</span>
         <v-sheet flat
                  class="seek-background"
                  :color="noBackground ? 'transparent' : 'default'"

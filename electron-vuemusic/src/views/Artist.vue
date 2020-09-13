@@ -2,11 +2,11 @@
     <div class="artist" v-if="$store.state.artist[id]">
         <div class="banner">
             <div class="banner-background" :style="{
-                backgroundImage: `url(${image})`,
+                backgroundImage: `url(${$store.getters.itemImage(artist)})`,
                 opacity: $vuetify.theme.dark ? 0.1 : 0.3,
             }"></div>
             <div class="artist-center">
-                <glow-image rounded :url="image" :size="250"></glow-image>
+                <glow-image rounded :url="$store.getters.itemImage(artist)" :size="250"></glow-image>
             </div>
             <div class="banner-content">
                 <div class="buttons">
@@ -36,7 +36,7 @@
                 </div>
                 <div class="tracks-container" v-if="topTracks.length > 0">
                     <h3>Top tracks</h3>
-                    <track-grid :tracks="topTracks" :context-item="artist"></track-grid>
+                    <track-grid :tracks="topTracks" :context-item="{...artist, tracks: topTracks}"></track-grid>
                 </div>
             </div>
             <v-divider class="divider" v-if="topTracks.length > 0"></v-divider>
@@ -122,11 +122,6 @@
                 if (latestAlbum > latestSingle)
                     return this.albums[0];
                 return this.singles[0];
-            },
-            image() {
-                if (this.artist.images.length === 0)
-                    return this.$store.getters.notFoundImage;
-                return this.artist.images[0].url
             },
         },
         watch: {

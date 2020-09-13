@@ -24,8 +24,8 @@
             async share() {
                 this.loading = true;
                 await this.$store.dispatch('share', {
-                    url: this.$store.getters.shareUrl(this.item),
-                    copy: this.$copyText
+                    item: this.item,
+                    copy: this.$copyText,
                 });
                 this.loading = false;
             }

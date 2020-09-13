@@ -1,6 +1,6 @@
 <template>
     <div ref="trackRow" class="track-row" v-if="track!==null" :class="rowClass">
-        <track-item class="track-left" :track="track" :album-list="albumList"></track-item>
+        <track-item :context-item="contextItem" class="track-left" :track="track" :album-list="albumList"></track-item>
         <div class="track-middle" :title="track.album.name" v-if="!albumList">
             <router-link class="album-link" tag="span"
                          :to="$store.getters.relativeItemUrl(track.album)">
