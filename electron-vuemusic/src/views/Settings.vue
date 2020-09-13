@@ -1,54 +1,56 @@
 <template>
     <div class="settings">
-        <h1 class="page-title">Settings</h1>
-        <v-divider class="divider"></v-divider>
-        <div class="secrets" v-if="$store.state.platform.shouldSetKey">
-            <h2>Secrets</h2>
-            <p class="caption">These values must be set before using the application. Order: Spotify id, Spotify secret,
-                Youtube API key</p>
-            <div class="secret-textarea">
-                <div class="secret-help">
-                    <p>Spotify Client ID</p>
-                    <p>Spotify Client Secret</p>
-                    <p>Youtube API Key</p>
+        <div class="wide">
+            <h1 class="page-title">Settings</h1>
+            <v-divider class="divider"></v-divider>
+            <div class="secrets" v-if="$store.state.platform.shouldSetKey">
+                <h2>Secrets</h2>
+                <p class="caption">These values must be set before using the application. Order: Spotify id, Spotify secret,
+                    Youtube API key</p>
+                <div class="secret-textarea">
+                    <div class="secret-help">
+                        <p>Spotify Client ID</p>
+                        <p>Spotify Client Secret</p>
+                        <p>Youtube API Key</p>
+                    </div>
+                    <v-textarea no-resize spellcheck="false" :rules="secretRules" outlined auto-grow row-height="4"
+                                v-model="secrets"></v-textarea>
                 </div>
-                <v-textarea no-resize spellcheck="false" :rules="secretRules" outlined auto-grow row-height="4"
-                            v-model="secrets"></v-textarea>
+                <p class="key-saved" v-if="$store.getters.isKeySet">
+                    <v-icon color="success">mdi-check</v-icon>
+                    <span>Keys saved!</span>
+                </p>
+                <p v-else class="key-saved">
+                    <v-icon color="error">mdi-close</v-icon>
+                    <span>One ore more keys not valid</span>
+                </p>
             </div>
-            <p class="key-saved" v-if="$store.getters.isKeySet">
-                <v-icon color="success">mdi-check</v-icon>
-                <span>Keys saved!</span>
-            </p>
-            <p v-else class="key-saved">
-                <v-icon color="error">mdi-close</v-icon>
-                <span>One ore more keys not valid</span>
-            </p>
-        </div>
-        <div>
-            <h2>Account</h2>
-            <div class="login" v-if="$store.getters.isKeySet">
-                <div v-if="!$store.getters.isLoggedIn">
-                    <p>Click the button below to log in to your Spotify™ account!</p>
-                    <v-btn outlined color="success" @click="login" :loading="loginLoading">
-                        <v-icon>mdi-spotify</v-icon>
-                        Login
-                    </v-btn>
-                    <v-btn icon color="warning" @click="resetLogin" v-if="loginLoading">
-                        <v-icon>mdi-close</v-icon>
-                    </v-btn>
-                </div>
-            </div>
-            <div v-if="$store.getters.isLoggedIn">
-                <div class="account-info">
-                    <v-avatar>
-                        <img class="avatar" :src="$store.state.userInfo.avatar" alt="user profile image"/>
-                    </v-avatar>
-                    <div>
-                        <h3>{{$store.state.userInfo.name}}</h3>
-                        <p class="caption">{{$store.state.userInfo.mail}}</p>
+            <div>
+                <h2>Account</h2>
+                <div class="login" v-if="$store.getters.isKeySet">
+                    <div v-if="!$store.getters.isLoggedIn">
+                        <p>Click the button below to log in to your Spotify™ account!</p>
+                        <v-btn outlined color="success" @click="login" :loading="loginLoading">
+                            <v-icon>mdi-spotify</v-icon>
+                            Login
+                        </v-btn>
+                        <v-btn icon color="warning" @click="resetLogin" v-if="loginLoading">
+                            <v-icon>mdi-close</v-icon>
+                        </v-btn>
                     </div>
                 </div>
-                <v-btn color="primary" outlined @click="$store.dispatch('spotifyLogout')">Log out</v-btn>
+                <div v-if="$store.getters.isLoggedIn">
+                    <div class="account-info">
+                        <v-avatar>
+                            <img class="avatar" :src="$store.state.userInfo.avatar" alt="user profile image"/>
+                        </v-avatar>
+                        <div>
+                            <h3>{{$store.state.userInfo.name}}</h3>
+                            <p class="caption">{{$store.state.userInfo.mail}}</p>
+                        </div>
+                    </div>
+                    <v-btn color="primary" outlined @click="$store.dispatch('spotifyLogout')">Log out</v-btn>
+                </div>
             </div>
         </div>
     </div>
@@ -93,9 +95,11 @@
 </script>
 
 <style scoped>
-    .settings {
+    .wide{
         padding: 30px;
         max-width: 800px;
+        display: block;
+        margin:0 auto;
     }
 
     .divider {

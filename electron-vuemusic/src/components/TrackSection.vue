@@ -1,6 +1,7 @@
 <template>
     <div v-if="playlist" class="track-section">
         <recycle-scroller
+                ref="scroller"
                 class="scroller"
                 :items="tracks.filter(t=>!t.is_local)"
                 key-field="id"
@@ -45,6 +46,35 @@
                 type: Boolean,
                 default: false,
             },
+            highlightId: {
+                type: String,
+                default: undefined,
+            },
+        },
+        data: () => ({
+            hasHighlighted: false,
+        }),
+        mounted() {
+            this.highlight();
+        },
+        methods: {
+            async highlight() {
+                if (this.highlightId !== undefined && this.playlist && this.playlist.tracks) {
+                    let index = this.playlist.tracks.findIndex(t => t.id === this.highlightId)
+                    if (index !== -1 && this.hasHighlighted === false) {
+                        this.hasHighlighted = true;
+                        console.log("Scroll to highlighted track", this.highlightId);
+                        this.$refs.scroller.scrollToItem(index + 1);
+                        //todo click play on the track here
+                        console.warn("Implement todo here!!");
+                    }
+                }
+            },
+        },
+        watch: {
+            'playlist.tracks'() {
+                this.highlight();
+            },
         },
         computed: {
             compactMenu() {
@@ -64,7 +94,6 @@
                 let metaHeight = 150;
                 let artistHeight = this.isAlbum ? 36 : 0;
                 let dividerHeight = 1;
-                console.log(artHeight + descriptionHeight + metaHeight + artistHeight + dividerHeight);
                 return [{
                     id: '0',
                     size: artHeight + descriptionHeight + metaHeight + artistHeight + dividerHeight

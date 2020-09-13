@@ -8,12 +8,19 @@
         <v-list dense>
             <share-menu-item :item="item"></share-menu-item>
             <follow-menu-item v-if="type!=='category' && type!=='user'" :item="item"></follow-menu-item>
+            <v-list-item v-if="type === 'track' || type === 'artist'" exact :to="`/radio?seed_${type}s=${item.id}`">
+                <v-list-item-icon>
+                    <v-icon>mdi-radio-tower</v-icon>
+                </v-list-item-icon>
+                <v-list-item-title>Go to {{type}} radio</v-list-item-title>
+            </v-list-item>
             <v-list-item v-if="editablePlaylist" @click="remove(item, contextItem)">
                 <v-list-item-icon>
                     <v-progress-circular size="20" indeterminate width="1" v-if="removeLoading"></v-progress-circular>
                     <v-icon v-else>mdi-playlist-minus</v-icon>
                 </v-list-item-icon>
-                <v-list-item-title>Remove from <span class="font-weight-bold">{{contextItem.name}}</span></v-list-item-title>
+                <v-list-item-title>Remove from <span class="font-weight-bold">{{contextItem.name}}</span>
+                </v-list-item-title>
             </v-list-item>
             <v-menu open-on-hover offset-y>
                 <template v-slot:activator="{ on, attrs }">
@@ -27,7 +34,8 @@
                 <v-list dense class="playlist-menu">
                     <v-list-item @click="add(item, playlist)" v-for="playlist of myPlaylists" :key="playlist.id">
                         <v-list-item-icon>
-                            <v-progress-circular size="20" indeterminate width="1" v-if="addLoading[playlist.id]"></v-progress-circular>
+                            <v-progress-circular size="20" indeterminate width="1"
+                                                 v-if="addLoading[playlist.id]"></v-progress-circular>
                             <v-icon v-else>mdi-playlist-music</v-icon>
                         </v-list-item-icon>
                         <v-list-item-title>{{playlist.name}}</v-list-item-title>

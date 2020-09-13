@@ -78,10 +78,6 @@
     import NavContent from "./components/NavContent";
 
     //TOOD:
-    //Radio page
-    //Tune page (from browse)
-    //paste spotify link in search bar -> go to that page in vuemusic instantly (no enter)
-
     //After that, add functionality xd
 
 

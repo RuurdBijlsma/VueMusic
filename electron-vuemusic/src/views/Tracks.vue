@@ -14,7 +14,7 @@
                         <v-icon>mdi-play</v-icon>
                         Play
                     </v-btn>
-                    <v-btn small v-if="tracks.length > 0" color="primary">
+                    <v-btn small v-if="tracks.length > 1" color="primary">
                         <v-icon small>mdi-shuffle</v-icon>
                         Shuffle
                     </v-btn>
@@ -114,8 +114,7 @@
     }
 
     .sub-caption {
-        margin: 15px 0;
-        margin-bottom: 10px;
+        margin: 15px 0 10px;
         text-transform: uppercase;
         font-size: 12px;
         font-weight: bolder;

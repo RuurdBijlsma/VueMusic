@@ -21,7 +21,7 @@ const routes = [
         component: () => import('../views/Browse')
     },
     {
-        path: '/album/:name/:id',
+        path: '/album/:name/:id/:trackId?',
         name: 'Album',
         component: () => import('../views/Album')
     },
@@ -39,6 +39,11 @@ const routes = [
         path: '/user/:name/:id',
         name: 'User',
         component: () => import('../views/User')
+    },
+    {
+        path: '/track/:name/:id',
+        name: 'Track',
+        component: () => import('../views/Track')
     },
     {
         path: '/category/:id',
@@ -74,6 +79,16 @@ const routes = [
         path: '/library',
         name: 'Library',
         component: () => import('../views/Library')
+    },
+    {
+        path: '/tune',
+        name: 'Tune',
+        component: () => import('../views/Tune')
+    },
+    {
+        path: '/radio',
+        name: 'Radio',
+        component: () => import('../views/Radio')
     },
 ]
 

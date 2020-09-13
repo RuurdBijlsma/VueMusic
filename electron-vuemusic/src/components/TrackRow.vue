@@ -1,7 +1,7 @@
 <template>
     <div ref="trackRow" class="track-row" v-if="track!==null" :class="rowClass">
         <track-item class="track-left" :track="track" :album-list="albumList"></track-item>
-        <div class="track-middle" :title="track.album.name">
+        <div class="track-middle" :title="track.album.name" v-if="!albumList">
             <router-link class="album-link" tag="span"
                          :to="`/album/${$store.getters.urlName(track.album.name)}/${track.album.id}`">
                 {{track.album.name}}

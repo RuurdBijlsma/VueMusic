@@ -27,6 +27,23 @@
                 await this.$router.push(`/search${term}`)
             },
         },
+        watch: {
+            async term() {
+                //https://open.spotify.com/track/7AVjkh7mhpeNa3iu3R9oyp?si=BGamcimjRt-WYX5weeaYhw
+                if (this.term.includes('open.spotify.com/')) {
+                    let term = this.term.split('spotify.com/')[1].split('?')[0];
+                    let [type, id] = term.split('/');
+                    await this.$router.push(this.$store.getters.relativeItemUrl({type, id, name: type[0],}));
+                    this.$store.dispatch('addSnack', {text: 'Navigated to Spotify™ link'}).then();
+                    this.$store.commit('liveTerm', '');
+                }
+            },
+        },
+        computed: {
+            term() {
+                return this.$store.state.search.liveTerm;
+            },
+        },
     }
 </script>
 

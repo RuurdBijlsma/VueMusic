@@ -1,5 +1,5 @@
 <template>
-    <playlist-page type="album" :id="id" :playlist="playlist" ref="playlistPage"></playlist-page>
+    <playlist-page :highlight-id="$route.params.trackId" type="album" :id="id" :playlist="playlist" ref="playlistPage"></playlist-page>
 </template>
 
 <script>

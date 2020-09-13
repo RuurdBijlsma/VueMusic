@@ -19,7 +19,7 @@
                 <div class="genre-grid">
                     <v-chip
                             class="genre"
-                            :to="`/radio?genres=${genre.replace(/ /gi, '-').toLowerCase()}`"
+                            :to="`/radio?seed_genres=${genre.replace(/ /gi, '-').toLowerCase()}`"
                             v-for="genre in $store.state.browse.genres"
                     >{{genre}}
                     </v-chip>

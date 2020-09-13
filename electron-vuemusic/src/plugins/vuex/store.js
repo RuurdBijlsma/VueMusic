@@ -146,10 +146,13 @@ export default new Vuex.Store({
         urlName: () => name => {
             return encodeURIComponent(name.toLowerCase().replace(/ /gi, '-').slice(0, 36));
         },
-        shareUrl: (state, getters) => (item) => {
+        relativeItemUrl: (state, getters) => item => {
             let type = item.type || 'category';
             let name = type === 'user' ? item.display_name : item.name;
-            return 'https://idk.com/' + type + '/' + getters.urlName(name) + '/' + item.id;
+            return `/${type}/${getters.urlName(name)}/${item.id}`;
+        },
+        shareUrl: (state, getters) => (item) => {
+            return `${location.origin}/#${getters.relativeItemUrl(item)}`;
         },
         isArtistFollowed: state => artist => state.library.artists.find(a => a.id === artist.id),
         isTrackFollowed: state => track => state.library.tracks.find(a => a.id === track.id),
@@ -529,6 +532,9 @@ export default new Vuex.Store({
             else
                 commit('loadUser', {id, user: {...user, playlists}});
         },
+        loadTrack: async ({state}, id) => {
+            return await state.api.getTrack(id);
+        },
         followPlaylist: async ({state, dispatch}, playlist) => {
             await state.api.followPlaylist(playlist.id);
             await dispatch('refreshUserData', 'playlist');
@@ -593,6 +599,20 @@ export default new Vuex.Store({
             await dispatch('loadPlaylist', playlist.id);
             await dispatch('refreshUserData', 'playlist');
             return state.playlist[playlist.id];
+        },
+        getRadioTracks: async ({state, dispatch}, options) => {
+            let firstTrack = null;
+            let keys = Object.keys(options);
+            if (keys.length === 1 && keys[0] === 'seed_tracks') {
+                let tracks = options['seed_tracks'].split(',');
+                if (tracks.length === 1)
+                    firstTrack = await dispatch('loadTrack', tracks[0]);
+            }
+            options.limit = firstTrack ? 99 : 100;
+            let radioTracks = (await state.api.getRecommendations(options)).tracks;
+            if (firstTrack)
+                return [firstTrack, ...radioTracks];
+            return radioTracks;
         },
     },
     modules: {platform, media, search}
