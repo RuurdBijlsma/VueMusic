@@ -67,7 +67,7 @@
             </v-form>
 
             <v-list-item v-for="playlist in $store.state.library.playlists" :key="playlist.id"
-                         :to="`/playlist/${$store.getters.urlName(playlist.name)}/${playlist.id}`" exact>
+                         :to="$store.getters.relativeItemUrl(playlist)" exact>
                 <v-list-item-icon>
                     <v-icon>mdi-playlist-music</v-icon>
                 </v-list-item-icon>
@@ -103,7 +103,7 @@
                 this.createLoading = false;
                 this.showPlaylistInput = false;
                 this.playlistName = '';
-                await this.$router.push(`/playlist/${this.$store.getters.urlName(playlist.name)}/${playlist.id}`);
+                await this.$router.push($store.getters.relativeItemUrl(playlist));
             }
         },
         watch: {},

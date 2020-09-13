@@ -1,7 +1,7 @@
 <template>
     <v-lazy class="item-square" :width="(big ? 240 : small ? 80 : 180)" :min-height="big ? 240 : small ? 80 : 180">
         <!--    <div class="item-square">-->
-        <router-link tag="span" :to="url">
+        <router-link tag="span" :to="$store.getters.relativeItemUrl(item)">
             <div class="image" :class="{big, small}"
                  :style="{
                     backgroundImage: `url(${image})`,
@@ -71,9 +71,6 @@
             playLoading: false,
         }),
         methods: {
-            urlName(artist) {
-                return Utils.urlName(artist);
-            },
             play(e) {
                 this.playLoading = true;
                 e.stopPropagation();
@@ -81,11 +78,6 @@
             },
         },
         computed: {
-            url() {
-                if (this.type === 'category')
-                    return `/category/${this.item.id}`;
-                return `/${this.type}/${this.$store.getters.urlName(this.item.name)}/${this.item.id}`;
-            },
             type() {
                 if (!this.item.type)
                     return 'category';

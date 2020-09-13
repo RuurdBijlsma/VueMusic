@@ -3,7 +3,7 @@
         <track-item class="track-left" :track="track" :album-list="albumList"></track-item>
         <div class="track-middle" :title="track.album.name" v-if="!albumList">
             <router-link class="album-link" tag="span"
-                         :to="`/album/${$store.getters.urlName(track.album.name)}/${track.album.id}`">
+                         :to="$store.getters.relativeItemUrl(track.album)">
                 {{track.album.name}}
             </router-link>
         </div>

@@ -5,7 +5,7 @@
         <h2 class="album-artist" v-if="isAlbum"
             :title="playlist.artists.map(t=>t.name).join(', ')">
             <span v-for="(artist, index) in playlist.artists" :key="artist.id">
-            <router-link class="artist-link" :to="`/artist/${$store.getters.urlName(artist.name)}/${artist.id}`">{{artist.name}}</router-link><span
+            <router-link class="artist-link" :to="$store.getters.relativeItemUrl(artist)">{{artist.name}}</router-link><span
                     v-if="index < playlist.artists.length - 1">, </span>
             </span>
         </h2>
@@ -21,7 +21,7 @@
             <span v-else-if="!isAlbum">
                 <span>
                     <span>Created by </span><router-link class="user-link"
-                                                         :to="`/user/${$store.getters.urlName(playlist.owner.display_name)}/${playlist.owner.id}`"
+                                                         :to="$store.getters.relativeItemUrl(playlist.owner)"
                 >{{playlist.owner.display_name}}</router-link>
                 </span>
                 <span class="dot">•</span>

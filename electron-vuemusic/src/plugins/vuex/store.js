@@ -149,6 +149,8 @@ export default new Vuex.Store({
         relativeItemUrl: (state, getters) => item => {
             let type = item.type || 'category';
             let name = type === 'user' ? item.display_name : item.name;
+            if (type === 'category')
+                return `${type}/${item.id}`;
             return `/${type}/${getters.urlName(name)}/${item.id}`;
         },
         shareUrl: (state, getters) => (item) => {

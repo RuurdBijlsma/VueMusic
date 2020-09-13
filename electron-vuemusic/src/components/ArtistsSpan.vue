@@ -5,7 +5,7 @@
                     :tag="grey ? 'span' : 'a'"
                     :style="{opacity: grey ? 0.7 : 1}"
                     class="artist"
-                    :to="`/artist/${$store.getters.urlName(artist.name)}/${artist.id}`">{{artist.name}}</router-link>
+                    :to="$store.getters.relativeItemUrl(artist)">{{artist.name}}</router-link>
             <span v-if="i!==artists.length - 1">, </span>
         </span>
     </span>
