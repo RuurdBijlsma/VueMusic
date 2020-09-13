@@ -80,6 +80,7 @@
     //TOOD:
     //Radio page
     //Tune page (from browse)
+    //paste spotify link in search bar -> go to that page in vuemusic instantly (no enter)
 
     //After that, add functionality xd
 
@@ -101,10 +102,12 @@
                 this.$store.commit('cacheAll');
                 delete e['returnValue'];
             };
-            let ipc = window.require('electron').ipcRenderer;
-            ipc.on('before-quit', () => {
-                this.$store.commit('cacheAll');
-            });
+
+            if (this.$store.state.platform.type === 'electron') {
+                window.require('electron').ipcRenderer.on('before-quit', () => {
+                    this.$store.commit('cacheAll');
+                });
+            }
             this.cacheInterval = setInterval(() => {
                 this.$store.commit('cacheAll');
             }, 1000 * 60 * 5);//Cache every 5 minutes
