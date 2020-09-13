@@ -1,5 +1,6 @@
 <template>
-    <div class="item-square">
+    <v-lazy class="item-square" :width="(big ? 240 : small ? 80 : 180)" :min-height="big ? 240 : small ? 80 : 180">
+        <!--    <div class="item-square">-->
         <router-link tag="span" :to="url">
             <div class="image" :class="{big, small}"
                  :style="{
@@ -27,7 +28,8 @@
                 <p class="preview-year" v-if="showYear">{{new Date(item.release_date).getFullYear()}}</p>
             </div>
         </router-link>
-    </div>
+        <!--    </div>-->
+    </v-lazy>
 </template>
 
 <script>

@@ -91,7 +91,7 @@
                 return 0;
             },
             tracks() {
-                return this.isAlbum ? this.playlist.tracks : this.playlist.tracks.map(t => t.track)
+                return this.playlist.tracks;
             },
             isAlbum() {
                 return this.playlist.type === 'album';

@@ -51,10 +51,21 @@
 
             <div class="playlist-header" v-if="$store.state.library.playlists.length > 0">
                 <v-subheader>Playlists</v-subheader>
-                <v-btn icon small title="Create new playlist" class="add-playlist">
-                    <v-icon small>mdi-plus</v-icon>
+                <v-btn @click="showPlaylistInput=true" v-if="!showPlaylistInput" icon small title="Create new playlist"
+                       class="add-playlist">
+                    <v-icon x-small>mdi-plus</v-icon>
                 </v-btn>
+                <v-btn @click="showPlaylistInput=false" small text v-else>Cancel</v-btn>
             </div>
+            <v-form v-if="showPlaylistInput" @submit.prevent="createPlaylist"
+                    class="create-playlist">
+                <v-text-field autofocus :rules="playlistRules" label="Playlist name" outlined dense
+                              v-model="playlistName"></v-text-field>
+                <v-btn icon type="submit" :loading="createLoading">
+                    <v-icon>mdi-plus</v-icon>
+                </v-btn>
+            </v-form>
+
             <v-list-item v-for="playlist in $store.state.library.playlists" :key="playlist.id"
                          :to="`/playlist/${$store.getters.urlName(playlist.name)}/${playlist.id}`" exact>
                 <v-list-item-icon>
@@ -75,10 +86,26 @@
     export default {
         name: "NavContent",
         components: {SearchInput, Logo},
-        data: () => ({}),
+        data: () => ({
+            showPlaylistInput: false,
+            playlistRules: [
+                v => v.length > 0 || "Name can't be empty",
+            ],
+            playlistName: '',
+            createLoading: false,
+        }),
         mounted() {
         },
-        methods: {},
+        methods: {
+            async createPlaylist() {
+                this.createLoading = true;
+                let playlist = await this.$store.dispatch('createPlaylist', this.playlistName);
+                this.createLoading = false;
+                this.showPlaylistInput = false;
+                this.playlistName = '';
+                await this.$router.push(`/playlist/${this.$store.getters.urlName(playlist.name)}/${playlist.id}`);
+            }
+        },
         watch: {},
     }
 </script>
@@ -102,5 +129,13 @@
 
     .add-playlist {
         opacity: 0.7;
+    }
+
+    .create-playlist {
+        display: flex;
+    }
+
+    .create-playlist > *:last-child {
+        margin-top: 2px;
     }
 </style>

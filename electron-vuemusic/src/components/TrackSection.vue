@@ -14,6 +14,7 @@
             <div class="scroll-item" v-if="index>0">
                 <v-divider></v-divider>
                 <track-row
+                        :context-item="playlist"
                         :no-album="hideAlbum || isAlbum"
                         :compact-menu="compactMenu"
                         :album-list="isAlbum"
@@ -57,14 +58,13 @@
                 return this.playlist.type === 'album';
             },
             tracks() {
-                let tracks = this.isAlbum ?
-                    this.playlist.tracks.map(t => ({...t, size: 51})) :
-                    this.playlist.tracks.map(t => ({...t.track, size: 51}));
+                let tracks = this.playlist.tracks.map(t => ({...t, size: 51}));
                 let artHeight = this.showArt ? 380 : 0;
                 let descriptionHeight = this.isAlbum || this.playlist.description.length === 0 ? 0 : 80;
                 let metaHeight = 150;
                 let artistHeight = this.isAlbum ? 36 : 0;
                 let dividerHeight = 1;
+                console.log(artHeight + descriptionHeight + metaHeight + artistHeight + dividerHeight);
                 return [{
                     id: '0',
                     size: artHeight + descriptionHeight + metaHeight + artistHeight + dividerHeight

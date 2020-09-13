@@ -36,7 +36,7 @@
                 </div>
                 <div class="tracks-container" v-if="topTracks.length > 0">
                     <h3>Top tracks</h3>
-                    <tracks-grid :tracks="topTracks"></tracks-grid>
+                    <track-grid :tracks="topTracks" :context-item="artist"></track-grid>
                 </div>
             </div>
             <v-divider class="divider" v-if="topTracks.length > 0"></v-divider>
@@ -69,11 +69,11 @@
     import FollowMenuItem from "../components/FollowMenuItem";
     import ItemMenu from "../components/ItemMenu";
     import GlowImage from "../components/GlowImage";
-    import TracksGrid from "../components/TracksGrid";
+    import TrackGrid from "../components/TrackGrid";
 
     export default {
         name: "Artist",
-        components: {TracksGrid, GlowImage, ItemMenu, FollowMenuItem, ShareMenuItem, ItemSquare, ItemRow, TrackItem},
+        components: {TrackGrid, GlowImage, ItemMenu, FollowMenuItem, ShareMenuItem, ItemSquare, ItemRow, TrackItem},
         data: () => ({}),
         async mounted() {
             await this.$store.dispatch('loadArtist', this.id);

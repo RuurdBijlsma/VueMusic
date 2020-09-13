@@ -26,7 +26,7 @@
         </div>
         <div class="icons" v-if="menu">
             <follow-button :item="track"></follow-button>
-            <item-menu :item="track"></item-menu>
+            <item-menu :context-item="contextItem" :item="track"></item-menu>
         </div>
     </div>
 </template>
@@ -53,6 +53,10 @@
             menu: {
                 type: Boolean,
                 default: false,
+            },
+            contextItem: {
+                type: Object,
+                default: null,
             },
         },
         computed: {

@@ -189,8 +189,14 @@ export default new Vuex.Store({
                 refresh: null,
                 expiryDate: null,
             });
-            commit('userInfo', []);
-            commit('user', []);
+            commit('userInfo', {
+                id: '',
+                name: '',
+                mail: '',
+                country: '',
+                followers: 0,
+                avatar: 'img/no-user.jpg',
+            });
             await commit('cacheAll');
             clearTimeout(state.timeout);
         },
@@ -443,9 +449,9 @@ export default new Vuex.Store({
             let retrieval = () => state.api.getPlaylist(id);
             for await(let batch of await dispatch('retrieveSpotifyArray', retrieval)) {
                 if (batch.items) {
-                    commit('extendPlaylist', {id, tracks: batch.items});
+                    commit('extendPlaylist', {id, tracks: batch.items.map(t => t.track)});
                 } else {
-                    commit('loadPlaylist', {id, playlist: {...batch, tracks: batch.tracks.items}});
+                    commit('loadPlaylist', {id, playlist: {...batch, tracks: batch.tracks.items.map(t => t.track)}});
                 }
             }
         },
@@ -525,11 +531,12 @@ export default new Vuex.Store({
         },
         followPlaylist: async ({state, dispatch}, playlist) => {
             await state.api.followPlaylist(playlist.id);
-            await dispatch('refreshUserData');
+            await dispatch('refreshUserData', 'playlist');
         },
         unfollowPlaylist: async ({state, dispatch}, playlist) => {
             await state.api.unfollowPlaylist(playlist.id);
-            await dispatch('refreshUserData');
+            await dispatch('refreshUserData', 'playlist');
+            await dispatch('loadUser', state.userInfo.id);
         },
         followArtist: async ({state, dispatch}, artist) => {
             await state.api.followArtists([artist.id]);
@@ -554,6 +561,38 @@ export default new Vuex.Store({
         unfollowTrack: async ({state, dispatch, commit}, track) => {
             await state.api.removeFromMySavedTracks([track.id]);
             commit('removeFromLibrary', {type: 'track', id: track.id});
+        },
+        addToPlaylist: async ({state, dispatch}, {track, playlist}) => {
+            await dispatch('loadPlaylist', playlist.id);
+            let existingTracks = state.playlist[playlist.id].tracks;
+            console.log(track.id, existingTracks);
+            if (existingTracks.findIndex(t => t.id === track.id) !== -1) {
+                dispatch('addSnack', {text: 'Track is already in playlist'}).then();
+                return;
+            }
+            try {
+                await state.api.addTracksToPlaylist(playlist.id, [track.uri]);
+                await dispatch('loadPlaylist', playlist.id);
+                dispatch('addSnack', {text: 'Added to playlist!'}).then();
+            } catch (e) {
+                console.warn(e);
+                dispatch('addSnack', {text: 'Could not add track to this playlist'}).then();
+            }
+        },
+        removeFromPlaylist: async ({state, dispatch}, {track, playlist}) => {
+            try {
+                await state.api.removeTracksFromPlaylist(playlist.id, [track.uri]);
+                await dispatch('loadPlaylist', playlist.id);
+            } catch (e) {
+                console.warn(e);
+                dispatch('addSnack', {text: 'Could not remove track from this playlist'}).then();
+            }
+        },
+        createPlaylist: async ({state, dispatch, commit}, name) => {
+            let playlist = await state.api.createPlaylist(state.userInfo.id, {name});
+            await dispatch('loadPlaylist', playlist.id);
+            await dispatch('refreshUserData', 'playlist');
+            return state.playlist[playlist.id];
         },
     },
     modules: {platform, media, search}

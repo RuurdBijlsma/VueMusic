@@ -9,7 +9,7 @@
         </div>
         <div class="track-right">
             <div class="track-duration">{{duration}}</div>
-            <item-menu :item="track"></item-menu>
+            <item-menu :context-item="contextItem" :item="track"></item-menu>
         </div>
     </div>
 </template>
@@ -34,6 +34,10 @@
             albumList: {
                 type: Boolean,
                 default: false,
+            },
+            contextItem: {
+                type: Object,
+                default: null,
             },
         },
         data: () => ({

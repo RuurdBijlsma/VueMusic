@@ -2,7 +2,7 @@
     <div class="top-tracks">
         <div class="track-grid-item" v-for="track in tracks" :key="track.id">
             <v-divider class="divider"></v-divider>
-            <track-item :track="track" :album-list="false" menu></track-item>
+            <track-item :context-item="contextItem" :track="track" :album-list="false" menu></track-item>
         </div>
     </div>
 </template>
@@ -11,19 +11,22 @@
     import TrackItem from "./TrackItem";
 
     export default {
-        name: "TracksGrid",
+        name: "TrackGrid",
         components: {TrackItem},
         props: {
             tracks: {
                 type: Array,
                 default: () => [],
-            }
+            },
+            contextItem: {
+                type: Object,
+                default: null,
+            },
         }
     }
 </script>
 
 <style scoped>
-
     .top-tracks {
         width: 100%;
         display: grid;
@@ -31,7 +34,8 @@
         gap: 6px 17px;
         flex-grow: 1;
     }
-    .divider{
-        margin-bottom:6px;
+
+    .divider {
+        margin-bottom: 6px;
     }
 </style>

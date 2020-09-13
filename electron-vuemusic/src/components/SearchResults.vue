@@ -12,7 +12,7 @@
         <div class="padded">
             <v-divider v-if="result.albums.length > 0"></v-divider>
             <h3 v-if="result.tracks.length > 0">Tracks</h3>
-            <tracks-grid v-if="result.tracks.length > 0" :tracks="result.tracks" class="end-pad"></tracks-grid>
+            <track-grid v-if="result.tracks.length > 0" :tracks="result.tracks" class="end-pad"></track-grid>
             <v-divider v-if="result.tracks.length > 0"></v-divider>
             <h3 v-if="result.playlists.length > 0">Playlists</h3>
         </div>
@@ -22,11 +22,11 @@
 
 <script>
     import ItemRow from "./ItemRow";
-    import TracksGrid from "./TracksGrid";
+    import TrackGrid from "./TrackGrid";
 
     export default {
         name: "SearchResults",
-        components: {TracksGrid, ItemRow},
+        components: {TrackGrid, ItemRow},
         props: {
             result: {
                 type: Object,
@@ -35,9 +35,6 @@
         },
         methods: {},
         computed: {
-            compact(){
-                return this.$store.state.windowWidth <= 680;
-            },
             term() {
                 return this.results.term;
             },

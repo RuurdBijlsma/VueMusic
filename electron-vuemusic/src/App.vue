@@ -80,8 +80,6 @@
     //TOOD:
     //Radio page
     //Tune page (from browse)
-    //Create playlist thing
-    //try to improve some performance with v-lazy (in album-row, heavy pages like listen now and browse, etc...)
 
     //After that, add functionality xd
 
