@@ -24,7 +24,7 @@
             </v-list-item>
 
             <v-subheader>Library</v-subheader>
-            <v-list-item to="/artists">
+            <v-list-item to="/library/artists">
                 <v-list-item-icon>
                     <v-icon color="primary">mdi-microphone-variant</v-icon>
                 </v-list-item-icon>
@@ -32,7 +32,7 @@
                     <v-list-item-title>Artists</v-list-item-title>
                 </v-list-item-content>
             </v-list-item>
-            <v-list-item to="/albums">
+            <v-list-item to="/library/albums">
                 <v-list-item-icon>
                     <v-icon color="primary">mdi-record-circle-outline</v-icon>
                 </v-list-item-icon>
@@ -40,7 +40,7 @@
                     <v-list-item-title>Albums</v-list-item-title>
                 </v-list-item-content>
             </v-list-item>
-            <v-list-item to="/tracks">
+            <v-list-item to="/library/tracks">
                 <v-list-item-icon>
                     <v-icon color="primary">mdi-music-note</v-icon>
                 </v-list-item-icon>

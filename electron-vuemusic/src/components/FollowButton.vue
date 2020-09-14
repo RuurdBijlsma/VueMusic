@@ -67,7 +67,4 @@
 </script>
 
 <style scoped>
-    .follow-button {
-
-    }
 </style>

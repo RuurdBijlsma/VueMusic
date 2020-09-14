@@ -1,10 +1,8 @@
 <template>
     <div class="media-info">
         <v-card outlined class="media-card">
-            <div v-if="false" class="media-album"/>
-            <div class="empty-album">
-                <v-icon class="empty-album-icon">mdi-music</v-icon>
-            </div>
+            <div class="media-album"
+                 :style="{backgroundImage: `url(${$store.getters.itemImage($store.getters.track)})`}"/>
             <div class="white-part">
                 <div class="media-text-info">
                     <img v-if="!$store.getters.isTrackSet"
@@ -50,33 +48,21 @@
     .white-part {
         display: flex;
         height: 50px;
-        width: calc(100% - 48px);
+        width: calc(100% - 50px);
         min-width: 100px;
     }
 
     .media-album {
         border-top-left-radius: 2px;
         border-bottom-left-radius: 2px;
-        min-width: 48px;
-        width: 48px;
+        border-top-right-radius: 0 !important;
+        border-bottom-right-radius: 0 !important;
+        min-width: 50px;
+        height: 50px;
+        width: 50px;
         background-repeat: no-repeat;
         background-size: cover;
         background-position: center;
-    }
-
-    .empty-album {
-        border-top-left-radius: 2px !important;
-        border-bottom-left-radius: 2px;
-        width: 48px;
-        min-width: 48px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background-color: rgba(0, 0, 0, 0.1);
-    }
-
-    .empty-album-icon {
-        opacity: 0.2;
     }
 
     .media-text-info {

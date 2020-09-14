@@ -5,7 +5,8 @@
             <v-divider class="divider"></v-divider>
             <div class="secrets" v-if="$store.state.platform.shouldSetKey">
                 <h2>Secrets</h2>
-                <p class="caption">These values must be set before using the application. Order: Spotify id, Spotify secret,
+                <p class="caption">These values must be set before using the application. Order: Spotify id, Spotify
+                    secret,
                     Youtube API key</p>
                 <div class="secret-textarea">
                     <div class="secret-help">
@@ -52,6 +53,13 @@
                     <v-btn color="primary" outlined @click="$store.dispatch('spotifyLogout')">Log out</v-btn>
                 </div>
             </div>
+            <div class="misc">
+                <h2>Miscellaneous</h2>
+                <v-btn outlined @click="$store.commit('clearCache')" color="error">
+                    <v-icon>mdi-error</v-icon>
+                    Clear cache
+                </v-btn>
+            </div>
         </div>
     </div>
 </template>
@@ -95,11 +103,11 @@
 </script>
 
 <style scoped>
-    .wide{
+    .wide {
         padding: 30px;
         max-width: 800px;
         display: block;
-        margin:0 auto;
+        margin: 0 auto;
     }
 
     .divider {
@@ -136,5 +144,9 @@
 
     .account-info > *:first-child {
         margin-right: 10px;
+    }
+
+    .misc {
+        margin-top: 20px;
     }
 </style>

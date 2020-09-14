@@ -188,11 +188,12 @@
         -webkit-app-region: no-drag;
         width: 100%;
         min-width: 100px;
+        margin-bottom: -5px;
     }
 
     .top-seeker {
-        width: calc(100% - 48px);
-        margin-left: 48px;
+        width: calc(100% - 51px);
+        margin-left: 51px;
         position: relative;
         top: 39px;
         z-index: 5;

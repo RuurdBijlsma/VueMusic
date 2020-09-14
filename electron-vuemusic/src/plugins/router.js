@@ -51,22 +51,27 @@ const routes = [
         component: () => import('../views/Category')
     },
     {
-        path: '/artists',
+        path: '/library',
+        name: 'Library',
+        component: () => import('../views/Library')
+    },
+    {
+        path: '/library/artists',
         name: 'Artists',
         component: () => import('../views/Artists')
     },
     {
-        path: '/albums',
+        path: '/library/albums',
         name: 'Albums',
         component: () => import('../views/Albums')
     },
     {
-        path: '/playlists',
+        path: '/library/playlists',
         name: 'Playlists',
         component: () => import('../views/Playlists')
     },
     {
-        path: '/tracks',
+        path: '/library/tracks',
         name: 'Tracks',
         component: () => import('../views/Tracks')
     },
@@ -74,11 +79,6 @@ const routes = [
         path: '/search',
         name: 'Search',
         component: () => import('../views/Search')
-    },
-    {
-        path: '/library',
-        name: 'Library',
-        component: () => import('../views/Library')
     },
     {
         path: '/tune',

@@ -3,7 +3,7 @@
         <h1 class="page-title">Library</h1>
         <v-divider class="divider"></v-divider>
         <div class="link-grid">
-            <v-card rounded outlined class="link" v-for="item in items" :key="item.to" :to="item.to">
+            <v-card rounded outlined class="link" v-for="item in items" :key="item.to" :to="'/library' + item.to">
                 <v-icon x-large>{{item.icon}}</v-icon>
                 <p class="link-name">{{item.name}}</p>
             </v-card>

@@ -25,9 +25,8 @@
                 v-if="$store.state.windowWidth <= 680 && $store.getters.isTrackSet" color="primaryLight">
             <div class="info-pane">
                 <media-info class="media-info"></media-info>
-                <div class="favorite-button">
-                    <follow-button class="follow-button" :item="$store.getters.track"></follow-button>
-                </div>
+                <follow-button class="button" :item="$store.getters.track"></follow-button>
+                <queue-button class="button"></queue-button>
             </div>
             <div class="full-controls">
                 <media-controls :full="$store.state.windowWidth > 430"></media-controls>
@@ -59,11 +58,11 @@
                 <span>Browse</span>
                 <v-icon>mdi-grid-large</v-icon>
             </v-btn>
-            <v-btn value="library" to="/library" exact>
+            <v-btn value="library" to="/library">
                 <span>Library</span>
                 <v-icon>mdi-record-circle-outline</v-icon>
             </v-btn>
-            <v-btn value="search" to="/search" exact>
+            <v-btn value="search" to="/search">
                 <span>Search</span>
                 <v-icon>mdi-magnify</v-icon>
             </v-btn>
@@ -78,17 +77,17 @@
     import MediaSeek from "./components/MediaSeek";
     import NavContent from "./components/NavContent";
     import FollowButton from "./components/FollowButton";
+    import QueueButton from "./components/QueueButton";
 
     //TOOD:
-    //show queue
+    //add to recently played
     //maybe remove spotify stuff from store.js into spotify-module.js
     //Delete cache every week or so to prevent massive cache causing lag
-    //clear cache button in settings
 
 
     export default {
         name: 'App',
-        components: {FollowButton, NavContent, MediaSeek, MediaControls, MediaInfo, ToolBar},
+        components: {QueueButton, FollowButton, NavContent, MediaSeek, MediaControls, MediaInfo, ToolBar},
         data: () => ({
             drawer: true,
             cacheInterval: -1,
@@ -100,8 +99,10 @@
             window.addEventListener('resize', this.resizeListener);
 
             window.onbeforeunload = e => {
-                this.$store.commit('cacheAll');
-                this.$store.commit('cacheAllMedia');
+                if(!this.$store.state.dontCache){
+                    this.$store.commit('cacheAll');
+                    this.$store.commit('cacheAllMedia');
+                }
                 delete e['returnValue'];
             };
 
@@ -204,7 +205,7 @@
         flex-grow: 1;
     }
 
-    .favorite-button {
+    .button {
         min-width: 50px;
         display: flex;
         justify-content: center;

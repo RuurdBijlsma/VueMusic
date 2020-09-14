@@ -1,13 +1,13 @@
 <template>
     <div class="queue-button" v-if="$store.getters.isTrackSet">
-        <v-menu :close-on-content-click="false" :close-on-click="true">
+        <v-menu offset-y :close-on-content-click="false" :close-on-click="true">
             <template v-slot:activator="{ on, attrs }">
                 <v-btn icon v-bind="attrs" v-on="on">
                     <v-icon>mdi-playlist-play</v-icon>
                 </v-btn>
             </template>
             <v-list class="track-list">
-                <h2 class="context">{{context.name}}</h2>
+                <h5 class="context">{{context.name}}</h5>
                 <v-list-item v-for="track in queue" :key="track.id">
                     <track-row class="track-row" :context-item="$store.state.media.contextItem"
                                :track="track"></track-row>
@@ -36,7 +36,7 @@
                 switch (this.contextItem.type) {
                     case 'liked':
                         name = 'Liked tracks';
-                        to = '/tracks';
+                        to = '/library/tracks';
                         break;
                     case 'search':
                         name = `Tracks from search term "${this.contextItem.term}"`;

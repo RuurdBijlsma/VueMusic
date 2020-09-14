@@ -10,6 +10,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
     state: {
+        dontCache: false,
         events: new EventEmitter(),
         windowWidth: window.innerWidth,
         timeout: -1,
@@ -68,6 +69,11 @@ export default new Vuex.Store({
             localStorage.stateCache = JSON.stringify(cache);
 
             console.log("State cache complete");
+        },
+        clearCache: state => {
+            state.dontCache = true;
+            localStorage.clear();
+            location.reload();
         },
         addSnackObject: (state, snack) => state.snackbars.push(snack),
         removeSnack: (state, snack) => state.snackbars.splice(state.snackbars.indexOf(snack), 1),
@@ -420,27 +426,22 @@ export default new Vuex.Store({
 
             //Personalized playlists
             let personalized;
-            if (localStorage.getItem('discoverPlaylists') === null) {
-                if (state.library.playlists.length === 0) {
-                    await dispatch('refreshUserData');
-                }
-                const discoverNames = ['Discover Weekly', 'Release Radar', ...[...Array(10)].map((_, i) => 'Daily Mix ' + (i + 1))];
+            if (state.library.playlists.length === 0) {
+                await dispatch('refreshUserData');
+            }
+            const discoverNames = ['Discover Weekly', 'Release Radar', ...[...Array(10)].map((_, i) => 'Daily Mix ' + (i + 1))];
 
-                personalized = state.library.playlists.filter(playlist => discoverNames
-                        .findIndex(name => playlist.name.includes(name)) !== -1 &&
-                    playlist.owner.display_name === 'Spotify'
-                );
-                personalized.sort((a, b) => {
-                    let aI = discoverNames.findIndex(name => a.name.includes(name));
-                    let bI = discoverNames.findIndex(name => b.name.includes(name));
-                    return aI - bI;
-                });
-                if (personalized.length > 0) {
-                    localStorage.discoverPlaylists = JSON.stringify(personalized);
-                    commit('homePersonalized', personalized);
-                }
-            } else {
-                commit('homePersonalized', JSON.parse(localStorage.discoverPlaylists));
+            personalized = state.library.playlists.filter(playlist => discoverNames
+                    .findIndex(name => playlist.name.includes(name)) !== -1 &&
+                playlist.owner.display_name === 'Spotify'
+            );
+            personalized.sort((a, b) => {
+                let aI = discoverNames.findIndex(name => a.name.includes(name));
+                let bI = discoverNames.findIndex(name => b.name.includes(name));
+                return aI - bI;
+            });
+            if (personalized.length > 0) {
+                commit('homePersonalized', personalized);
             }
 
             //New releases
