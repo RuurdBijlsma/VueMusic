@@ -1,11 +1,13 @@
 <template>
     <div class="playlist-meta">
-        <glow-image :size="imageSize" v-if="showArt" :url="$store.getters.itemImage(playlist)" class="art-section"></glow-image>
+        <glow-image :size="imageSize" v-if="showArt" :url="$store.getters.itemImage(playlist)"
+                    class="art-section"></glow-image>
         <h2 class="name">{{playlist.name}}</h2>
         <h2 class="album-artist" v-if="isAlbum"
             :title="playlist.artists.map(t=>t.name).join(', ')">
             <span v-for="(artist, index) in playlist.artists" :key="artist.id">
-            <router-link class="artist-link" :to="$store.getters.relativeItemUrl(artist)">{{artist.name}}</router-link><span
+            <router-link class="artist-link"
+                         :to="$store.getters.relativeItemUrl(artist)">{{artist.name}}</router-link><span
                     v-if="index < playlist.artists.length - 1">, </span>
             </span>
         </h2>
@@ -36,11 +38,13 @@
         </p>
         <div class="buttons">
             <div>
-                <v-btn class="play-button" small :color="fgLegible ? 'primary' : 'default'">
+                <v-btn class="play-button" small :color="fgLegible ? 'primary' : 'default'"
+                       @click="$store.dispatch('playItem', {item: playlist})">
                     <v-icon small class="mr-2">mdi-play</v-icon>
                     Play
                 </v-btn>
-                <v-btn v-if="playlist.tracks.length > 1" small :color="fgLegible ? 'primary' : 'default'">
+                <v-btn v-if="playlist.tracks.length > 1" small :color="fgLegible ? 'primary' : 'default'"
+                       @click="$store.dispatch('playItem', {item: playlist, shuffle: true})">
                     <v-icon small class="mr-2">mdi-shuffle</v-icon>
                     Shuffle
                 </v-btn>

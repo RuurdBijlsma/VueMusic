@@ -68,10 +68,11 @@
             playLoading: false,
         }),
         methods: {
-            play(e) {
+            async play(e) {
                 this.playLoading = true;
                 e.stopPropagation();
-                console.log("Play")
+                await this.$store.dispatch('playItem', {item:this.item});
+                this.playLoading = false;
             },
         },
         computed: {

@@ -14,6 +14,22 @@
                 </v-list-item-icon>
                 <v-list-item-title>Go to {{type}} radio</v-list-item-title>
             </v-list-item>
+            <v-list-item v-if="type !== 'category'" @click="playNext(item)">
+                <v-list-item-icon>
+                    <v-progress-circular size="20" indeterminate width="1"
+                                         v-if="nextQueueLoading"></v-progress-circular>
+                    <v-icon v-else>mdi-play-circle-outline</v-icon>
+                </v-list-item-icon>
+                <v-list-item-title>Play next</v-list-item-title>
+            </v-list-item>
+            <v-list-item v-if="type !== 'category'" @click="addToQueue(item)">
+                <v-list-item-icon>
+                    <v-progress-circular size="20" indeterminate width="1"
+                                         v-if="addQueueLoading"></v-progress-circular>
+                    <v-icon v-else>mdi-plus</v-icon>
+                </v-list-item-icon>
+                <v-list-item-title>Add to queue</v-list-item-title>
+            </v-list-item>
             <v-list-item v-if="editablePlaylist" @click="remove(item, contextItem)">
                 <v-list-item-icon>
                     <v-progress-circular size="20" indeterminate width="1" v-if="removeLoading"></v-progress-circular>
@@ -75,6 +91,8 @@
         data: () => ({
             addLoading: {},
             removeLoading: false,
+            addQueueLoading: false,
+            nextQueueLoading: false,
         }),
         methods: {
             async add(track, playlist) {
@@ -86,6 +104,14 @@
                 this.removeLoading = true;
                 await this.$store.dispatch('removeFromPlaylist', {track, playlist});
                 this.removeLoading = false;
+            },
+            async playNext(item) {
+                let context = await this.$store.dispatch('getContextItem', item);
+                this.$store.commit('playNext', context.tracks);
+            },
+            async addToQueue(item) {
+                let context = await this.$store.dispatch('getContextItem', item);
+                this.$store.commit('addToQueue', context.tracks);
             },
         },
         computed: {

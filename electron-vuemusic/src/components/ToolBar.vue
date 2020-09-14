@@ -5,9 +5,9 @@
         <div class="media-container" v-if="!mobile && $store.getters.isTrackSet">
             <div class="media-info">
                 <media-seek class="top-seeker" no-background small-time></media-seek>
-                <media-info class="top-info"></media-info>
+                <media-info small-artists drag class="top-info"></media-info>
             </div>
-            <follow-button class="favorite-button" hide-tooltip :item="$store.getters.track"></follow-button>
+            <follow-button class="favorite-button" hide-tooltip :item="$store.state.media.track"></follow-button>
             <queue-button class="queue-button"></queue-button>
         </div>
         <div class="volume" v-if="!mobile">

@@ -1,5 +1,6 @@
 <template>
-    <span class="artists" :title="artists.map(a=>a.name).join(', ')">
+    <span class="artists"
+          :title="artists.map(a=>a.name).join(', ')">
         <span v-for="(artist, i) in artists" :key="artist.id">
             <router-link
                     :tag="grey ? 'span' : 'a'"
@@ -33,7 +34,6 @@
         text-overflow: ellipsis;
         overflow: hidden;
         display: block;
-        max-width: calc(100% - 56px);
     }
 
     .artist {

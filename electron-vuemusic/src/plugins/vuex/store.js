@@ -642,6 +642,31 @@ export default new Vuex.Store({
                 return [firstTrack, ...radioTracks];
             return radioTracks;
         },
+        getItem: async ({state, dispatch}, item) => {
+            let type = item.type || 'category';
+            if (item.tracks && item.tracks.length > 0)
+                return item;
+            if (!state[type][item.id]) {
+                await dispatch('load' + type[0].toUpperCase() + type.slice(1), item.id);
+            }
+            return state[type][item.id];
+        },
+        getContextItem: async ({state, dispatch}, item) => {
+            if (item.type === 'track') {
+                return {...item, tracks: [item]};
+            }
+            if (item.tracks && item.tracks.length > 0)
+                return item;
+            let completeItem = await dispatch('getItem', item);
+            let type = item.type || 'category';
+            if (type === 'category') {
+                console.log("category", completeItem);
+            }
+            if (type === 'artist') {
+                return {...completeItem.artist, tracks: completeItem.tracks};
+            }
+            return completeItem;
+        },
     },
     modules: {platform, media, search}
 })

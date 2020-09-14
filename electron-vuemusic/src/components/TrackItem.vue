@@ -63,7 +63,7 @@
         methods: {
             play() {
                 this.$store.commit('track', {
-                    trackIndex: this.contextItem.tracks.findIndex(t => t.id === this.track.id),
+                    track: this.track,
                     contextItem: this.contextItem
                 });
             }

@@ -10,11 +10,12 @@
                 <h1 class="page-title">Tracks</h1>
                 <v-divider class="divider"></v-divider>
                 <div class="buttons">
-                    <v-btn small color="primary">
+                    <v-btn small color="primary" @click="$store.dispatch('playItem', {item: context})">
                         <v-icon small class="mr-2">mdi-play</v-icon>
                         Play
                     </v-btn>
-                    <v-btn small v-if="tracks.length > 1" color="primary">
+                    <v-btn small v-if="tracks.length > 1" color="primary"
+                           @click="$store.dispatch('playItem', {item: context, shuffle:true})">
                         <v-icon small class="mr-2">mdi-shuffle</v-icon>
                         Shuffle
                     </v-btn>
@@ -35,7 +36,7 @@
                 <track-row
                         :no-album="hideAlbum"
                         :compact-menu="compactMenu"
-                        :context-item="{type: 'liked', id: 'liked', tracks}"
+                        :context-item="context"
                         :album-list="false"
                         :key="item.id"
                         :track="item"></track-row>
@@ -57,6 +58,9 @@
             await this.$store.dispatch('refreshUserData', 'track');
         },
         computed: {
+            context() {
+                return {type: 'liked', id: 'liked', tracks: this.tracks}
+            },
             loading() {
                 return this.$store.state.isRefreshing.track;
             },

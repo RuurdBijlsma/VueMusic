@@ -2,18 +2,23 @@
     <div class="media-info">
         <v-card outlined class="media-card">
             <div class="media-album"
-                 :style="{backgroundImage: `url(${$store.getters.itemImage($store.getters.track)})`}"/>
+                 :style="{
+                            backgroundImage: `url(${$store.getters.itemImage($store.state.media.track)})`,
+                            webkitAppRegion: 'drag',
+                         }"/>
             <div class="white-part">
                 <div class="media-text-info">
                     <img v-if="!$store.getters.isTrackSet"
                          class="media-info-logo" src="../assets/logo-small-v.png"
                          alt="vm5 logo">
                     <div v-else class="media-title-artists">
-                        <span :title="$store.getters.track.name"
+                        <span :title="$store.state.media.track.name"
                               class="track-title">
-                            {{$store.getters.track.name}}
+                            {{$store.state.media.track.name}}
                         </span>
-                        <artists-span grey class="track-artists" :artists="$store.getters.track.artists"></artists-span>
+                        <artists-span :style="{maxWidth: smallArtists?`calc(100% - 56px)`:''}"
+                                      grey class="track-artists"
+                                      :artists="$store.state.media.track.artists"></artists-span>
                     </div>
                 </div>
             </div>
@@ -28,7 +33,17 @@
 
     export default {
         name: "MediaInfo",
-        components: {ArtistsSpan, MediaControls}
+        components: {ArtistsSpan, MediaControls},
+        props: {
+            drag: {
+                type: Boolean,
+                default: false,
+            },
+            smallArtists: {
+                type: Boolean,
+                default: false,
+            }
+        },
     }
 </script>
 

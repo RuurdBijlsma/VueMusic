@@ -2,7 +2,7 @@ import Utils from "../../js/Utils";
 
 export default {
     state: {
-        trackIndex: -1,
+        track: null,
         currentTime: 0,
         queue: [],
         shuffledQueue: [],
@@ -17,50 +17,98 @@ export default {
         toggleRepeat: state => state.repeat = !state.repeat,
         shuffle: (state, shuffle) => state.shuffle = shuffle,
         repeat: (state, repeat) => state.repeat = repeat,
-        track: (state, {trackIndex, contextItem}) => {
-            state.trackIndex = trackIndex;
+        track: (state, {track, contextItem}) => {
+            state.track = track;
             if (contextItem === undefined)
                 return;
-            if (state.contextItem === null ||
-                state.contextItem.id !== contextItem.id ||
-                state.contextItem.type !== contextItem.type
+            // Replace contextItem when
+            if (state.contextItem === null || //No context item is set
+                state.contextItem.id !== contextItem.id || //The ID of the new context is different
+                state.contextItem.type !== contextItem.type || //The type of the new context is different
+                state.queue.findIndex(t => t.id === track) === -1 //The new track is not in the current queue
             ) {
                 state.contextItem = contextItem;
                 state.queue = contextItem.tracks;
                 state.shuffledQueue = Utils.shuffleArray([...contextItem.tracks]);
             }
         },
+        playNext: (state, tracks) => {
+            let queues = [state.queue, state.shuffledQueue];
+            //Add tracks as "Play next" to both queues, remove duplicate tracks
+            for (let queue of queues) {
+                let currentIndex = queue.findIndex(t => t.id === state.track.id);
+                for (let track of tracks) {
+                    let index = queue.findIndex(t => t.id === track.id);
+                    if (index === currentIndex)
+                        continue;
+                    if (index !== -1)
+                        queue.splice(index, 1);
+                    queue.splice(currentIndex + 1, 0, track);
+                }
+            }
+        },
+        addToQueue: (state, tracks) => {
+            let queues = [state.queue, state.shuffledQueue];
+            //Add tracks as "Play next" to both queues, remove duplicate tracks
+            for (let queue of queues) {
+                let currentIndex = queue.findIndex(t => t.id === state.track.id);
+                for (let track of tracks) {
+                    let index = queue.findIndex(t => t.id === track.id);
+                    if (index === currentIndex)
+                        continue;
+                    if (index !== -1)
+                        queue.splice(index, 1);
+                    queue.push(track);
+                }
+            }
+        },
 
         cacheAllMedia: state => {
-            let cachedFields = ["trackIndex", "queue", "shuffledQueue", "contextItem", "shuffle", "repeat"];
+            let cachedFields = ["track", "queue", "shuffledQueue", "contextItem", "shuffle", "repeat"];
             let cache = {};
             for (let field of cachedFields)
                 cache[field] = state[field];
             localStorage.mediaStateCache = JSON.stringify(cache);
-
             console.log("Media state cache complete");
         },
     },
     getters: {
-        track: state => {
-            if (state.trackIndex === -1)
-                return null;
-            return state.queue[state.trackIndex];
+        trackIndex: (state, getters) => {
+            return getters.isTrackSet ? getters.currentQueue.findIndex(t => t.id === state.track.id) : -1
+        },
+        currentQueue: state => {
+            return state.shuffle ? state.shuffledQueue : state.queue;
         },
         isTrackSet: state => {
-            return state.trackIndex !== -1;
+            return state.track !== null;
         },
-        durationHms: (state, getters) => {
-            return Utils.secondsToHms(getters.track.duration_ms / 1000);
+        durationHms: (state) => {
+            return Utils.secondsToHms(state.track.duration_ms / 1000);
         },
         currentTimeHms: state => {
             return Utils.secondsToHms(state.currentTime);
         },
-        progress: (state, getters) => {
-            if (!getters.track.duration_ms)
+        progress: (state) => {
+            if (!state.track.duration_ms)
                 return 0;
-            return state.currentTime / (getters.track.duration_ms / 1000);
-        }
+            return state.currentTime / (state.track.duration_ms / 1000);
+        },
     },
-    actions: {}
+    actions: {
+        playItem: async ({state, commit, dispatch}, {item, shuffle = false}) => {
+            let context = await dispatch('getContextItem', item);
+            if (!context.tracks || context.tracks.length === 0) {
+                return dispatch("addSnack", {text: "This item has no tracks"});
+            }
+            let startTrack;
+            if (shuffle)
+                startTrack = context.tracks[Math.floor(Math.random() * context.tracks.length)];
+            else
+                startTrack = context.tracks[0];
+            if (item.type === 'track')
+                console.warn("Setting track item as context item, this should probably not happen");
+            commit('track', {track: startTrack, contextItem: context});
+            commit('shuffle', shuffle);
+        },
+    },
 }

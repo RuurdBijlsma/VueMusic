@@ -4,11 +4,12 @@
             <h1 class="page-title">Radio</h1>
             <v-divider class="divider"></v-divider>
             <div class="buttons">
-                <v-btn small color="primary">
+                <v-btn small color="primary" @click="$store.dispatch('playItem', {item: context})">
                     <v-icon small class="mr-2">mdi-play</v-icon>
                     Play
                 </v-btn>
-                <v-btn small v-if="tracks.length > 1" color="primary">
+                <v-btn small v-if="tracks.length > 1" color="primary"
+                       @click="$store.dispatch('playItem', {item: context, shuffle: true})">
                     <v-icon small class="mr-2">mdi-shuffle</v-icon>
                     Shuffle
                 </v-btn>
@@ -27,7 +28,7 @@
         </div>
         <div v-for="track in tracks" :key="track.id">
             <v-divider></v-divider>
-            <track-row :context-item="{type: 'radio', path: $route.fullPath, id: 'radio' + id, tracks}"
+            <track-row :context-item="context"
                        :track="track"></track-row>
         </div>
     </div>
@@ -65,6 +66,9 @@
             },
         },
         computed: {
+            context() {
+                return {type: 'radio', path: this.$route.fullPath, id: 'radio' + this.id, tracks: this.tracks}
+            },
             fullDuration() {
                 if (this.tracks.length === 0)
                     return Utils.secondsToHms(0);

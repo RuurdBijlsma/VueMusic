@@ -21,18 +21,6 @@
             </div>
         </v-main>
 
-        <v-card flat class="bottom-media-control"
-                v-if="$store.state.windowWidth <= 680 && $store.getters.isTrackSet" color="primaryLight">
-            <div class="info-pane">
-                <media-info class="media-info"></media-info>
-                <follow-button class="button" :item="$store.getters.track"></follow-button>
-                <queue-button class="button"></queue-button>
-            </div>
-            <div class="full-controls">
-                <media-controls :full="$store.state.windowWidth > 430"></media-controls>
-                <media-seek class="seeker"></media-seek>
-            </div>
-        </v-card>
         <v-snackbar v-for="snack in $store.state.snackbars" app v-model="snack.open" :timeout="snack.timeout"
                     :outlined="!$vuetify.theme.dark" color="primary">
             {{ snack.text }}
@@ -43,6 +31,19 @@
                 </v-btn>
             </template>
         </v-snackbar>
+
+        <v-card flat class="bottom-media-control"
+                v-if="$store.state.windowWidth <= 680 && $store.getters.isTrackSet" color="primaryLight">
+            <div class="info-pane">
+                <media-info class="media-info"></media-info>
+                <follow-button class="button" :item="$store.state.media.track"></follow-button>
+                <queue-button class="button"></queue-button>
+            </div>
+            <div class="full-controls">
+                <media-controls :full="$store.state.windowWidth > 430"></media-controls>
+                <media-seek class="seeker"></media-seek>
+            </div>
+        </v-card>
 
         <v-bottom-navigation
                 color="primary"
@@ -83,6 +84,9 @@
     //add to recently played
     //maybe remove spotify stuff from store.js into spotify-module.js
     //Delete cache every week or so to prevent massive cache causing lag
+    //changevolume with scroll
+    //check shuffle button size maybe
+    //media info pane changes size
 
 
     export default {

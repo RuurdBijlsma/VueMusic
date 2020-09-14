@@ -11,7 +11,8 @@
             <div class="banner-content">
                 <div class="buttons">
                     <div class="left-banner-content">
-                        <v-btn small color="primary" fab v-if="topTracks.length > 0">
+                        <v-btn small color="primary" fab v-if="topTracks.length > 0"
+                               @click="$store.dispatch('playItem', {item: {...artist, tracks: topTracks}})">
                             <v-icon>mdi-play</v-icon>
                         </v-btn>
                         <h1>{{artist.name}}</h1>
