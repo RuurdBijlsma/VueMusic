@@ -67,7 +67,13 @@
         },
         computed: {
             context() {
-                return {type: 'radio', path: this.$route.fullPath, id: 'radio' + this.id, tracks: this.tracks}
+                return {
+                    type: 'radio',
+                    name: 'Radio tracks',
+                    path: this.$route.fullPath,
+                    id: 'radio' + this.id,
+                    tracks: this.tracks
+                }
             },
             fullDuration() {
                 if (this.tracks.length === 0)

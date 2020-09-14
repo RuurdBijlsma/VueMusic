@@ -67,11 +67,15 @@
         data: () => ({
             playLoading: false,
         }),
+        mounted() {
+            if (this.item.type === 'liked')
+                console.log(this.item, this.$store.getters.relativeItemUrl(this.item));
+        },
         methods: {
             async play(e) {
                 this.playLoading = true;
                 e.stopPropagation();
-                await this.$store.dispatch('playItem', {item:this.item});
+                await this.$store.dispatch('playItem', {item: this.item});
                 this.playLoading = false;
             },
         },

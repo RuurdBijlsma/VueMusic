@@ -30,7 +30,6 @@ export default new Vuex.Store({
         },
         homePage: {
             featured: {title: '', playlists: []},
-            recent: [],
             newReleases: [],
             personalized: [],
         },
@@ -132,6 +131,10 @@ export default new Vuex.Store({
             let i = Math.floor(Math.random() * 7) + 1;
             return `img/notfound/${i}.png`;
         },
+        likedImage: () => {
+            let i = Math.floor(Math.random() * 7) + 1;
+            return `img/liked/${i}.png`;
+        },
         itemImage: (state, getters) => item => {
             let type = item.type || 'category';
             if (type === 'category') {
@@ -144,6 +147,14 @@ export default new Vuex.Store({
                     return item.album.images[0].url;
                 else
                     return getters.notFoundImage;
+            } else if (type === 'search') {
+                console.warn("Tried getting image for search");
+                return '';
+            } else if (type === 'radio') {
+                console.warn("Tried getting image for radio");
+                return '';
+            } else if (type === 'liked') {
+                return getters.likedImage;
             } else {
                 if (item.images.length > 0)
                     return item.images[0].url;
@@ -172,6 +183,12 @@ export default new Vuex.Store({
             let name = type === 'user' ? item.display_name : item.name;
             if (type === 'category')
                 return `${type}/${item.id}`;
+            if (type === 'radio')
+                return null;
+            if (type === 'search')
+                return item.to;
+            if (type === 'liked')
+                return '/library/tracks';
             return `/${type}/${getters.urlName(name)}/${item.id}`;
         },
         shareUrl: (state, getters) => item => {

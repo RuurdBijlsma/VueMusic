@@ -81,12 +81,10 @@
     import QueueButton from "./components/QueueButton";
 
     //TOOD:
-    //add to recently played
-    //maybe remove spotify stuff from store.js into spotify-module.js
-    //Delete cache every week or so to prevent massive cache causing lag
-    //changevolume with scroll
+    //clear queue / remove single item from queue
+    //maybe remove spotify stuff from store.js into spotify-module.js (probably not needed until more stuff starts to clutter base store.js)
+    //Delete cache every week or so to prevent massive cache causing lag (see first if lag actually happens)
     //check shuffle button size maybe
-    //media info pane changes size
 
 
     export default {

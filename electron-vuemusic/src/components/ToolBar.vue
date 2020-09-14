@@ -12,6 +12,7 @@
         </div>
         <div class="volume" v-if="!mobile">
             <v-slider
+                    ref="volume"
                     :min="0"
                     :max="1"
                     :step="0.01"
@@ -120,6 +121,12 @@
                 default: false,
             },
         },
+        mounted() {
+            this.$refs.volume.$el.addEventListener('wheel', this.volumeScroll, true);
+        },
+        beforeDestroy() {
+            this.$refs.volume.$el.removeEventListener('wheel', this.volumeScroll);
+        },
         methods: {
             toggleMute() {
                 if (this.volume > 0) {
@@ -128,6 +135,10 @@
                 } else {
                     this.volume = this.prevVolume;
                 }
+            },
+            volumeScroll(e) {
+                let changeAmount = e.deltaY * -0.00025;
+                this.volume = Math.min(1, Math.max(0, this.volume + changeAmount));
             },
         },
         watch: {
@@ -179,7 +190,7 @@
     .media-container {
         display: flex;
         max-width: 550px;
-        flex-grow: 10;
+        flex: 1 0 0;
         align-items: center;
         min-width: 100px;
     }
@@ -205,8 +216,7 @@
 
     .volume {
         -webkit-app-region: no-drag;
-        min-width: 100px;
-        max-width: 160px;
+        max-width: 110px;
         height: 32px;
         flex-grow: 1;
         margin-left: 10px;

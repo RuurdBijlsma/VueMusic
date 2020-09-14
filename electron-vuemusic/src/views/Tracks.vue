@@ -59,7 +59,7 @@
         },
         computed: {
             context() {
-                return {type: 'liked', id: 'liked', tracks: this.tracks}
+                return {type: 'liked', id: 'liked', name: 'Liked tracks', tracks: this.tracks}
             },
             loading() {
                 return this.$store.state.isRefreshing.track;

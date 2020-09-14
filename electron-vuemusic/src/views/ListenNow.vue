@@ -1,20 +1,18 @@
 <template>
     <div class="listen-now">
-        <div class="padded" v-if="$store.state.homePage.recent.length>0">
-            <h2>Recently played</h2>
+        <div class="padded" v-if="$store.state.media.recentlyPlayed.length > 0">
+            <h2>{{$store.state.homePage.featured.title.replace(/\\/gi,'')}}</h2>
         </div>
 
         <item-row class="item-row"
-                  v-if="$store.state.homePage.recent.length>0"
-                  :items="$store.state.homePage.recent"
-                  type="playlist"
+                  :items="$store.state.homePage.featured.playlists"
+                  big
         ></item-row>
 
-        <h2 class="padded">{{$store.state.homePage.featured.title.replace(/\\/gi,'')}}</h2>
+        <h2 class="padded">Recently played</h2>
         <item-row class="item-row"
-                  :items="$store.state.homePage.featured.playlists"
-                  type="playlist"
-                  big
+                  v-if="$store.state.media.recentlyPlayed.length > 0"
+                  :items="$store.state.media.recentlyPlayed"
         ></item-row>
 
         <h2 class="padded">Made for you</h2>

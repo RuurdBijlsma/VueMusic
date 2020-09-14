@@ -7,14 +7,14 @@
         </template>
         <v-list dense>
             <share-menu-item :item="item"></share-menu-item>
-            <follow-menu-item v-if="type!=='category' && type!=='user'" :item="item"></follow-menu-item>
+            <follow-menu-item v-if="type!=='category' && type!=='user' && type !== 'liked'" :item="item"></follow-menu-item>
             <v-list-item v-if="type === 'track' || type === 'artist'" exact :to="`/radio?seed_${type}s=${item.id}`">
                 <v-list-item-icon>
                     <v-icon>mdi-radio-tower</v-icon>
                 </v-list-item-icon>
                 <v-list-item-title>Go to {{type}} radio</v-list-item-title>
             </v-list-item>
-            <v-list-item v-if="type !== 'category'" @click="playNext(item)">
+            <v-list-item v-if="type !== 'category' && type !== 'liked'" @click="playNext(item)">
                 <v-list-item-icon>
                     <v-progress-circular size="20" indeterminate width="1"
                                          v-if="nextQueueLoading"></v-progress-circular>
@@ -22,7 +22,7 @@
                 </v-list-item-icon>
                 <v-list-item-title>Play next</v-list-item-title>
             </v-list-item>
-            <v-list-item v-if="type !== 'category'" @click="addToQueue(item)">
+            <v-list-item v-if="type !== 'category' && type !== 'liked'" @click="addToQueue(item)">
                 <v-list-item-icon>
                     <v-progress-circular size="20" indeterminate width="1"
                                          v-if="addQueueLoading"></v-progress-circular>

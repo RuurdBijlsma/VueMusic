@@ -50,25 +50,10 @@
                 return this.$store.state.media.contextItem;
             },
             context() {
-                let name, to;
-                switch (this.contextItem.type) {
-                    case 'liked':
-                        name = 'Liked tracks';
-                        to = '/library/tracks';
-                        break;
-                    case 'search':
-                        name = `Tracks from search term "${this.contextItem.term}"`;
-                        to = this.contextItem.to;
-                        break;
-                    case 'radio':
-                        name = `Radio tracks`;
-                        to = null;
-                        break;
-                    default:
-                        name = this.contextItem.name;
-                        to = this.$store.getters.relativeItemUrl(this.contextItem);
-                }
-                return {name, to};
+                return {
+                    name: this.contextItem.name,
+                    to: this.$store.getters.relativeItemUrl(this.contextItem)
+                };
             },
             queue() {
                 return this.$store.getters.currentQueue;

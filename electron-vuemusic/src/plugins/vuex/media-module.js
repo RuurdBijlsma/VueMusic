@@ -2,6 +2,7 @@ import Utils from "../../js/Utils";
 
 export default {
     state: {
+        recentlyPlayed: [],
         track: null,
         currentTime: 0,
         queue: [],
@@ -27,6 +28,17 @@ export default {
                 state.contextItem.type !== contextItem.type || //The type of the new context is different
                 state.queue.findIndex(t => t.id === track) === -1 //The new track is not in the current queue
             ) {
+                if (contextItem.type !== 'radio' && contextItem.type !== 'search') {
+                    let index = state.recentlyPlayed.findIndex(i => i.id === contextItem.id);
+                    if (index !== -1) {
+                        console.log("Removing index", index, 'from', state.recentlyPlayed);
+                        state.recentlyPlayed.splice(index, 1);
+                    }
+                    console.log('adding recently played item', contextItem, state.recentlyPlayed.length);
+                    state.recentlyPlayed.unshift(contextItem);
+                    state.recentlyPlayed = state.recentlyPlayed.slice(0, 10);
+                }
+
                 state.contextItem = contextItem;
                 state.queue = contextItem.tracks;
                 state.shuffledQueue = Utils.shuffleArray([...contextItem.tracks]);
@@ -64,7 +76,7 @@ export default {
         },
 
         cacheAllMedia: state => {
-            let cachedFields = ["track", "queue", "shuffledQueue", "contextItem", "shuffle", "repeat"];
+            let cachedFields = ["recentlyPlayed", "track", "queue", "shuffledQueue", "contextItem", "shuffle", "repeat"];
             let cache = {};
             for (let field of cachedFields)
                 cache[field] = state[field];
