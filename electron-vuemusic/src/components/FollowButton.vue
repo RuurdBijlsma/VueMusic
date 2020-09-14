@@ -1,20 +1,30 @@
 <template>
-    <v-tooltip top>
-        <template v-slot:activator="{ on, attrs }">
-            <v-btn :loading="loading" icon v-if="isFollowed" @click="unfollow" color="primary"
-                   v-bind="attrs"
-                   v-on="on">
+    <div class="follow-button" v-if="item !== null">
+        <v-tooltip top v-if="!hideTooltip">
+            <template v-slot:activator="{ on, attrs }">
+                <v-btn :loading="loading" icon v-if="isFollowed" @click="unfollow" color="primary"
+                       v-bind="attrs"
+                       v-on="on">
+                    <v-icon>mdi-heart-outline</v-icon>
+                </v-btn>
+                <v-btn :loading="loading" icon v-else @click="follow"
+                       v-bind="attrs"
+                       v-on="on">
+                    <v-icon>mdi-heart-outline</v-icon>
+                </v-btn>
+            </template>
+            <span v-if="isFollowed">Remove from library</span>
+            <span v-else>Add to library</span>
+        </v-tooltip>
+        <div v-else>
+            <v-btn :loading="loading" icon v-if="isFollowed" @click="unfollow" color="primary">
                 <v-icon>mdi-heart-outline</v-icon>
             </v-btn>
-            <v-btn :loading="loading" icon v-else @click="follow"
-                   v-bind="attrs"
-                   v-on="on">
+            <v-btn :loading="loading" icon v-else @click="follow">
                 <v-icon>mdi-heart-outline</v-icon>
             </v-btn>
-        </template>
-        <span v-if="isFollowed">Remove from library</span>
-        <span v-else>Add to library</span>
-    </v-tooltip>
+        </div>
+    </div>
 </template>
 
 <script>
@@ -25,6 +35,10 @@
                 type: Object,
                 default: null,
             },
+            hideTooltip: {
+                type: Boolean,
+                default: false,
+            }
         },
         data: () => ({
             loading: false,
@@ -53,5 +67,7 @@
 </script>
 
 <style scoped>
+    .follow-button {
 
+    }
 </style>

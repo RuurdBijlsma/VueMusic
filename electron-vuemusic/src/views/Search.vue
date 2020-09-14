@@ -17,6 +17,9 @@
                 </v-list-item>
             </v-list>
         </div>
+        <div class="pa-4" v-else>
+            <h2>No recent searches</h2>
+        </div>
     </div>
 </template>
 

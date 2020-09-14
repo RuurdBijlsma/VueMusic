@@ -27,7 +27,8 @@
         </div>
         <div v-for="track in tracks" :key="track.id">
             <v-divider></v-divider>
-            <track-row :context-item="{type: 'radio', id: 'radio', tracks}" :track="track"></track-row>
+            <track-row :context-item="{type: 'radio', path: $route.fullPath, id: 'radio' + id, tracks}"
+                       :track="track"></track-row>
         </div>
     </div>
 </template>
@@ -42,6 +43,7 @@
         data: () => ({
             tracks: [],
             loading: false,
+            id: Math.random(),
         }),
         async mounted() {
             await this.loadRadio();

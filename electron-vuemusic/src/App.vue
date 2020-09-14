@@ -26,7 +26,7 @@
             <div class="info-pane">
                 <media-info class="media-info"></media-info>
                 <div class="favorite-button">
-                    <follow-button class="follow-button" :item="$store.state.media.track"></follow-button>
+                    <follow-button class="follow-button" :item="$store.getters.track"></follow-button>
                 </div>
             </div>
             <div class="full-controls">
@@ -80,10 +80,10 @@
     import FollowButton from "./components/FollowButton";
 
     //TOOD:
-    //load active track and queue when playing track
     //show queue
     //maybe remove spotify stuff from store.js into spotify-module.js
     //Delete cache every week or so to prevent massive cache causing lag
+    //clear cache button in settings
 
 
     export default {
@@ -117,7 +117,7 @@
 
             console.log(this.$store);
             if (!this.$store.getters.isKeySet) {
-                if (this.$store.state.shouldSetKey && this.$route.name !== 'Settings') {
+                if (this.$store.state.platform.shouldSetKey && this.$route.name !== 'Settings') {
                     await this.$router.push('/settings');
                 }
             } else if (!this.$store.getters.isLoggedIn && this.$route.name !== 'Settings') {

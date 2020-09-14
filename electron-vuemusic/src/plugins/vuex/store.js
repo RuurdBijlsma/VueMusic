@@ -469,9 +469,19 @@ export default new Vuex.Store({
             let retrieval = () => state.api.getPlaylist(id);
             for await(let batch of await dispatch('retrieveSpotifyArray', retrieval)) {
                 if (batch.items) {
-                    commit('extendPlaylist', {id, tracks: batch.items.map(t => t.track)});
+                    commit('extendPlaylist', {
+                        id, tracks: batch.items
+                            .map(t => t.track)
+                            .filter(t => t !== null)
+                    });
                 } else {
-                    commit('loadPlaylist', {id, playlist: {...batch, tracks: batch.tracks.items.map(t => t.track)}});
+                    commit('loadPlaylist', {
+                        id, playlist: {
+                            ...batch, tracks: batch.tracks.items
+                                .map(t => t.track)
+                                .filter(t => t !== null)
+                        }
+                    });
                 }
             }
         },

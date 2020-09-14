@@ -2,7 +2,8 @@
     <div class="track-item" v-if="track!==null">
         <div class="track-content">
             <div class="left-square">
-                <div v-if="!albumList" class="album-art" :style="{backgroundImage: `url(${$store.getters.itemImage(track)})`}"></div>
+                <div v-if="!albumList" class="album-art"
+                     :style="{backgroundImage: `url(${$store.getters.itemImage(track)})`}"></div>
                 <div v-else class="album-number">{{track.track_number}}</div>
                 <v-card v-if="albumList" class="play-button" flat>
                     <v-btn icon @click="play">
@@ -61,8 +62,10 @@
         },
         methods: {
             play() {
-                console.log(this.contextItem);
-                this.$store.commit('track', {track:this.track, contextItem: this.contextItem});
+                this.$store.commit('track', {
+                    trackIndex: this.contextItem.tracks.findIndex(t => t.id === this.track.id),
+                    contextItem: this.contextItem
+                });
             }
         },
     }
@@ -138,7 +141,7 @@
     .track-info {
         margin-left: 15px;
         line-height: 17px;
-        max-width: 100%;
+        width: 100%;
         overflow: hidden;
     }
 

@@ -23,7 +23,6 @@ export default {
     actions: {
         search: async ({state, commit, rootState}, term) => {
             let result = await rootState.api.search(term, ['album', 'artist', 'playlist', 'track']);
-            console.log("Searched for", term, result);
             commit('searchTerm', {
                 term,
                 albums: result.albums.items,

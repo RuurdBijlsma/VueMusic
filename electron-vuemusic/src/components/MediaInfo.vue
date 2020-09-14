@@ -11,11 +11,11 @@
                          class="media-info-logo" src="../assets/logo-small-v.png"
                          alt="vm5 logo">
                     <div v-else class="media-title-artists">
-                        <span :title="$store.state.media.track.name"
+                        <span :title="$store.getters.track.name"
                               class="track-title">
-                            {{$store.state.media.track.name}}
+                            {{$store.getters.track.name}}
                         </span>
-                        <artists-span grey class="track-artists" :artists="$store.state.media.track.artists"></artists-span>
+                        <artists-span grey class="track-artists" :artists="$store.getters.track.artists"></artists-span>
                     </div>
                 </div>
             </div>
@@ -35,14 +35,23 @@
 </script>
 
 <style scoped>
+    .media-info {
+        width: 100%;
+        display: inline-flex;
+        min-width: 100px;
+    }
+
     .media-card {
         display: flex;
+        width: 100%;
+        min-width: 100px;
     }
 
     .white-part {
         display: flex;
         height: 50px;
-        flex-grow: 1;
+        width: calc(100% - 48px);
+        min-width: 100px;
     }
 
     .media-album {
@@ -59,6 +68,7 @@
         border-top-left-radius: 2px !important;
         border-bottom-left-radius: 2px;
         width: 48px;
+        min-width: 48px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -90,6 +100,8 @@
         height: calc(100% - 10px);
         margin-top: 3px;
         font-size: 13px;
+        min-width: 100px;
+        max-width: 100%;
     }
 
     .track-title {

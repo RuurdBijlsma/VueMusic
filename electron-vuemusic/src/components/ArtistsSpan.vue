@@ -33,6 +33,7 @@
         text-overflow: ellipsis;
         overflow: hidden;
         display: block;
+        max-width: calc(100% - 56px);
     }
 
     .artist {

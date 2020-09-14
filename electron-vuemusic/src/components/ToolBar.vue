@@ -2,9 +2,13 @@
     <div class="toolbar">
         <logo class="logo" v-if="mobile"></logo>
         <media-controls full class="controls" v-if="!mobile"></media-controls>
-        <div class="media-info" v-if="!mobile && $store.getters.isTrackSet">
-            <media-seek class="top-seeker" no-background small-time></media-seek>
-            <media-info class="top-info"></media-info>
+        <div class="media-container" v-if="!mobile && $store.getters.isTrackSet">
+            <div class="media-info">
+                <media-seek class="top-seeker" no-background small-time></media-seek>
+                <media-info class="top-info"></media-info>
+            </div>
+            <follow-button class="favorite-button" hide-tooltip :item="$store.getters.track"></follow-button>
+            <queue-button class="queue-button"></queue-button>
         </div>
         <div class="volume" v-if="!mobile">
             <v-slider
@@ -17,12 +21,6 @@
             ></v-slider>
         </div>
         <div class="buttons">
-            <v-btn icon class="favorite-button">
-                <v-icon>mdi-heart-outline</v-icon>
-            </v-btn>
-            <v-btn icon>
-                <v-icon>mdi-format-list-bulleted</v-icon>
-            </v-btn>
             <v-menu offset-y :close-on-content-click="true">
                 <template v-slot:activator="{ on, attrs }">
                     <v-btn
@@ -106,10 +104,12 @@
     import MediaControls from "./MediaControls";
     import MediaSeek from "./MediaSeek";
     import Logo from "./Logo";
+    import FollowButton from "./FollowButton";
+    import QueueButton from "./QueueButton";
 
     export default {
         name: "ToolBar",
-        components: {Logo, MediaSeek, MediaControls, MediaInfo},
+        components: {QueueButton, FollowButton, Logo, MediaSeek, MediaControls, MediaInfo},
         data: () => ({
             volume: 1,
             prevVolume: 1,
@@ -176,10 +176,18 @@
         -webkit-app-region: no-drag;
     }
 
+    .media-container {
+        display: flex;
+        max-width: 550px;
+        flex-grow: 10;
+        align-items: center;
+        min-width: 100px;
+    }
+
     .media-info {
         -webkit-app-region: no-drag;
-        flex-grow: 10;
-        max-width: 500px;
+        width: 100%;
+        min-width: 100px;
     }
 
     .top-seeker {
@@ -205,9 +213,21 @@
 
     .buttons {
         margin: 0 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .buttons > * {
+        -webkit-app-region: no-drag;
+    }
+
+    .favorite-button {
+        -webkit-app-region: no-drag;
+        margin: 0 5px;
+    }
+
+    .queue-button {
         -webkit-app-region: no-drag;
     }
 
@@ -250,6 +270,12 @@
         }
 
         .minimize-button {
+            display: none;
+        }
+    }
+
+    @media (max-width: 710px) {
+        .queue-button {
             display: none;
         }
     }

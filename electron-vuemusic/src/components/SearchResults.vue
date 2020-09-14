@@ -13,7 +13,7 @@
             <v-divider v-if="result.albums.length > 0"></v-divider>
             <h3 v-if="result.tracks.length > 0">Tracks</h3>
             <track-grid v-if="result.tracks.length > 0" :tracks="result.tracks" class="end-pad"
-                        :context-item="{type:'search', id:'search', tracks:result.tracks}"></track-grid>
+                        :context-item="{type:'search', id:'search' + id, term, to: $route.fullPath, tracks:result.tracks}"></track-grid>
             <v-divider v-if="result.tracks.length > 0"></v-divider>
             <h3 v-if="result.playlists.length > 0">Playlists</h3>
         </div>
@@ -34,10 +34,13 @@
                 default: null,
             }
         },
+        data: () => ({
+            id: Math.random(),
+        }),
         methods: {},
         computed: {
             term() {
-                return this.results.term;
+                return this.result.term;
             },
         },
         watch: {
