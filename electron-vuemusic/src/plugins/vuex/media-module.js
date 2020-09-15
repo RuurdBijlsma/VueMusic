@@ -4,7 +4,7 @@ export default {
     state: {
         recentlyPlayed: [],
         track: null,
-        currentTime: 0,
+        currentTime: 39,
         queue: [],
         shuffledQueue: [],
         contextItem: null,
@@ -30,11 +30,8 @@ export default {
             ) {
                 if (contextItem.type !== 'radio' && contextItem.type !== 'search') {
                     let index = state.recentlyPlayed.findIndex(i => i.id === contextItem.id);
-                    if (index !== -1) {
-                        console.log("Removing index", index, 'from', state.recentlyPlayed);
+                    if (index !== -1)
                         state.recentlyPlayed.splice(index, 1);
-                    }
-                    console.log('adding recently played item', contextItem, state.recentlyPlayed.length);
                     state.recentlyPlayed.unshift(contextItem);
                     state.recentlyPlayed = state.recentlyPlayed.slice(0, 10);
                 }

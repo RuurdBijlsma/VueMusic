@@ -206,7 +206,7 @@
         width: calc(100% - 51px);
         margin-left: 51px;
         position: relative;
-        top: 39px;
+        top: 40px;
         z-index: 5;
     }
 
