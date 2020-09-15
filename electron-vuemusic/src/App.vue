@@ -45,7 +45,7 @@
             </div>
         </v-card>
 
-        <v-bottom-navigatioqun
+        <v-bottom-navigation
                 color="primary"
                 grow
                 :shift="$store.state.windowWidth <= 430"
@@ -67,7 +67,7 @@
                 <span>Search</span>
                 <v-icon>mdi-magnify</v-icon>
             </v-btn>
-        </v-bottom-navigatioqun>
+        </v-bottom-navigation>
     </v-app>
 </template>
 
@@ -81,7 +81,6 @@
     import QueueButton from "./components/QueueButton";
 
     //TOOD:
-    //clear queue / remove single item from queue
     //maybe remove spotify stuff from store.js into spotify-module.js (probably not needed until more stuff starts to clutter base store.js)
     //Delete cache every week or so to prevent massive cache causing lag (see first if lag actually happens)
     //check shuffle button size maybe
