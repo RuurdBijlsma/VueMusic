@@ -107,6 +107,10 @@
             },
             imageSize() {
                 let width = this.$store.state.windowWidth;
+                if (width < 400)
+                    return 250;
+                if (width < 450)
+                    return 300;
                 if (width < 1030)
                     return 350;
                 if (width < 1287)

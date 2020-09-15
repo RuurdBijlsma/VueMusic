@@ -124,31 +124,11 @@
         .art-section {
             width: 300px;
         }
-
-        .album-art {
-            min-width: 300px;
-            height: 300px;
-            right: -150px;
-        }
-
-        .album-normal {
-            left: -150px;
-        }
     }
 
     @media (max-width: 1287px) {
         .art-section {
             width: 250px;
-        }
-
-        .album-art {
-            min-width: 250px;
-            height: 250px;
-            right: -125px;
-        }
-
-        .album-normal {
-            left: -125px;
         }
     }
 
@@ -156,16 +136,6 @@
         .art-section {
             width: 350px;
             margin-top: 0;
-        }
-
-        .album-art {
-            min-width: 350px;
-            height: 350px;
-            right: -175px;
-        }
-
-        .album-normal {
-            left: -175px;
         }
     }
 </style>
