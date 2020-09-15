@@ -122,12 +122,20 @@
             },
         },
         mounted() {
-            this.$refs.volume.$el.addEventListener('wheel', this.volumeScroll, true);
+            this.mountVolumeListener();
         },
         beforeDestroy() {
-            this.$refs.volume.$el.removeEventListener('wheel', this.volumeScroll);
+            this.removeVolumeListener();
         },
         methods: {
+            mountVolumeListener() {
+                if (this.$refs.volume)
+                    this.$refs.volume.$el.addEventListener('wheel', this.volumeScroll, true);
+            },
+            removeVolumeListener() {
+                if (this.$refs.volume)
+                    this.$refs.volume.$el.removeEventListener('wheel', this.volumeScroll);
+            },
             toggleMute() {
                 if (this.volume > 0) {
                     this.prevVolume = this.volume;
@@ -144,6 +152,15 @@
         watch: {
             '$vuetify.theme.dark'() {
                 localStorage.darkTheme = this.$vuetify.theme.dark;
+            },
+            mobile() {
+                if (!this.mobile) {
+                    setTimeout(() => {
+                        this.mountVolumeListener();
+                    }, 100);
+                } else {
+                    this.removeVolumeListener();
+                }
             },
         },
         computed: {
