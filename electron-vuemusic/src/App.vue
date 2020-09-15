@@ -45,7 +45,7 @@
             </div>
         </v-card>
 
-        <v-bottom-navigation
+        <v-bottom-navigatioqun
                 color="primary"
                 grow
                 :shift="$store.state.windowWidth <= 430"
@@ -67,7 +67,7 @@
                 <span>Search</span>
                 <v-icon>mdi-magnify</v-icon>
             </v-btn>
-        </v-bottom-navigation>
+        </v-bottom-navigatioqun>
     </v-app>
 </template>
 

@@ -74,6 +74,20 @@ export default {
                 }
             }
         },
+        removeFromQueue: (state, track) => {
+            if (track.id === state.track.id)
+                return;
+            let index = state.queue.findIndex(t => t.id === track.id);
+            let indexShuffle = state.shuffledQueue.findIndex(t => t.id === track.id);
+            if (index !== -1)
+                state.queue.splice(index, 1);
+            if (indexShuffle !== -1)
+                state.shuffledQueue.splice(indexShuffle, 1);
+        },
+        clearQueue: (state) => {
+            state.queue = [state.track];
+            state.shuffledQueue = [state.track];
+        },
 
         cacheAllMedia: state => {
             let cachedFields = ["recentlyPlayed", "track", "queue", "shuffledQueue", "contextItem", "shuffle", "repeat"];

@@ -17,14 +17,18 @@
                     <div class="scroll-item">
                         <v-divider></v-divider>
                         <track-row
+                                queue-track
                                 :context-item="$store.state.media.contextItem"
                                 :key="item.id"
                                 :track="item"></track-row>
                     </div>
                 </recycle-scroller>
-                <v-btn v-if="context.to !== null" :disabled="$route.fullPath === context.to" color="primary" text
-                       class="view-more" small :to="context.to">View all tracks
-                </v-btn>
+                <div class="bottom-buttons">
+                    <v-btn v-if="context.to !== null" :disabled="$route.fullPath === context.to" color="primary" text
+                           class="view-more" small :to="context.to" :title="'Visit ' + $store.state.media.contextItem.name">View more
+                    </v-btn>
+                    <v-btn small text class="view-more" @click="$store.commit('clearQueue')">Clear queue</v-btn>
+                </div>
             </v-list>
         </v-menu>
     </div>
@@ -90,7 +94,7 @@
         padding: 0 15px;
     }
 
-    .track-row {
-        width: 100%;
+    .bottom-buttons {
+        display: flex;
     }
 </style>

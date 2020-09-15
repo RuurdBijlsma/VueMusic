@@ -9,7 +9,7 @@
         </div>
         <div class="track-right">
             <div class="track-duration">{{duration}}</div>
-            <item-menu :context-item="contextItem" :item="track"></item-menu>
+            <item-menu :queue-track="queueTrack" :context-item="contextItem" :item="track"></item-menu>
         </div>
     </div>
 </template>
@@ -39,6 +39,10 @@
                 type: Object,
                 default: null,
                 required: true,
+            },
+            queueTrack: {
+                type: Boolean,
+                default: false,
             },
         },
         data: () => ({

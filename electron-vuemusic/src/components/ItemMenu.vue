@@ -7,14 +7,15 @@
         </template>
         <v-list dense>
             <share-menu-item :item="item"></share-menu-item>
-            <follow-menu-item v-if="type!=='category' && type!=='user' && type !== 'liked'" :item="item"></follow-menu-item>
+            <follow-menu-item v-if="type!=='category' && type!=='user' && type !== 'liked'"
+                              :item="item"></follow-menu-item>
             <v-list-item v-if="type === 'track' || type === 'artist'" exact :to="`/radio?seed_${type}s=${item.id}`">
                 <v-list-item-icon>
                     <v-icon>mdi-radio-tower</v-icon>
                 </v-list-item-icon>
                 <v-list-item-title>Go to {{type}} radio</v-list-item-title>
             </v-list-item>
-            <v-list-item v-if="type !== 'category' && type !== 'liked'" @click="playNext(item)">
+            <v-list-item v-if="!queueTrack && type !== 'category' && type !== 'liked'" @click="playNext(item)">
                 <v-list-item-icon>
                     <v-progress-circular size="20" indeterminate width="1"
                                          v-if="nextQueueLoading"></v-progress-circular>
@@ -22,7 +23,7 @@
                 </v-list-item-icon>
                 <v-list-item-title>Play next</v-list-item-title>
             </v-list-item>
-            <v-list-item v-if="type !== 'category' && type !== 'liked'" @click="addToQueue(item)">
+            <v-list-item v-if="!queueTrack && type !== 'category' && type !== 'liked'" @click="addToQueue(item)">
                 <v-list-item-icon>
                     <v-progress-circular size="20" indeterminate width="1"
                                          v-if="addQueueLoading"></v-progress-circular>
@@ -37,6 +38,13 @@
                 </v-list-item-icon>
                 <v-list-item-title>Remove from <span class="font-weight-bold">{{contextItem.name}}</span>
                 </v-list-item-title>
+            </v-list-item>
+            <v-list-item v-if="type === 'track' && queueTrack && $store.getters.isTrackSet && item.id !== $store.state.media.track.id"
+                         @click="$store.commit('removeFromQueue', item)">
+                <v-list-item-icon>
+                    <v-icon>mdi-playlist-minus</v-icon>
+                </v-list-item-icon>
+                <v-list-item-title>Remove from queue</v-list-item-title>
             </v-list-item>
             <v-menu open-on-hover offset-y>
                 <template v-slot:activator="{ on, attrs }">
@@ -86,6 +94,10 @@
             contextItem: {
                 type: Object,
                 default: null,
+            },
+            queueTrack: {
+                type: Boolean,
+                default: false,
             },
         },
         data: () => ({
