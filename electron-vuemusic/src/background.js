@@ -4,7 +4,6 @@ import {app, protocol, BrowserWindow, ipcMain} from 'electron'
 import {createProtocol} from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, {VUEJS_DEVTOOLS} from 'electron-devtools-installer'
 import path from 'path';
-import MusicDownloader from "yt-music-downloader";
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
@@ -50,11 +49,7 @@ function createWindow() {
     });
 }
 
-ipcMain.handle('getStreamUrl', async (event, track) => {
-    return 'http://url' + track.name;
-})
-
-//disable cors >:(
+//disable cors >:()
 app.commandLine.appendSwitch('disable-features', 'OutOfBlinkCors');
 
 app.on('before-quit', e => {
@@ -62,7 +57,7 @@ app.on('before-quit', e => {
     win.webContents.send('before-quit');
 });
 
-// Quit when all windows are closed...
+// Quit when all windows are closed.
 app.on('window-all-closed', () => {
     // On macOS it is common for applications and their menu bar
     // to stay active until the user quits explicitly with Cmd + Q

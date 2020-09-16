@@ -137,9 +137,6 @@
             } else if (!this.$store.getters.isLoggedIn && this.$route.name !== 'Settings') {
                 await this.$router.push('/settings');
             }
-
-            let reply = await ipcRenderer.invoke('getStreamUrl', {name: k'asdf'});
-            console.log(reply);
         },
         beforeDestroy() {
             clearInterval(this.cacheInterval);

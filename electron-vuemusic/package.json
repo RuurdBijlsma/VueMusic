@@ -23,7 +23,9 @@
     "vue2-perfect-scrollbar": "^1.5.0",
     "vuetify": "^2.2.11",
     "vuex": "^3.4.0",
-    "yt-music-downloader": "file:../../yt-music-downloader"
+    "ffbinaries": "^1.1.4",
+    "ytdl-core": "^3.2.2",
+    "youtube-search": "^1.1.4"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",

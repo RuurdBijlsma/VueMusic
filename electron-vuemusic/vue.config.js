@@ -1,5 +1,10 @@
 module.exports = {
-  "transpileDependencies": [
-    "vuetify"
-  ]
+    "transpileDependencies": [
+        "vuetify"
+    ],
+    pluginOptions: {
+        electronBuilder: {
+            externals: ['ffbinaries'],
+        }
+    }
 }

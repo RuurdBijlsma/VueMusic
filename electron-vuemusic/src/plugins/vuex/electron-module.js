@@ -1,14 +1,20 @@
+import MusicDownloader from '../../js/MusicDownloader';
+
 export default {
     state: {
         type: 'electron',
+        electron: window.require('electron'),
+        ipc: window.require('electron').ipcRenderer,
         shouldSetKey: true,
         spotifyId: localStorage.getItem('spotifyId') === null ? 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' : localStorage.spotifyId,
         spotifySecret: localStorage.getItem('spotifySecret') === null ? 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb' : localStorage.spotifySecret,
         youtubeKey: localStorage.getItem('youtubeKey') === null ? 'cccccccccccc-dddddddddddddddddddddddddd' : localStorage.youtubeKey,
         requestedScopes: "ugc-image-upload user-read-email user-read-private playlist-read-collaborative playlist-modify-public playlist-read-private playlist-modify-private user-library-modify user-library-read user-top-read user-read-recently-played user-follow-read user-follow-modify",
         server: null,
+        downloader: new MusicDownloader,
     },
     mutations: {
+        downloaderKey: (state, key) => state.downloader.apiKey = key,
         spotifyId: (state, id) => {
             localStorage.spotifyId = id;
             state.spotifyId = id
@@ -20,6 +26,7 @@ export default {
         youtubeKey: (state, key) => {
             localStorage.youtubeKey = key;
             state.youtubeKey = key
+            state.downloader.apiKey = key;
         },
     },
     getters: {
@@ -35,17 +42,35 @@ export default {
 
     },
     actions: {
-        _initialize: async ({}) => {
+        _initialize: async ({state, commit, dispatch}) => {
+            commit('downloaderKey', state.youtubeKey);
         },
-        openDevTools: async () => {
-            window.require('electron').remote.getCurrentWindow().openDevTools();
+        openDevTools: async ({state}) => {
+            state.electron.remote.getCurrentWindow().openDevTools();
         },
-        closeWindow: async () => {
-            window.require('electron').remote.app.exit();
+        closeWindow: async ({state}) => {
+            state.electron.remote.app.exit();
         },
-        minimizeWindow: async () => {
-            window.require('electron').remote.getCurrentWindow().minimize();
+        minimizeWindow: async ({state}) => {
+            state.electron.remote.getCurrentWindow().minimize();
         },
+
+        setYoutubeKey: async ({state}, key) => {
+            await state.ipc.invoke('setYoutubeKey', key);
+        },
+        isTrackAvailableOffline: async ({state}, track) => {
+            return await state.downloader.isTrackOffline(track);
+        },
+        downloadTrackByUrl: async ({state}, url) => {
+            //call this when working url is found
+            return state.downloader.downloadUrl(url);
+        },
+        async * getTrackUrls({state}, track) {
+            for await(let format of state.downloader.getStreamFormats(track)) {
+                yield format.url;
+            }
+        },
+
         resetSpotifyLogin({state, commit}) {
             if (state.server !== null) {
                 state.server.close();

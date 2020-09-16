@@ -96,6 +96,7 @@
                     this.$store.commit('spotifyId', spotifyId);
                     this.$store.commit('spotifySecret', spotifySecret);
                     this.$store.commit('youtubeKey', youtubeKey);
+                    this.$store.dispatch('setYoutubeKey', youtubeKey);
                 }
             },
         }
