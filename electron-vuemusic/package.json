@@ -22,7 +22,8 @@
     "vue-virtual-scroller": "^1.0.10",
     "vue2-perfect-scrollbar": "^1.5.0",
     "vuetify": "^2.2.11",
-    "vuex": "^3.4.0"
+    "vuex": "^3.4.0",
+    "yt-music-downloader": "file:../../yt-music-downloader"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",
@@ -30,7 +31,7 @@
     "@vue/cli-plugin-router": "~4.5.0",
     "@vue/cli-plugin-vuex": "~4.5.0",
     "@vue/cli-service": "~4.5.0",
-    "electron": "^9.0.0",
+    "electron": "^10.1.2",
     "electron-devtools-installer": "^3.1.0",
     "sass": "^1.19.0",
     "sass-loader": "^8.0.0",

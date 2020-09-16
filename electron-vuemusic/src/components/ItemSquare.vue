@@ -68,8 +68,7 @@
             playLoading: false,
         }),
         mounted() {
-            if (this.item.type === 'liked')
-                console.log(this.item, this.$store.getters.relativeItemUrl(this.item));
+
         },
         methods: {
             async play(e) {

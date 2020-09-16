@@ -200,7 +200,7 @@ export default new Vuex.Store({
         isAlbumFollowed: state => album => state.library.albums.find(a => a.id === album.id),
     },
     actions: {
-        initialize: async ({commit, dispatch}) => {
+        initialize: async ({commit, state, dispatch}) => {
             await dispatch('processAuth');
             await dispatch('_initialize');
         },

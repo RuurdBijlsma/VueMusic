@@ -80,10 +80,22 @@
     import FollowButton from "./components/FollowButton";
     import QueueButton from "./components/QueueButton";
 
+    const {ipcRenderer} = window.require('electron');
+
     //TOOD:
     //maybe remove spotify stuff from store.js into spotify-module.js (probably not needed until more stuff starts to clutter base store.js)
     //Delete cache every week or so to prevent massive cache causing lag (see first if lag actually happens)
     //check shuffle button size maybe
+
+    // In vuex platform store create all functions for youtube stuff
+    // * check if track is offline
+    // * get track url
+    //  - get track local url
+    //  - get track stream url
+    //      * download track when getting stream url (since it's not downloaded yet)
+    // How to move stream from main to renderer?
+    // those should fire events that call functions in the main electron thread
+
 
 
     export default {
@@ -100,7 +112,7 @@
             window.addEventListener('resize', this.resizeListener);
 
             window.onbeforeunload = e => {
-                if(!this.$store.state.dontCache){
+                if (!this.$store.state.dontCache) {
                     this.$store.commit('cacheAll');
                     this.$store.commit('cacheAllMedia');
                 }
@@ -115,7 +127,7 @@
             this.cacheInterval = setInterval(() => {
                 this.$store.commit('cacheAll');
                 this.$store.commit('cacheAllMedia');
-            }, 1000 * 60 * 5);//Cache every 5 minutes
+            }, 1000 * 60 * 5);//Cache every 5 minutes.
 
             console.log(this.$store);
             if (!this.$store.getters.isKeySet) {
@@ -125,6 +137,9 @@
             } else if (!this.$store.getters.isLoggedIn && this.$route.name !== 'Settings') {
                 await this.$router.push('/settings');
             }
+
+            let reply = await ipcRenderer.invoke('getStreamUrl', {name: k'asdf'});
+            console.log(reply);
         },
         beforeDestroy() {
             clearInterval(this.cacheInterval);

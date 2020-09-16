@@ -4,11 +4,12 @@ import {app, protocol, BrowserWindow, ipcMain} from 'electron'
 import {createProtocol} from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, {VUEJS_DEVTOOLS} from 'electron-devtools-installer'
 import path from 'path';
+import MusicDownloader from "yt-music-downloader";
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 // Keep a global reference of the window object, if you don't, the window will
-// be closed automatically when the JavaScript object is garbage collected.
+// be closed automatically when the JavaScript object is garbage collected..
 let win
 
 // Scheme must be registered before the app is ready.
@@ -29,6 +30,7 @@ function createWindow() {
         webPreferences: {
             webSecurity: false,
             allowRunningInsecureContent: true,
+            enableRemoteModule: true,
             nodeIntegration: true,
         },
     })
@@ -47,6 +49,13 @@ function createWindow() {
         win = null
     });
 }
+
+ipcMain.handle('getStreamUrl', async (event, track) => {
+    return 'http://url' + track.name;
+})
+
+//disable cors >:(
+app.commandLine.appendSwitch('disable-features', 'OutOfBlinkCors');
 
 app.on('before-quit', e => {
     e.preventDefault();
