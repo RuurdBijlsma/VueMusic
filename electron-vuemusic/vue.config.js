@@ -1,10 +1,11 @@
 module.exports = {
-    "transpileDependencies": [
-        "vuetify"
-    ],
-    pluginOptions: {
-        electronBuilder: {
-            externals: ['ffbinaries'],
-        }
+  "pluginOptions": {
+    "electronBuilder": {
+      "nodeIntegration": true,
+      "experimentalNativeDepCheck": true
     }
+  },
+  "transpileDependencies": [
+    "vuetify"
+  ]
 }

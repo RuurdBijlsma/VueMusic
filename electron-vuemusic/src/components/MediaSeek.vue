@@ -70,7 +70,7 @@
                 let {left, width} = this.$refs.seekBar.$el.getBoundingClientRect();
                 let x = e.pageX - left;
                 let percentage = Math.max(Math.min(1, x / width), 0);
-                console.log(percentage);
+                this.$store.commit('seekTo', percentage);
             },
             seekUp(e) {
                 this.seeking = false;

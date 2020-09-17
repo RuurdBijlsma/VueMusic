@@ -5,13 +5,14 @@
                icon small v-if="full">
             <v-icon small>mdi-shuffle</v-icon>
         </v-btn>
-        <v-btn icon small>
+        <v-btn icon small @click="$store.dispatch('skip', -1)">
             <v-icon>mdi-rewind</v-icon>
         </v-btn>
-        <v-btn icon large>
-            <v-icon large>mdi-play</v-icon>
+        <v-btn :loading="$store.state.media.trackLoading" icon large @click="$store.dispatch(playing ? 'pause' : 'play')">
+            <v-icon large v-if="playing">mdi-pause</v-icon>
+            <v-icon large v-else>mdi-play</v-icon>
         </v-btn>
-        <v-btn icon small>
+        <v-btn icon small @click="$store.dispatch('skip', 1)">
             <v-icon>mdi-fast-forward</v-icon>
         </v-btn>
         <v-btn :color="$store.state.media.repeat ? 'primary' : 'default'"
@@ -29,6 +30,11 @@
             full: {
                 type: Boolean,
                 default: false,
+            }
+        },
+        computed: {
+            playing() {
+                return this.$store.state.media.playing;
             }
         }
     }

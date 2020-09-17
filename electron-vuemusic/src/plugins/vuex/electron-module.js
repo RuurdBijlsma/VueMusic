@@ -1,4 +1,4 @@
-import MusicDownloader from '../../js/MusicDownloader';
+import MusicDownloader from '../../js/MusicDownloader.js';
 
 export default {
     state: {
@@ -12,6 +12,7 @@ export default {
         requestedScopes: "ugc-image-upload user-read-email user-read-private playlist-read-collaborative playlist-modify-public playlist-read-private playlist-modify-private user-library-modify user-library-read user-top-read user-read-recently-played user-follow-read user-follow-modify",
         server: null,
         downloader: new MusicDownloader,
+        downloads: [],
     },
     mutations: {
         downloaderKey: (state, key) => state.downloader.apiKey = key,
@@ -61,14 +62,16 @@ export default {
         isTrackAvailableOffline: async ({state}, track) => {
             return await state.downloader.isTrackOffline(track);
         },
-        downloadTrackByUrl: async ({state}, url) => {
-            //call this when working url is found
-            return state.downloader.downloadUrl(url);
+        downloadTrackByUrl: async ({state, commit}, {track, url}) => {
+            let abortController = new AbortController();
+            commit('addDownload', {track, state: 'Preparing', abortController: abortController})
+            await state.downloader.downloadTrack(url, track,
+                progress => commit('downloadProgress', {track, progress}),
+                abortController.signal,
+            );
         },
-        async * getTrackUrls({state}, track) {
-            for await(let format of state.downloader.getStreamFormats(track)) {
-                yield format.url;
-            }
+        getTrackUrls({state}, track) {
+            return state.downloader.getTrackUrls(track);
         },
 
         resetSpotifyLogin({state, commit}) {

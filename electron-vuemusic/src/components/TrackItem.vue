@@ -6,12 +6,18 @@
                      :style="{backgroundImage: `url(${$store.getters.itemImage(track)})`}"></div>
                 <div v-else class="album-number">{{track.track_number}}</div>
                 <v-card v-if="albumList" class="play-button" flat>
-                    <v-btn icon @click="play">
+                    <v-btn icon @click="pause" v-if="trackIsPlaying">
+                        <v-icon>mdi-pause</v-icon>
+                    </v-btn>
+                    <v-btn icon @click="play" v-else>
                         <v-icon>mdi-play</v-icon>
                     </v-btn>
                 </v-card>
-                <div v-else class="play-button art-button">
-                    <v-btn @click="play" icon color="white">
+                <div v-else class="play-button art-button" :style="{opacity: trackIsPlaying ? '1' : '0'}">
+                    <v-btn @click="pause" icon color="white" v-if="trackIsPlaying">
+                        <v-icon>mdi-pause</v-icon>
+                    </v-btn>
+                    <v-btn @click="play" icon color="white" v-else>
                         <v-icon>mdi-play</v-icon>
                     </v-btn>
                 </div>
@@ -61,13 +67,29 @@
             },
         },
         methods: {
-            play() {
+            async play() {
+                if (this.trackIsLoaded) {
+                    return this.$store.dispatch('play');
+                }
+
+                this.$store.commit('playAfterLoad', true);
                 this.$store.commit('track', {
                     track: this.track,
                     contextItem: this.contextItem
                 });
-            }
+            },
+            async pause() {
+                await this.$store.dispatch('pause');
+            },
         },
+        computed: {
+            trackIsLoaded() {
+                return this.$store.state.media.track.id === this.track.id;
+            },
+            trackIsPlaying() {
+                return this.trackIsLoaded && this.$store.state.media.playing;
+            },
+        }
     }
 </script>
 
@@ -118,7 +140,7 @@
     }
 
     .play-button:hover {
-        opacity: 1;
+        opacity: 1 !important;
     }
 
     .play-button {

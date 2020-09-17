@@ -47,6 +47,16 @@
                             </v-list-item-content>
                         </router-link>
                     </v-list-item>
+
+                    <v-list-item to="/downloads">
+                        <v-list-item-icon>
+                            <v-icon>mdi-download</v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-content>
+                            <v-list-item-title>Downloads</v-list-item-title>
+                        </v-list-item-content>
+                    </v-list-item>
+
                     <v-list-item to="/settings">
                         <v-list-item-icon>
                             <v-icon>mdi-cog-outline</v-icon>
@@ -55,6 +65,7 @@
                             <v-list-item-title>Settings</v-list-item-title>
                         </v-list-item-content>
                     </v-list-item>
+
                     <v-list-item @click="$store.dispatch('spotifyLogout')" color="primary"
                                  v-if="$store.getters.isLoggedIn">
                         <v-list-item-icon>
@@ -73,6 +84,7 @@
                             <v-list-item-title>Login</v-list-item-title>
                         </v-list-item-content>
                     </v-list-item>
+
                     <v-list-item color="primary">
                         <v-list-item-icon>
                             <v-icon>mdi-brightness-6</v-icon>
@@ -123,6 +135,7 @@
         },
         mounted() {
             this.mountVolumeListener();
+            this.volume = this.$store.state.media.volume ** 0.5;
         },
         beforeDestroy() {
             this.removeVolumeListener();
@@ -162,6 +175,9 @@
                     this.removeVolumeListener();
                 }
             },
+            volume() {
+                this.$store.commit('volume', this.volume ** 2);
+            },
         },
         computed: {
             volumeIcon() {
@@ -173,9 +189,6 @@
                     return 'mdi-volume-high';
                 }
             },
-            adjustedVolume() {
-                return this.volume ** 2;
-            }
         }
     }
 </script>

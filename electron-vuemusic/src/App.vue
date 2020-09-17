@@ -68,6 +68,8 @@
                 <v-icon>mdi-magnify</v-icon>
             </v-btn>
         </v-bottom-navigation>
+
+        <music-player></music-player>
     </v-app>
 </template>
 
@@ -79,28 +81,24 @@
     import NavContent from "./components/NavContent";
     import FollowButton from "./components/FollowButton";
     import QueueButton from "./components/QueueButton";
-
-    const {ipcRenderer} = window.require('electron');
+    import MusicPlayer from "@/components/MusicPlayer";
 
     //TOOD:
     //maybe remove spotify stuff from store.js into spotify-module.js (probably not needed until more stuff starts to clutter base store.js)
     //Delete cache every week or so to prevent massive cache causing lag (see first if lag actually happens)
     //check shuffle button size maybe
+    //maybe add play/shuffle to track grid/ search results and artist tracks
 
-    // In vuex platform store create all functions for youtube stuff
-    // * check if track is offline
-    // * get track url
-    //  - get track local url
-    //  - get track stream url
-    //      * download track when getting stream url (since it's not downloaded yet)
-    // How to move stream from main to renderer?
-    // those should fire events that call functions in the main electron thread
-
+    //like dislike global keyboard shortcut
+    //click media notification -> open app
+    //media controls in windows taskbar preview
+    //icon to show if current track is local
+    //skip prev fix
 
 
     export default {
         name: 'App',
-        components: {QueueButton, FollowButton, NavContent, MediaSeek, MediaControls, MediaInfo, ToolBar},
+        components: {MusicPlayer, QueueButton, FollowButton, NavContent, MediaSeek, MediaControls, MediaInfo, ToolBar},
         data: () => ({
             drawer: true,
             cacheInterval: -1,

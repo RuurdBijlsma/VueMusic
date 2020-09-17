@@ -1,41 +1,57 @@
 'use strict'
 
-import {app, protocol, BrowserWindow, ipcMain} from 'electron'
+import {app, protocol, BrowserWindow} from 'electron'
 import {createProtocol} from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, {VUEJS_DEVTOOLS} from 'electron-devtools-installer'
-import path from 'path';
+import path from 'path'
+import fs from "fs";
+import Directories from "@/js/Directories";
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 // Keep a global reference of the window object, if you don't, the window will
-// be closed automatically when the JavaScript object is garbage collected..
+// be closed automatically when the JavaScript object is garbage collected.
 let win
 
-// Scheme must be registered before the app is ready.
+// Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
     {scheme: 'app', privileges: {secure: true, standard: true}}
 ])
 
+function registerLocalResourceProtocol() {
+    protocol.registerFileProtocol('local-resource', (request, callback) => {
+        const url = request.url.replace(/^local-resource:\/\//, '')
+        // Decode URL to prevent errors when loading filenames with UTF-8 chars or chars like "#"
+        const decodedUrl = decodeURI(url) // Needed in case URL contains spaces
+        try {
+            return callback(decodedUrl)
+        } catch (error) {
+            console.error('ERROR: registerLocalResourceProtocol: Could not get file path:', error)
+        }
+    })
+}
+
 function createWindow() {
     // Create the browser window.
-    let icon = path.join(__static, 'img/logo-gradient.png');
+    let icon = path.join(__static, process.env.WEBPACK_DEV_SERVER_URL ? 'img/logo-dev.png' : 'img/logo-gradient.png');
     win = new BrowserWindow({
-        width: 1570,
-        height: 800,
+        width: 1400,
+        height: 900,
+        frame: false,
         autoHideMenuBar: true,
         icon,
-        frame: false,
         backgroundColor: '#e7474c',
         webPreferences: {
             webSecurity: false,
-            allowRunningInsecureContent: true,
-            enableRemoteModule: true,
-            nodeIntegration: true,
-        },
+            // Use pluginOptions.nodeIntegration, leave this alone
+            // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
+            nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION
+        }
     })
 
     if (process.env.WEBPACK_DEV_SERVER_URL) {
         // Load the url of the dev server if in development mode
+        // win.loadURL(`file://${__dirname}/dist/index.html`);
         win.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
         if (!process.env.IS_TEST) win.webContents.openDevTools()
     } else {
@@ -46,24 +62,18 @@ function createWindow() {
 
     win.on('closed', () => {
         win = null
-    });
+    })
 }
-
-//disable cors >:()
-app.commandLine.appendSwitch('disable-features', 'OutOfBlinkCors');
-
-app.on('before-quit', e => {
-    e.preventDefault();
-    win.webContents.send('before-quit');
-});
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
-    // On macOS it is common for applications and their menu bar
-    // to stay active until the user quits explicitly with Cmd + Q
-    if (process.platform !== 'darwin') {
-        app.quit()
-    }
+    //Clean temp directory
+    let files = fs.readdirSync(Directories.temp);
+    for (const file of files)
+        fs.unlinkSync(path.join(Directories.temp, file));
+
+    if (process.platform !== 'darwin')
+        app.quit();
 })
 
 app.on('activate', () => {
@@ -78,6 +88,9 @@ app.on('activate', () => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', async () => {
+    app.commandLine.appendSwitch('disable-features', 'OutOfBlinkCors');
+
+    registerLocalResourceProtocol()
     if (isDevelopment && !process.env.IS_TEST) {
         // Install Vue Devtools
         try {

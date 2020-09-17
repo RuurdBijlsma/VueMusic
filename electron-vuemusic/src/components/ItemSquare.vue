@@ -11,8 +11,11 @@
                  :style="{
                     borderRadius: type === 'artist' ? '50%' : '5px',
                  }">
-                <v-btn :loading="playLoading" fab small color="primary" @click="play">
+                <v-btn :loading="playLoading" fab small color="primary" @click="play" v-if="!itemIsPlaying">
                     <v-icon color="white">mdi-play</v-icon>
+                </v-btn>
+                <v-btn :loading="playLoading" fab small color="primary" @click="pause" v-else>
+                    <v-icon color="white">mdi-pause</v-icon>
                 </v-btn>
                 <item-menu color="white" :fab="type==='artist'" v-if="!hideMenu" :item="item"></item-menu>
             </div>
@@ -67,18 +70,32 @@
         data: () => ({
             playLoading: false,
         }),
-        mounted() {
-
-        },
         methods: {
-            async play(e) {
-                this.playLoading = true;
+            async pause(e) {
                 e.stopPropagation();
+                await this.$store.dispatch('pause');
+            },
+            async play(e) {
+                e.stopPropagation();
+                if (this.itemIsLoaded) {
+                    return await this.$store.dispatch('play');
+                }
+                this.playLoading = true;
                 await this.$store.dispatch('playItem', {item: this.item});
                 this.playLoading = false;
             },
         },
         computed: {
+            itemIsLoaded() {
+                let contextItem = this.$store.state.media.contextItem;
+                return contextItem.type === this.item.type && contextItem.id === this.item.id;
+            },
+            itemIsPlaying() {
+                if (!this.itemIsLoaded)
+                    return false;
+                if (this.$store.state.media.playing)
+                    return true;
+            },
             type() {
                 if (!this.item.type)
                     return 'category';
