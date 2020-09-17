@@ -87,6 +87,8 @@
         },
         computed: {
             itemIsLoaded() {
+                if(!this.$store.getters.isTrackSet)
+                    return false;
                 let contextItem = this.$store.state.media.contextItem;
                 return contextItem.type === this.item.type && contextItem.id === this.item.id;
             },

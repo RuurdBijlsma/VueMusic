@@ -5,7 +5,7 @@
                 <div v-if="!albumList" class="album-art"
                      :style="{backgroundImage: `url(${$store.getters.itemImage(track)})`}"></div>
                 <div v-else class="album-number">{{track.track_number}}</div>
-                <v-card v-if="albumList" class="play-button" flat>
+                <v-card v-if="albumList" class="play-button" flat :style="{opacity: trackIsLoaded ? '1' : '0'}">
                     <v-btn icon @click="pause" v-if="trackIsPlaying">
                         <v-icon>mdi-pause</v-icon>
                     </v-btn>
@@ -13,7 +13,7 @@
                         <v-icon>mdi-play</v-icon>
                     </v-btn>
                 </v-card>
-                <div v-else class="play-button art-button" :style="{opacity: trackIsPlaying ? '1' : '0'}">
+                <div v-else class="play-button art-button" :style="{opacity: trackIsLoaded ? '1' : '0'}">
                     <v-btn @click="pause" icon color="white" v-if="trackIsPlaying">
                         <v-icon>mdi-pause</v-icon>
                     </v-btn>
@@ -84,6 +84,8 @@
         },
         computed: {
             trackIsLoaded() {
+                if (!this.$store.getters.isTrackSet)
+                    return false;
                 return this.$store.state.media.track.id === this.track.id;
             },
             trackIsPlaying() {

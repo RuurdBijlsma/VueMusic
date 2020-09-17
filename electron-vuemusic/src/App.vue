@@ -81,7 +81,7 @@
     import NavContent from "./components/NavContent";
     import FollowButton from "./components/FollowButton";
     import QueueButton from "./components/QueueButton";
-    import MusicPlayer from "@/components/MusicPlayer";
+    import MusicPlayer from "./components/MusicPlayer";
 
     //TOOD:
     //maybe remove spotify stuff from store.js into spotify-module.js (probably not needed until more stuff starts to clutter base store.js)
@@ -93,7 +93,12 @@
     //click media notification -> open app
     //media controls in windows taskbar preview
     //icon to show if current track is local
-    //skip prev fix
+    //first load loads playlists in reverse order
+    //start on page where you quit the application
+    //fix toolbar icons when song is null
+    //express not found in build
+    //remove all windows.require
+    //holding seek down to the right of the seek bar skips next very often
 
 
     export default {

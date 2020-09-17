@@ -24,7 +24,10 @@ export default {
         local: (state, local) => state.local = local,
         trackLoading: (state, trackLoading) => state.trackLoading = trackLoading,
         volume: (state, volume) => state.volume = volume,
-        seekTo: (state, percentage) => state.audio.currentTime = state.audio.duration * percentage,
+        seekTo: (state, percentage) => {
+            if (state.audio.duration)
+                state.audio.currentTime = state.audio.duration * percentage
+        },
         duration: (state, duration) => state.duration = duration || 0,
         currentTime: (state, currentTime) => state.currentTime = currentTime || 0,
         playing: (state, playing) => state.playing = playing,

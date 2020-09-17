@@ -56,9 +56,6 @@ export default {
             state.electron.remote.getCurrentWindow().minimize();
         },
 
-        setYoutubeKey: async ({state}, key) => {
-            await state.ipc.invoke('setYoutubeKey', key);
-        },
         isTrackAvailableOffline: async ({state}, track) => {
             return await state.downloader.isTrackOffline(track);
         },
