@@ -1,10 +1,12 @@
-import MusicDownloader from '../../js/MusicDownloader.js';
+import MusicDownloader from '../../js/MusicDownloader.js'
+import electron from 'electron'
+import http from "http";
+
+const express = window.require('express')
 
 export default {
     state: {
         type: 'electron',
-        electron: window.require('electron'),
-        ipc: window.require('electron').ipcRenderer,
         shouldSetKey: true,
         spotifyId: localStorage.getItem('spotifyId') === null ? 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' : localStorage.spotifyId,
         spotifySecret: localStorage.getItem('spotifySecret') === null ? 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb' : localStorage.spotifySecret,
@@ -47,13 +49,13 @@ export default {
             commit('downloaderKey', state.youtubeKey);
         },
         openDevTools: async ({state}) => {
-            state.electron.remote.getCurrentWindow().openDevTools();
+            electron.remote.getCurrentWindow().openDevTools();
         },
         closeWindow: async ({state}) => {
-            state.electron.remote.app.exit();
+            electron.remote.app.exit();
         },
         minimizeWindow: async ({state}) => {
-            state.electron.remote.getCurrentWindow().minimize();
+            electron.remote.getCurrentWindow().minimize();
         },
 
         isTrackAvailableOffline: async ({state}, track) => {
@@ -87,22 +89,22 @@ export default {
                 const authUrl = 'https://accounts.spotify.com/';
                 const redirectUrl = 'http://localhost:' + port;
                 const url = `${authUrl}authorize?client_id=${state.spotifyId}&response_type=code&redirect_uri=${redirectUrl}&scope=${encodeURIComponent(state.requestedScopes)}`;
-                let {shell} = window.require('electron');
+                let {shell} = electron;
                 await shell.openExternal(url);
 
                 if (state.server !== null)
                     state.server.close();
 
-                const app = window.require('express')();
-                const http = window.require('http').createServer(app);
+                const app = express();
+                const server = http.createServer(app);
 
                 app.get('/', async (req, res) => {
                     if (req.query.hasOwnProperty('code')) {
-                        http.close()
+                        server.close()
                         commit('server', null);
                         console.log("Stopped listening on *:" + port);
                         dispatch('getAuthByCode', {redirectUrl, code: req.query.code}).then(auth => {
-                            window.require('electron').remote.getCurrentWindow().focus();
+                            electron.remote.getCurrentWindow().focus();
                             resolve({
                                 code: req.query.code,
                                 token: auth.access_token,
@@ -124,7 +126,7 @@ export default {
                 });
 
                 commit('server', http);
-                http.listen(port, () => {
+                server.listen(port, () => {
                     console.log('listening on *:' + port);
                 });
             })
