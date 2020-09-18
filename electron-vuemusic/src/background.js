@@ -33,7 +33,7 @@ function registerLocalResourceProtocol() {
 
 function createWindow() {
     // Create the browser window.
-    let icon = path.join(__static, process.env.WEBPACK_DEV_SERVER_URL ? 'img/logo-dev.png' : 'img/logo-gradient.png');
+    let icon = path.join(__static, process.env.WEBPACK_DEV_SERVER_URL ? 'img/logo-red.png' : 'img/logo-gradient.png');
     win = new BrowserWindow({
         width: 1400,
         height: 900,
@@ -58,6 +58,7 @@ function createWindow() {
         createProtocol('app')
         // Load the index.html when not in development
         win.loadURL('app://./index.html')
+        // win.webContents.openDevTools()
     }
 
     win.on('closed', () => {
@@ -65,13 +66,20 @@ function createWindow() {
     })
 }
 
+app.on('before-quit', event => {
+    event.preventDefault();
+    //Clean temp directory
+    try {
+        let files = fs.readdirSync(Directories.temp);
+        for (const file of files)
+            fs.unlinkSync(path.join(Directories.temp, file));
+    } catch (e) {
+        //sad
+    }
+})
+
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
-    //Clean temp directory
-    let files = fs.readdirSync(Directories.temp);
-    for (const file of files)
-        fs.unlinkSync(path.join(Directories.temp, file));
-
     if (process.platform !== 'darwin')
         app.quit();
 })

@@ -12,7 +12,7 @@
         </v-navigation-drawer>
 
         <v-app-bar app class="toolbar" elevation="1">
-            <tool-bar :mobile="$store.state.windowWidth <= 680"></tool-bar>
+            <tool-bar :mobile="$store.state.windowWidth <= 680" class="toolbar-content"></tool-bar>
         </v-app-bar>
 
         <v-main class="scroll-container">
@@ -82,6 +82,7 @@
     import FollowButton from "./components/FollowButton";
     import QueueButton from "./components/QueueButton";
     import MusicPlayer from "./components/MusicPlayer";
+    import Directories from "./js/Directories";
 
     //TOOD:
     //maybe remove spotify stuff from store.js into spotify-module.js (probably not needed until more stuff starts to clutter base store.js)
@@ -123,6 +124,7 @@
             };
 
             if (this.$store.state.platform.type === 'electron') {
+                //todo move this to electron-module
                 window.require('electron').ipcRenderer.on('before-quit', () => {
                     this.$store.commit('cacheAll');
                 });
@@ -185,6 +187,10 @@
         justify-content: left;
         align-items: center;
         padding: 0;
+    }
+
+    .v-toolbar__content {
+        width: 100%;
     }
 
     .router-view {

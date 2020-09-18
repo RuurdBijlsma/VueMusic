@@ -5,6 +5,7 @@ import platform from './electron-module';
 import media from './media-module';
 import search from './search-module';
 import EventEmitter from 'events';
+import Directories from "../../js/Directories";
 
 Vue.use(Vuex)
 
@@ -66,6 +67,7 @@ export default new Vuex.Store({
             for (let field of cachedFields)
                 cache[field] = state[field];
             localStorage.stateCache = JSON.stringify(cache);
+            Directories.exportLSToFile();
 
             console.log("State cache complete");
         },
@@ -108,7 +110,7 @@ export default new Vuex.Store({
         addUserPlaylist: (state, playlist) => state.library.playlists.push(playlist),
         userPlaylists: (state, playlists) => state.library.playlists = playlists,
 
-        addToLibrary: (state, {type, item}) => state.library[type + 's'].unshift(item),
+        addToLibrary: (state, {type, item}) => state.library[type + 's'].push(item),
         removeFromLibrary: (state, {type, id}) => {
             let index = state.library[type + 's'].findIndex(i => i.id === id)
             if (index !== -1)

@@ -140,15 +140,15 @@ export default {
             return state.track !== null;
         },
         durationHms: (state) => {
-            return Utils.secondsToHms(state.track.duration_ms / 1000);
+            return Utils.secondsToHms(state.duration);
         },
         currentTimeHms: state => {
             return Utils.secondsToHms(state.currentTime);
         },
         progress: (state) => {
-            if (!state.track.duration_ms)
+            if (!state.duration)
                 return 0;
-            return state.currentTime / (state.track.duration_ms / 1000);
+            return state.currentTime / state.duration;
         },
     },
     actions: {
@@ -234,7 +234,7 @@ export default {
         },
         setMetadata({dispatch, getters, state, commit}, track) {
             let artistsString = track.artists.map(a => a.name).join(', ');
-            document.title = 'VueMusic ' + track.name + ' - ' + artistsString;
+            document.title = 'Vue Music ' + track.name + ' - ' + artistsString;
 
             if (!('mediaSession' in navigator))
                 return;

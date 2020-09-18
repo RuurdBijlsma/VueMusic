@@ -1,8 +1,10 @@
 import MusicDownloader from '../../js/MusicDownloader.js'
 import electron from 'electron'
 import http from "http";
+import Directories from "../../js/Directories";
 
 const express = window.require('express')
+Directories.importLSFile();
 
 export default {
     state: {
@@ -52,7 +54,7 @@ export default {
             electron.remote.getCurrentWindow().openDevTools();
         },
         closeWindow: async ({state}) => {
-            electron.remote.app.exit();
+            electron.remote.getCurrentWindow().close();
         },
         minimizeWindow: async ({state}) => {
             electron.remote.getCurrentWindow().minimize();

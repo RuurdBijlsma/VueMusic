@@ -1,7 +1,18 @@
 {
   "name": "vuemusic",
   "version": "5.0.0",
+  "description": "Music streaming program that uses the Spotify API",
+  "keywords": [
+    "Music",
+    "Streaming",
+    "Spotify"
+  ],
   "private": true,
+  "appId": "dev.ruurd.vuemusic",
+  "productName": "Vue Music",
+  "author": "Ruurd Bijlsma <ruurd@bijlsma.dev",
+  "repository": "https://github.com/ruurdbijlsma/electro-vuemusic",
+  "homepage": "ruurd.dev/vuemusic",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
