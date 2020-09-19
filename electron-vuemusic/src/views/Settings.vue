@@ -3,7 +3,7 @@
         <div class="wide">
             <h1 class="page-title">Settings</h1>
             <v-divider class="divider"></v-divider>
-            <div class="secrets" v-if="$store.state.platform.shouldSetKey">
+            <div class="secrets">
                 <h2>Secrets</h2>
                 <p class="caption">These values must be set before using the application. Order: Spotify id, Spotify
                     secret,
@@ -75,7 +75,7 @@
             ],
         }),
         mounted() {
-            this.secrets = this.$store.state.platform.spotifyId + '\n' + this.$store.state.platform.spotifySecret + '\n' + this.$store.state.platform.youtubeKey;
+            this.secrets = this.$store.state.spotifyId + '\n' + this.$store.state.spotifySecret + '\n' + this.$store.state.youtubeKey;
         },
         methods: {
             async resetLogin() {
@@ -96,6 +96,7 @@
                     this.$store.commit('spotifyId', spotifyId);
                     this.$store.commit('spotifySecret', spotifySecret);
                     this.$store.commit('youtubeKey', youtubeKey);
+                    this.$store.dispatch('cacheState');
                 }
             },
         }

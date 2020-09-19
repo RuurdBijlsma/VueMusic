@@ -1,75 +1,27 @@
-import EventEmitter from "events";
-import ytdl from 'ytdl-core';
-import search from "youtube-search";
-import os from 'os'
 import path from 'path';
 import ffbinaries from "ffbinaries";
 import fs from "fs";
 import child_process from "child_process";
-import Directories from "./Directories";
 import fileNamify from 'filenamify';
+import MusicDownloader from "./MusicDownloader";
 
-export default class MusicDownloader extends EventEmitter {
-    constructor(browser = false) {
+export default class NodeMusicDownloader extends MusicDownloader {
+    constructor(musicDir = './', filesDir = './', tempDir = './') {
         super();
 
-        this.apiKey = null;
-        this.browser = browser;
+        this.directories = {
+            music: musicDir,
+            files: filesDir,
+            temp: tempDir,
+        }
+
         this.ffmpegPath = null;
         this.downloadingFfmpeg = false;
-        this.baseUrl = 'http://www.youtube.com/watch?v=';
-        this.ytdlOptions = {
-            quality: 'highestaudio',
-            filter: 'audioonly',
-        };
-        this.searchCache = localStorage.getItem('searchCache') === null ?
-            {cacheAge: +new Date()} : JSON.parse(localStorage.searchCache);
-    }
-
-    getSearchString(track) {
-        return `${track.name} - ${track.artists.map(a => a.name).join(', ')}`;
-    }
-
-    async cachedSearch(term, maxResults = 3) {
-        let cacheKey = term + '|' + maxResults.toString();
-        if (this.searchCache[cacheKey])
-            return this.searchCache[cacheKey];
-
-        let {results} = await search(term, {maxResults, key: this.apiKey});
-        this.searchCache[cacheKey] = results;
-        localStorage.searchCache = JSON.stringify(this.searchCache);
-        return results;
-    }
-
-    async* getTrackUrls(track) {
-        let offlineUrl = await this.isTrackOffline(track);
-        if (offlineUrl)
-            yield {local: true, url: offlineUrl};
-        let searchTerm = this.getSearchString(track);
-        let results = await this.cachedSearch(searchTerm);
-        let ids = results.map(r => r.id);
-
-        for (let id of ids) {
-            let result = await ytdl.getInfo(id, {
-                quality: 'highestaudio',
-                filter: 'audioonly',
-            });
-            let formats = result.formats;
-            let qualities = ["AUDIO_QUALITY_LOW", "AUDIO_QUALITY_MEDIUM", "AUDIO_QUALITY_HIGH"];
-            formats = formats
-                .sort((a, b) => b.averageBitrate - a.averageBitrate)
-                .sort((a, b) => b.audioBitrate - a.audioBitrate)
-                .sort((a, b) => b.mimeType.startsWith('audio') - a.mimeType.startsWith('audio'))
-                .sort((a, b) => qualities.indexOf(b.audioQuality) - qualities.indexOf(a.audioQuality))
-            for (let format of formats.slice(0, 2)) {
-                yield {local: false, url: format.url};
-            }
-        }
     }
 
     async isTrackOffline(track) {
         let fileName = fileNamify(this.getSearchString(track));
-        let filePath = path.join(Directories.music, fileName + '.mp3');
+        let filePath = path.join(this.directories.music, fileName + '.mp3');
         if (await this.fileExists(filePath)) {
             return filePath;
         }
@@ -81,7 +33,7 @@ export default class MusicDownloader extends EventEmitter {
 
         let fileName = fileNamify(this.getSearchString(track));
 
-        let downloadedTrackFile = path.join(Directories.temp, fileName);
+        let downloadedTrackFile = path.join(this.directories.temp, fileName);
         progress('Downloading');
         await this.downloadFile(url, downloadedTrackFile, abortSignal);
         progress('Processing metadata');
@@ -104,15 +56,15 @@ export default class MusicDownloader extends EventEmitter {
         }
 
         let hasImage = track.hasOwnProperty('album') && track.album.images.length > 0;
-        let imageFile = path.join(Directories.temp, `image-${baseFileName}.jpg`);
+        let imageFile = path.join(this.directories.temp, `image-${baseFileName}.jpg`);
         if (hasImage)
             await this.downloadFile(track.album.images[0].url, imageFile, abortSignal);
 
-        let outputFile = path.join(Directories.temp, baseFileName + '.mp3');
+        let outputFile = path.join(this.directories.temp, baseFileName + '.mp3');
         await this.ffmpegMetadata(trackInputFile, outputFile, hasImage ? imageFile : '', tags, abortSignal);
 
         return new Promise((resolve, reject) => {
-            let destinationFile = path.join(Directories.music, baseFileName + '.mp3');
+            let destinationFile = path.join(this.directories.music, baseFileName + '.mp3');
             fs.rename(outputFile, destinationFile, err => {
                 this.deleteFile(trackInputFile).then();
                 if (hasImage)
@@ -233,8 +185,8 @@ export default class MusicDownloader extends EventEmitter {
                 return this.once('downloadFFMPEG', resolve);
 
             this.downloadingFfmpeg = true;
-            ffbinaries.downloadBinaries(['ffmpeg'], {destination: Directories.files}, () => {
-                this.ffmpegPath = path.join(Directories.files, ffbinaries.getBinaryFilename('ffmpeg', ffbinaries.detectPlatform()))
+            ffbinaries.downloadBinaries(['ffmpeg'], {destination: this.directories.files}, () => {
+                this.ffmpegPath = path.join(this.directories.files, ffbinaries.getBinaryFilename('ffmpeg', ffbinaries.detectPlatform()))
                 resolve(this.ffmpegPath);
                 this.emit('downloadFFMPEG');
                 this.downloadingFfmpeg = false;

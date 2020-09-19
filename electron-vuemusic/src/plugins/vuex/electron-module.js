@@ -1,4 +1,4 @@
-import MusicDownloader from '../../js/MusicDownloader.js'
+import NodeMusicDownloader from '../../js/music-downloader/NodeMusicDownloader'
 import electron, {remote} from 'electron'
 import http from "http";
 import Directories from "../../js/Directories";
@@ -10,13 +10,8 @@ Directories.importLSFile();
 export default {
     state: {
         type: 'electron',
-        shouldSetKey: true,
-        spotifyId: localStorage.getItem('spotifyId') === null ? 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' : localStorage.spotifyId,
-        spotifySecret: localStorage.getItem('spotifySecret') === null ? 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb' : localStorage.spotifySecret,
-        youtubeKey: localStorage.getItem('youtubeKey') === null ? 'cccccccccccc-dddddddddddddddddddddddddd' : localStorage.youtubeKey,
-        requestedScopes: "ugc-image-upload user-read-email user-read-private playlist-read-collaborative playlist-modify-public playlist-read-private playlist-modify-private user-library-modify user-library-read user-top-read user-read-recently-played user-follow-read user-follow-modify",
         server: null,
-        downloader: new MusicDownloader,
+        downloader: new NodeMusicDownloader(Directories.music, Directories.files, Directories.temp),
         downloads: [],
         playingIcons: [],
         pausedIcons: [],
@@ -26,38 +21,10 @@ export default {
             state.playingIcons = [prevIcon, pauseIcon, nextIcon];
             state.pausedIcons = [prevIcon, playIcon, nextIcon];
         },
-
-        downloaderKey: (state, key) => state.downloader.apiKey = key,
-        spotifyId: (state, id) => {
-            localStorage.spotifyId = id;
-            state.spotifyId = id
-        },
-        spotifySecret: (state, secret) => {
-            localStorage.spotifySecret = secret;
-            state.spotifySecret = secret
-        },
-        youtubeKey: (state, key) => {
-            localStorage.youtubeKey = key;
-            state.youtubeKey = key
-            state.downloader.apiKey = key;
-        },
     },
-    getters: {
-        isValidKeySet: () => ({spotifyId, spotifySecret, youtubeKey}) =>
-            spotifyId !== "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" &&
-            spotifySecret !== "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb" &&
-            youtubeKey !== "cccccccccccc-dddddddddddddddddddddddddd" &&
-            spotifyId.length === 32 &&
-            spotifySecret.length === 32 &&
-            youtubeKey.length === 39 &&
-            youtubeKey.indexOf('-') === 12,
-        isKeySet: (state, getters) => getters.isValidKeySet({...state})
-
-    },
+    getters: {},
     actions: {
-        _initialize: async ({state, commit, dispatch, getters, rootState}) => {
-            commit('downloaderKey', state.youtubeKey);
-
+        platformInitialize: async ({state, commit, dispatch, getters, rootState}) => {
             const likeShortcut = 'Shift+Alt+L';
             if (remote.globalShortcut.isRegistered(likeShortcut))
                 remote.globalShortcut.unregister(likeShortcut);
@@ -108,19 +75,8 @@ export default {
             remote.getCurrentWindow().minimize();
         },
 
-        isTrackAvailableOffline: async ({state}, track) => {
-            return await state.downloader.isTrackOffline(track);
-        },
-        downloadTrackByUrl: async ({state, commit}, {track, url}) => {
-            let abortController = new AbortController();
-            commit('addDownload', {track, state: 'Preparing', abortController: abortController})
-            await state.downloader.downloadTrack(url, track,
-                progress => commit('downloadProgress', {track, progress}),
-                abortController.signal,
-            );
-        },
-        getTrackUrls({state}, track) {
-            return state.downloader.getTrackUrls(track);
+        exportCache: ({}) => {
+            Directories.exportLSToFile();
         },
 
         resetSpotifyLogin({state, commit}) {
@@ -181,33 +137,5 @@ export default {
                 });
             })
         },
-        getAuthByRefreshToken: async ({state}, refreshToken) => {
-            console.log('Refresh using refreshToken', refreshToken);
-            let result = await (await fetch('https://accounts.spotify.com/api/token', {
-                method: 'post',
-                body: `grant_type=refresh_token&refresh_token=${refreshToken}&client_id=${state.spotifyId}&client_secret=${state.spotifySecret}`,
-                headers: {'Content-Type': 'application/x-www-form-urlencoded',}
-            })).text();
-            try {
-                return JSON.parse(result);
-            } catch (e) {
-                console.log("Error", e.message, "result = ", result);
-            }
-        },
-        getAuthByCode: async ({state}, {redirectUrl, code}) => {
-            console.log('Getting auth using code', {redirectUrl, code});
-            let result = await (await fetch('https://accounts.spotify.com/api/token', {
-                method: 'post',
-                body: `grant_type=authorization_code&code=${code}&redirect_uri=${redirectUrl}&client_id=` +
-                    `${state.spotifyId}&client_secret=${state.spotifySecret}`,
-                headers: {'Content-Type': 'application/x-www-form-urlencoded',}
-            })).text();
-            try {
-                return JSON.parse(result);
-            } catch (e) {
-                console.log("Error", e.message, "t = ", result);
-            }
-        }
-    }
-    ,
+    },
 }

@@ -120,7 +120,7 @@ export default {
             state.shuffledQueue = [state.track];
         },
 
-        cacheAllMedia: state => {
+        cacheMedia: state => {
             let cachedFields = ["recentlyPlayed", "track", "queue", "shuffledQueue", "contextItem", "shuffle", "repeat", "volume"];
             let cache = {};
             for (let field of cachedFields)
@@ -152,6 +152,21 @@ export default {
         },
     },
     actions: {
+        isTrackAvailableOffline: async ({rootState}, track) => {
+            return await rootState.platform.downloader.isTrackOffline(track);
+        },
+        downloadTrackByUrl: async ({rootState, commit}, {track, url}) => {
+            let abortController = new AbortController();
+            commit('addDownload', {track, state: 'Preparing', abortController: abortController})
+            await rootState.platform.downloader.downloadTrack(url, track,
+                progress => commit('downloadProgress', {track, progress}),
+                abortController.signal,
+            );
+        },
+        getTrackUrls({rootState}, track) {
+            return rootState.platform.downloader.getTrackUrls(track);
+        },
+
         async setTrack({dispatch, state, commit}, track) {
             dispatch('setMetadata', track);
             commit('trackLoading', true);
@@ -177,6 +192,7 @@ export default {
                 let playAfterLoad = state.playAfterLoad;
                 commit('playAfterLoad', false);
 
+                console.log("🎵 Now playing 🎵", url)
                 state.audio.src = url;
                 let loadTimeout = setTimeout(() => {
                     //if url doesn't load in time, go next url

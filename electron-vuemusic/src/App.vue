@@ -91,8 +91,10 @@
     //Delete cache every week or so to prevent massive cache causing lag (see first if lag actually happens)
     //check shuffle button size maybe
     //maybe add play/shuffle to track grid/ search results and artist tracks
-
     //click media notification -> open app
+
+    //download tracks on web
+    //break up store.js into some modules
 
 
     export default {
@@ -110,33 +112,33 @@
 
             window.onbeforeunload = e => {
                 if (!this.$store.state.dontCache) {
-                    this.$store.commit('cacheAll');
-                    this.$store.commit('cacheAllMedia');
+                    this.$store.dispatch('cacheAll');
                 }
                 delete e['returnValue'];
             };
 
             if (this.$store.state.platform.type === 'electron') {
                 //todo move this to electron-module
-                const ipc = window.require('electron').ipcRenderer;
-                ipc.on('before-quit', () => {
-                    this.$store.commit('cacheAll');
+                window.require('electron').ipcRenderer.on('before-quit', async () => {
+                    await this.$store.dispatch('cacheState');
                 });
             }
 
-            this.cacheInterval = setInterval(() => {
-                this.$store.commit('cacheAll');
-                this.$store.commit('cacheAllMedia');
+            this.cacheInterval = setInterval(async () => {
+                await this.$store.dispatch('cacheAll');
             }, 1000 * 60 * 5);//Cache every 5 minutes.
 
             console.log(this.$store);
             if (!this.$store.getters.isKeySet) {
-                if (this.$store.state.platform.shouldSetKey && this.$route.name !== 'Settings') {
+                if (this.$route.name !== 'Settings') {
                     await this.$router.push('/settings');
                 }
             } else if (!this.$store.getters.isLoggedIn && this.$route.name !== 'Settings') {
                 await this.$router.push('/settings');
             }
+
+            if (this.$store.state.platform.type === 'web')
+                this.handleCode();
         },
         beforeDestroy() {
             clearInterval(this.cacheInterval);
@@ -144,6 +146,16 @@
             window.removeEventListener('resize', this.resizeListener);
         },
         methods: {
+            handleCode() {
+                if (location.search.includes('?code=')) {
+                    let code = location.search.split('?code=')[1].split('&')[0];
+
+                    let otherTab = new BroadcastChannel('loginCode');
+                    otherTab.postMessage(code);
+                    otherTab.close();
+                    window.close();
+                }
+            },
             resizeListener() {
                 this.$store.commit('windowWidth', window.innerWidth);
             },
