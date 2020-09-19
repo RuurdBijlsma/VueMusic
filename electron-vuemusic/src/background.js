@@ -41,8 +41,9 @@ function createWindow() {
     let icon = path.join(__static, process.env.WEBPACK_DEV_SERVER_URL ? 'img/logo-red.png' : 'img/logo-gradient.png');
     let splash = path.join(__static, 'splash.html');
     let bounds = store.get('bounds', {});
-    if ((bounds.width && bounds.height) && (bounds.width < 300 || bounds.height < 400))
+    if ((bounds.width !== undefined && bounds.height !== undefined) && (bounds.width < 300 || bounds.height < 400))
         bounds = {};
+    console.log('bounds', bounds);
     let windowConfig = {
         width: 1400,
         height: 900,
