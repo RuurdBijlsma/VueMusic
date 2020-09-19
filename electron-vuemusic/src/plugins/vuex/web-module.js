@@ -12,9 +12,7 @@ export default {
     mutations: {
         channel: (state, channel) => state.channel = channel,
     },
-    getters: {
-
-    },
+    getters: {},
     actions: {
         exportCache() {
             //Not needed
@@ -31,7 +29,7 @@ export default {
                 commit('server', null);
             }
         },
-        firstLogin: async ({getters, state, commit, dispatch}) => {
+        firstLogin: async ({rootState, getters, state, commit, dispatch}) => {
             return new Promise(async resolve => {
                 if (!getters.isKeySet) {
                     console.warn("Can't log in, keys are not set");
@@ -40,7 +38,7 @@ export default {
                 let redirectUrl = location.origin + (location.pathname + (location.pathname.endsWith('/') ? '' : '/') + '#/login').replace(/\/\//gi, '/');
                 console.log("REDIRECT URL:", redirectUrl);
                 redirectUrl = encodeURIComponent(redirectUrl);
-                const url = `${state.authUrl}authorize?client_id=${state.spotifyId}&response_type=code&redirect_uri=${redirectUrl}&scope=${encodeURIComponent(state.requestedScopes)}`;
+                const url = `${rootState.authUrl}authorize?client_id=${rootState.spotifyId}&response_type=code&redirect_uri=${redirectUrl}&scope=${encodeURIComponent(rootState.requestedScopes)}`;
                 window.open(url);
 
                 if (state.channel)

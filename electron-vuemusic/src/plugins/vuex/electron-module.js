@@ -85,16 +85,15 @@ export default {
                 commit('server', null);
             }
         },
-        firstLogin: async ({getters, state, commit, dispatch}) => {
+        firstLogin: async ({rootState, getters, state, commit, dispatch}) => {
             return new Promise(async resolve => {
                 if (!getters.isKeySet) {
                     console.warn("Can't log in, keys are not set");
                     return;
                 }
                 const port = 38900;
-                const authUrl = 'https://accounts.spotify.com/';
                 const redirectUrl = 'http://localhost:' + port;
-                const url = `${authUrl}authorize?client_id=${state.spotifyId}&response_type=code&redirect_uri=${redirectUrl}&scope=${encodeURIComponent(state.requestedScopes)}`;
+                const url = `${rootState.authUrl}authorize?client_id=${rootState.spotifyId}&response_type=code&redirect_uri=${redirectUrl}&scope=${encodeURIComponent(rootState.requestedScopes)}`;
                 let {shell} = electron;
                 await shell.openExternal(url);
 

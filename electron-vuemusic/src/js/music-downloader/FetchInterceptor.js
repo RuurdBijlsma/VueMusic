@@ -8,11 +8,11 @@ class FetchInterceptor {
         window.fetch = function () {
             let [url, options] = arguments;
 
-            let interceptUrls = ["https://www.youtube.com"]
+            let interceptUrls = ["https://www.youtube.com","https://manifest.googlevideo.com"]
             for (let interceptUrl of interceptUrls) {
                 if (url.startsWith(interceptUrl)) {
                     console.log("INTERCEPT", url, options);
-                    url = 'http://localhost:3000/proxy?url=' + encodeURIComponent(url);
+                    url = 'https://api.ruurd.dev/proxy?url=' + encodeURIComponent(url);
                     break;
                 }
             }

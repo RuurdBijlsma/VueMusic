@@ -8,5 +8,6 @@ module.exports = {
     },
     "transpileDependencies": [
         "vuetify"
-    ]
+    ],
+    publicPath: '/vuemusic',
 }

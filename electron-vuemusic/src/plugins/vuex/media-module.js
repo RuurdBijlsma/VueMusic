@@ -258,7 +258,7 @@ export default {
         },
         setMetadata({dispatch, getters, state, commit}, track) {
             let artistsString = track.artists.map(a => a.name).join(', ');
-            document.title = 'Vue Music ' + track.name + ' - ' + artistsString;
+            document.title = 'Vue Music • ' + track.name + ' - ' + artistsString;
 
             if (!('mediaSession' in navigator))
                 return;

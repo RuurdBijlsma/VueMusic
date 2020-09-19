@@ -103,9 +103,9 @@ app.on('before-quit', event => {
         store.set('bounds', win.getBounds());
 
         let lastUrl = win.getURL();
-        if (lastUrl.includes('app://') )
+        if (lastUrl.includes('app://'))
             store.set('lastUrl', win.getURL());
-        if (lastUrl.includes('//localhost:') )
+        if (lastUrl.includes('//localhost:'))
             store.set('lastUrlDev', win.getURL());
         let files = fs.readdirSync(Directories.temp);
         for (const file of files)
