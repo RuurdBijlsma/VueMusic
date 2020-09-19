@@ -95,6 +95,7 @@
 
     //download tracks on web
     //break up store.js into some modules
+    //music not playing on mobile
 
 
     export default {

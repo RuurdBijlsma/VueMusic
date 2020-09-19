@@ -10,7 +10,12 @@ let isElectron = window && window.process !== undefined && window.process.type !
 console.log("is electron?", isElectron);
 const platform = require(isElectron ? './electron-module' : './web-module').default;
 
-console.log("Imported platform", platform);
+if (document.querySelectorAll(`head link[rel='manifest']`).length === 0) {
+    let manifestLink = document.createElement('link');
+    manifestLink.setAttribute('rel', 'manifest');
+    manifestLink.setAttribute('href', './manifest.json');
+    document.querySelector('head').appendChild(manifestLink);
+}
 
 Vue.use(Vuex)
 
