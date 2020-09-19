@@ -93,7 +93,6 @@
     //maybe add play/shuffle to track grid/ search results and artist tracks
 
     //click media notification -> open app
-    //media controls in windows taskbar preview
 
 
     export default {
