@@ -2,6 +2,7 @@ import MusicDownloader from '../../js/MusicDownloader.js'
 import electron, {remote} from 'electron'
 import http from "http";
 import Directories from "../../js/Directories";
+import path from "path";
 
 const express = window.require('express')
 Directories.importLSFile();
@@ -17,8 +18,15 @@ export default {
         server: null,
         downloader: new MusicDownloader,
         downloads: [],
+        playingIcons: [],
+        pausedIcons: [],
     },
     mutations: {
+        playIcons: (state, {playIcon, pauseIcon, prevIcon, nextIcon}) => {
+            state.playingIcons = [prevIcon, pauseIcon, nextIcon];
+            state.pausedIcons = [prevIcon, playIcon, nextIcon];
+        },
+
         downloaderKey: (state, key) => state.downloader.apiKey = key,
         spotifyId: (state, id) => {
             localStorage.spotifyId = id;
@@ -56,23 +64,48 @@ export default {
             let regResult = remote.globalShortcut.register(likeShortcut, async () => {
                 let added = await dispatch('toggleFollowCurrentTrack');
                 let speech = added ? 'Added to favorites' : 'Removed from favorites';
-                console.log("just followed?", added);
                 let voices = speechSynthesis.getVoices();
                 let voice = voices[Math.floor(Math.random() * voices.length)];
                 let utterance = new SpeechSynthesisUtterance(speech);
                 utterance.voice = voice;
                 speechSynthesis.speak(utterance);
             });
-            console.log("Global shortcut register success?", regResult);
+
+
+            let playIcon = {
+                tooltip: 'Play',
+                icon: path.join(__static, '/img/playicon.png'),
+                click: () => dispatch('play'),
+            };
+            let pauseIcon = {
+                tooltip: 'Play',
+                icon: path.join(__static, '/img/pauseicon.png'),
+                click: () => dispatch('pause'),
+            };
+            let prevIcon = {
+                tooltip: 'Previous Song',
+                icon: path.join(__static, '/img/previcon.png'),
+                click: () => dispatch('skip', -1),
+            };
+            let nextIcon = {
+                tooltip: 'Next Song',
+                icon: path.join(__static, '/img/nexticon.png'),
+                click: () => dispatch('skip', 1),
+            };
+            commit('playIcons', {playIcon, pauseIcon, prevIcon, nextIcon});
         },
-        openDevTools: async ({state}) => {
-            electron.remote.getCurrentWindow().openDevTools();
+        setPlatformPlaying: ({state}, playing) => {
+            const win = remote.getCurrentWindow();
+            let thumbAdded = win.setThumbarButtons(playing ? state.playingIcons : state.pausedIcons);
         },
-        closeWindow: async ({state}) => {
-            electron.remote.getCurrentWindow().close();
+        openDevTools: async ({}) => {
+            remote.getCurrentWindow().openDevTools();
         },
-        minimizeWindow: async ({state}) => {
-            electron.remote.getCurrentWindow().minimize();
+        closeWindow: async ({}) => {
+            remote.getCurrentWindow().close();
+        },
+        minimizeWindow: async ({}) => {
+            remote.getCurrentWindow().minimize();
         },
 
         isTrackAvailableOffline: async ({state}, track) => {
@@ -121,7 +154,7 @@ export default {
                         commit('server', null);
                         console.log("Stopped listening on *:" + port);
                         dispatch('getAuthByCode', {redirectUrl, code: req.query.code}).then(auth => {
-                            electron.remote.getCurrentWindow().focus();
+                            remote.getCurrentWindow().focus();
                             resolve({
                                 code: req.query.code,
                                 token: auth.access_token,
@@ -149,7 +182,7 @@ export default {
             })
         },
         getAuthByRefreshToken: async ({state}, refreshToken) => {
-            console.log('refresh');
+            console.log('Refresh using refreshToken', refreshToken);
             let result = await (await fetch('https://accounts.spotify.com/api/token', {
                 method: 'post',
                 body: `grant_type=refresh_token&refresh_token=${refreshToken}&client_id=${state.spotifyId}&client_secret=${state.spotifySecret}`,
@@ -162,7 +195,7 @@ export default {
             }
         },
         getAuthByCode: async ({state}, {redirectUrl, code}) => {
-            console.log({redirectUrl, code});
+            console.log('Getting auth using code', {redirectUrl, code});
             let result = await (await fetch('https://accounts.spotify.com/api/token', {
                 method: 'post',
                 body: `grant_type=authorization_code&code=${code}&redirect_uri=${redirectUrl}&client_id=` +

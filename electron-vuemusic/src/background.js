@@ -43,7 +43,6 @@ function createWindow() {
     let bounds = store.get('bounds', {});
     if ((bounds.width !== undefined && bounds.height !== undefined) && (bounds.width < 300 || bounds.height < 400))
         bounds = {};
-    console.log('bounds', bounds);
     let windowConfig = {
         width: 1400,
         height: 900,
@@ -81,7 +80,6 @@ function createWindow() {
         // win.loadURL(`file://${__dirname}/dist/index.html`);
         let url = store.get('lastUrlDev', process.env.WEBPACK_DEV_SERVER_URL);
         url = url === '' ? process.env.WEBPACK_DEV_SERVER_URL : url;
-        console.log("Loading url", url);
         win.loadURL(url);
         if (!process.env.IS_TEST) win.webContents.openDevTools()
     } else {
@@ -89,7 +87,6 @@ function createWindow() {
         // Load the index.html when not in development
         let url = store.get('lastUrl', 'app://./index.html');
         url = url === '' ? 'app://./index.html' : url;
-        console.log("Loading url", url);
         win.loadURL(url)
         // win.webContents.openDevTools()
     }

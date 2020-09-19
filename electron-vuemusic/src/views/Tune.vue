@@ -165,10 +165,6 @@
                 if (Object.keys(options).length === 0)
                     return await this.$store.dispatch('addSnack', {text: "You should select some options first"})
 
-                // options.custom = true;
-
-                console.log(options);
-
                 await this.$router.push({
                     path: '/radio',
                     query: options,

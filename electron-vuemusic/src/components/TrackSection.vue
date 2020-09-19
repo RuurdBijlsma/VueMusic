@@ -63,7 +63,6 @@
                     let index = this.playlist.tracks.findIndex(t => t.id === this.highlightId)
                     if (index !== -1 && this.hasHighlighted === false) {
                         this.hasHighlighted = true;
-                        console.log("Scroll to highlighted track", this.highlightId);
                         this.$refs.scroller.scrollToItem(index + 1);
                         //todo click play on the track here
                         console.warn("Implement todo here!!");

@@ -92,7 +92,6 @@
     //check shuffle button size maybe
     //maybe add play/shuffle to track grid/ search results and artist tracks
 
-    //like dislike global keyboard shortcut
     //click media notification -> open app
     //media controls in windows taskbar preview
 

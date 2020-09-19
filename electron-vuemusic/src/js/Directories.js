@@ -29,7 +29,6 @@ class Directories {
 
     importLSFile() {
         let localStorageFile = path.join(this.files, 'localStorage.json');
-        console.log("Importing localStorage from file", localStorageFile);
 
         if (fs.existsSync(localStorageFile)) {
             let ls = JSON.parse(fs.readFileSync(localStorageFile));
@@ -41,7 +40,6 @@ class Directories {
 
     exportLSToFile() {
         let localStorageFile = path.join(this.files, 'localStorage.json');
-        console.log("Exporting localStorage to file", localStorageFile);
 
         let localData = JSON.stringify(localStorage);
         fs.writeFileSync(localStorageFile, localData);

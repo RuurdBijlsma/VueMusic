@@ -12,7 +12,6 @@ import fileNamify from 'filenamify';
 export default class MusicDownloader extends EventEmitter {
     constructor(browser = false) {
         super();
-        console.log(Directories)
 
         this.apiKey = null;
         this.browser = browser;
@@ -82,15 +81,13 @@ export default class MusicDownloader extends EventEmitter {
 
         let fileName = fileNamify(this.getSearchString(track));
 
-        console.log("Starting download", url);
         let downloadedTrackFile = path.join(Directories.temp, fileName);
         progress('Downloading');
         await this.downloadFile(url, downloadedTrackFile, abortSignal);
         progress('Processing metadata');
-        console.log("Downloaded track to", downloadedTrackFile);
         let processedFile = await this.ffmpegProcessing(track, downloadedTrackFile, () => 0, abortSignal);
         progress('Done');
-        console.log("FFMPEG done, processed file location", processedFile);
+        console.log("Downloaded track and converted to mp3 ✔", processedFile);
     }
 
     async ffmpegProcessing(track, trackInputFile, progress = () => 0, abortSignal = null) {
@@ -112,18 +109,14 @@ export default class MusicDownloader extends EventEmitter {
             await this.downloadFile(track.album.images[0].url, imageFile, abortSignal);
 
         let outputFile = path.join(Directories.temp, baseFileName + '.mp3');
-        console.log("Adding metadata to", trackInputFile, 'output file:', outputFile);
         await this.ffmpegMetadata(trackInputFile, outputFile, hasImage ? imageFile : '', tags, abortSignal);
 
         return new Promise((resolve, reject) => {
             let destinationFile = path.join(Directories.music, baseFileName + '.mp3');
             fs.rename(outputFile, destinationFile, err => {
-                console.log("Deleting ", trackInputFile)
                 this.deleteFile(trackInputFile).then();
-                if (hasImage) {
-                    console.log("Deleting ", imageFile)
+                if (hasImage)
                     this.deleteFile(imageFile).then();
-                }
                 resolve(destinationFile)
             });
         });
@@ -148,13 +141,12 @@ export default class MusicDownloader extends EventEmitter {
                 command = `${ffmpegPath} -y -i "${fileInput}"` +
                     `${this.tagsToString(tags)} "${fileOutput}"`;
             }
-            console.log("Waiting for files to unlock");
             if (await this.fileExists(fileOutput))
                 await this.deleteFile(fileOutput);
             await this.waitForFileUnlock(fileInput);
             await this.waitForFileUnlock(coverImageFile);
             await this.waitForFileUnlock(ffmpegPath);
-            console.log("All files seem unlocked and the output file doesn't exist, starting ffmpeg with command", {command});
+
             if (!abortSignal.aborted) {
                 let process = child_process.exec(command, (error, stdout, stderr) => {
                     if (error)
@@ -237,10 +229,8 @@ export default class MusicDownloader extends EventEmitter {
         return new Promise(async (resolve, reject) => {
             if (this.ffmpegPath)
                 return resolve(this.ffmpegPath);
-            if (this.downloadingFfmpeg) {
-                console.log("Waiting for ffmpeg download to finish");
+            if (this.downloadingFfmpeg)
                 return this.once('downloadFFMPEG', resolve);
-            }
 
             this.downloadingFfmpeg = true;
             ffbinaries.downloadBinaries(['ffmpeg'], {destination: Directories.files}, () => {

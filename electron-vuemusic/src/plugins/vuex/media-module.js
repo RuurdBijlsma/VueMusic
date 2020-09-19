@@ -177,7 +177,6 @@ export default {
                 let playAfterLoad = state.playAfterLoad;
                 commit('playAfterLoad', false);
 
-                console.log('state.audio.src', url);
                 state.audio.src = url;
                 let loadTimeout = setTimeout(() => {
                     //if url doesn't load in time, go next url
@@ -189,13 +188,13 @@ export default {
                 };
                 state.audio.onended = () => dispatch('skip', 1);
                 state.audio.onplay = () => {
-                    // navigator.mediaSession.playbackState = 'playing';
-                    // this.win.setThumbarButtons(this.playingIcons);
+                    navigator.mediaSession.playbackState = 'playing';
+                    dispatch('setPlatformPlaying', true);
                     commit('playing', true);
                 };
                 state.audio.onpause = () => {
-                    // navigator.mediaSession.playbackState = 'paused';
-                    // this.win.setThumbarButtons(this.pausedIcons);
+                    navigator.mediaSession.playbackState = 'paused';
+                    dispatch('setPlatformPlaying', false);
                     commit('playing', false);
                 };
                 let canplayFired = false;
@@ -299,7 +298,7 @@ export default {
                     dispatch('pause');
                 });
             } catch (error) {
-                console.log('Warning! The "stop" media session action is not supported.');
+                console.warn('Warning! The "stop" media session action is not supported.');
             }
 
             try {
@@ -307,7 +306,7 @@ export default {
                     commit('seekTo', event.seekTime / state.duration);
                 });
             } catch (error) {
-                console.log('Warning! The "seekto" media session action is not supported.');
+                console.warn('Warning! The "seekto" media session action is not supported.');
             }
         },
 

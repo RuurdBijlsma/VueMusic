@@ -208,7 +208,7 @@ export default new Vuex.Store({
         },
         spotifyLogin: async ({dispatch, commit}) => {
             let auth = await dispatch('firstLogin');
-            console.log("Auth result from 'spotifyLogin'", auth);
+            console.log("Auth result from 'firstLogin'", auth);
             commit('auth', auth);
             await commit('cacheAll');
             await dispatch('processAuth');
@@ -568,7 +568,6 @@ export default new Vuex.Store({
         },
         loadUser: async ({dispatch, commit, state}, id) => {
             let isInitial = state.user[id] === undefined;
-            console.log({isInitial})
             let user = await state.api.getUser(id);
 
             if (isInitial)
@@ -612,13 +611,10 @@ export default new Vuex.Store({
             if (track === null) return;
 
             let [saved] = await state.api.containsMySavedTracks([track.id]);
-            if (saved) {
+            if (saved)
                 await dispatch('unfollowTrack', track);
-                console.log("unfollowed track");
-            } else {
+             else
                 await dispatch('followTrack', track);
-                console.log("followed track");
-            }
             return !saved;
         },
         followTrack: async ({state, dispatch, commit}, track) => {
@@ -632,7 +628,7 @@ export default new Vuex.Store({
         addToPlaylist: async ({state, dispatch}, {track, playlist}) => {
             await dispatch('loadPlaylist', playlist.id);
             let existingTracks = state.playlist[playlist.id].tracks;
-            console.log(track.id, existingTracks);
+
             if (existingTracks.findIndex(t => t.id === track.id) !== -1) {
                 dispatch('addSnack', {text: 'Track is already in playlist'}).then();
                 return;
@@ -693,7 +689,8 @@ export default new Vuex.Store({
             let completeItem = await dispatch('getItem', item);
             let type = item.type || 'category';
             if (type === 'category') {
-                console.log("category", completeItem);
+                let randomPlaylist = completeItem.playlists[Math.floor(Math.random() * completeItem.playlists.length)];
+                return await dispatch('getContextItem', randomPlaylist);
             }
             if (type === 'artist') {
                 return {...completeItem.artist, tracks: completeItem.tracks};

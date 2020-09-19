@@ -31,7 +31,6 @@
         data: () => ({}),
         async mounted() {
             await this.$store.dispatch("refreshUserData", 'artist');
-            console.log(this.$store.state.library)
         },
         methods: {}
     }
