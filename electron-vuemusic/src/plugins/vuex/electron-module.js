@@ -1,5 +1,5 @@
 import MusicDownloader from '../../js/MusicDownloader.js'
-import electron from 'electron'
+import electron, {remote} from 'electron'
 import http from "http";
 import Directories from "../../js/Directories";
 
@@ -47,8 +47,23 @@ export default {
 
     },
     actions: {
-        _initialize: async ({state, commit, dispatch}) => {
+        _initialize: async ({state, commit, dispatch, getters, rootState}) => {
             commit('downloaderKey', state.youtubeKey);
+
+            const likeShortcut = 'Shift+Alt+L';
+            if (remote.globalShortcut.isRegistered(likeShortcut))
+                remote.globalShortcut.unregister(likeShortcut);
+            let regResult = remote.globalShortcut.register(likeShortcut, async () => {
+                let added = await dispatch('toggleFollowCurrentTrack');
+                let speech = added ? 'Added to favorites' : 'Removed from favorites';
+                console.log("just followed?", added);
+                let voices = speechSynthesis.getVoices();
+                let voice = voices[Math.floor(Math.random() * voices.length)];
+                let utterance = new SpeechSynthesisUtterance(speech);
+                utterance.voice = voice;
+                speechSynthesis.speak(utterance);
+            });
+            console.log("Global shortcut register success?", regResult);
         },
         openDevTools: async ({state}) => {
             electron.remote.getCurrentWindow().openDevTools();

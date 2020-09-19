@@ -110,7 +110,7 @@ export default new Vuex.Store({
         addUserPlaylist: (state, playlist) => state.library.playlists.push(playlist),
         userPlaylists: (state, playlists) => state.library.playlists = playlists,
 
-        addToLibrary: (state, {type, item}) => state.library[type + 's'].push(item),
+        addToLibrary: (state, {type, item, addAtStart = false}) => state.library[type + 's'][addAtStart ? 'unshift' : 'push'](item),
         removeFromLibrary: (state, {type, id}) => {
             let index = state.library[type + 's'].findIndex(i => i.id === id)
             if (index !== -1)
@@ -607,9 +607,23 @@ export default new Vuex.Store({
             await state.api.removeFromMySavedAlbums([album.id]);
             await dispatch('refreshUserData', 'album');
         },
+        toggleFollowCurrentTrack: async ({state, dispatch}) => {
+            let track = state.media.track;
+            if (track === null) return;
+
+            let [saved] = await state.api.containsMySavedTracks([track.id]);
+            if (saved) {
+                await dispatch('unfollowTrack', track);
+                console.log("unfollowed track");
+            } else {
+                await dispatch('followTrack', track);
+                console.log("followed track");
+            }
+            return !saved;
+        },
         followTrack: async ({state, dispatch, commit}, track) => {
             await state.api.addToMySavedTracks([track.id]);
-            commit('addToLibrary', {type: 'track', item: track});
+            commit('addToLibrary', {type: 'track', item: track, addAtStart: true});
         },
         unfollowTrack: async ({state, dispatch, commit}, track) => {
             await state.api.removeFromMySavedTracks([track.id]);

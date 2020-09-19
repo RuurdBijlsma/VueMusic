@@ -79,7 +79,7 @@ function createWindow() {
     if (process.env.WEBPACK_DEV_SERVER_URL) {
         // Load the url of the dev server if in development mode
         // win.loadURL(`file://${__dirname}/dist/index.html`);
-        let url = store.get('lastUrl', process.env.WEBPACK_DEV_SERVER_URL);
+        let url = store.get('lastUrlDev', process.env.WEBPACK_DEV_SERVER_URL);
         url = url === '' ? process.env.WEBPACK_DEV_SERVER_URL : url;
         console.log("Loading url", url);
         win.loadURL(url);
@@ -106,8 +106,10 @@ app.on('before-quit', event => {
         store.set('bounds', win.getBounds());
 
         let lastUrl = win.getURL();
-        if (lastUrl.includes('app://') || lastUrl.includes('localhost'))
+        if (lastUrl.includes('app://') )
             store.set('lastUrl', win.getURL());
+        if (lastUrl.includes('//localhost:') )
+            store.set('lastUrlDev', win.getURL());
         let files = fs.readdirSync(Directories.temp);
         for (const file of files)
             fs.unlinkSync(path.join(Directories.temp, file));
