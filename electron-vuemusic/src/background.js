@@ -63,6 +63,7 @@ function createWindow() {
         windowOpts: windowConfig,
         templateUrl: splash,
         minVisible: 0,
+        delay: 0,
         splashScreenOpts: {
             fullscreenable: false,
             maximizable: false,

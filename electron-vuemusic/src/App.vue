@@ -95,7 +95,6 @@
     //like dislike global keyboard shortcut
     //click media notification -> open app
     //media controls in windows taskbar preview
-    //icon to show if current track is local
 
 
     export default {
