@@ -38,7 +38,7 @@
     }
 
     .card {
-        max-width: 400px;
+        /*max-width: 400px;*/
         margin-bottom: 15px;
     }
 

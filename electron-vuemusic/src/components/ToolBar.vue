@@ -1,8 +1,8 @@
 <template>
     <div class="toolbar">
         <logo class="logo" v-if="mobile"></logo>
-        <media-controls full class="controls" v-if="!mobile"></media-controls>
-        <div class="media-container" v-if="!mobile && $store.getters.isTrackSet">
+        <media-controls full class="controls" v-if="!mobile && !compact"></media-controls>
+        <div class="media-container" v-if="(!compact && !mobile) && $store.getters.isTrackSet">
             <div class="media-info">
                 <media-seek class="top-seeker" no-background small-time></media-seek>
                 <media-info small-artists drag class="top-info"></media-info>
@@ -129,6 +129,10 @@
         }),
         props: {
             mobile: {
+                type: Boolean,
+                default: false,
+            },
+            compact:{
                 type: Boolean,
                 default: false,
             },
@@ -281,28 +285,6 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-    }
-
-    @media (max-width: 1000px) {
-        .volume {
-            display: none;
-        }
-    }
-
-    @media (max-width: 870px) {
-        .controls {
-            display: none !important;
-        }
-
-        .media-info {
-            margin-left: 3px;
-            margin-right: 0;
-        }
-
-        .top-seeker {
-            margin-left: 51px;
-            width: calc(100% - 51px);
-        }
     }
 
     @media (max-width: 800px) {

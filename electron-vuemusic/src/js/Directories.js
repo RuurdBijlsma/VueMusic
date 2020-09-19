@@ -32,9 +32,7 @@ class Directories {
         console.log("Importing localStorage from file", localStorageFile);
 
         if (fs.existsSync(localStorageFile)) {
-            console.log('file exists')
             let ls = JSON.parse(fs.readFileSync(localStorageFile));
-            console.log("file contents", ls);
             for (let key in ls)
                 if (ls.hasOwnProperty(key))
                     localStorage[key] = ls[key];

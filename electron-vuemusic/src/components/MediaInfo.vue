@@ -21,8 +21,13 @@
                                       :artists="$store.state.media.track.artists"></artists-span>
                     </div>
                 </div>
+                <div class="local-icon">
+                    <v-icon :small="$store.state.windowWidth >= 1000" v-if="$store.state.media.local">
+                        mdi-cloud-download-outline
+                    </v-icon>
+                    <v-icon :small="$store.state.windowWidth >= 1000" v-else>mdi-radio-tower</v-icon>
+                </div>
             </div>
-            <media-controls class="controls"></media-controls>
         </v-card>
     </div>
 </template>
@@ -81,10 +86,22 @@
     }
 
     .media-text-info {
-        width: 100%;
+        width: calc(100% - 24px);
         display: flex;
         justify-content: center;
         align-items: flex-start;
+    }
+
+    @media (max-width: 1000px) {
+        .media-text-info {
+            width: calc(100% - 36px);
+        }
+
+        .local-icon {
+            width: 36px !important;
+            padding-top: 12px !important;
+            opacity: 0.8 !important;
+        }
     }
 
     .media-info-logo {
@@ -114,30 +131,21 @@
         white-space: nowrap;
     }
 
-
-    .controls {
-        display: none !important;
-        justify-content: center;
-        align-items: center;
-    }
-
-    @media (max-width: 870px) {
-        .controls {
-            display: flex !important;
-        }
-    }
-
-    @media (max-width: 680px) {
-        .controls {
-            display: none !important;
-        }
-    }
-
     .media-info >>> a {
         text-decoration: none;
     }
 
     .media-info >>> a:hover {
         text-decoration: underline;
+    }
+
+    .local-icon {
+        width: 24px;
+        height: 100%;
+        padding-top: 10px;
+        display: flex;
+        justify-content: flex-start;
+        align-items: flex-start;
+        opacity: 0.6;
     }
 </style>

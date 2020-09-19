@@ -12,7 +12,8 @@
         </v-navigation-drawer>
 
         <v-app-bar app class="toolbar" elevation="1">
-            <tool-bar :mobile="$store.state.windowWidth <= 680" class="toolbar-content"></tool-bar>
+            <tool-bar :compact="$store.state.windowWidth <= 1000" :mobile="$store.state.windowWidth <= 680"
+                      class="toolbar-content"></tool-bar>
         </v-app-bar>
 
         <v-main class="scroll-container">
@@ -33,7 +34,9 @@
         </v-snackbar>
 
         <v-card flat class="bottom-media-control"
-                v-if="$store.state.windowWidth <= 680 && $store.getters.isTrackSet" color="primaryLight">
+                :class="{'medium-width': $store.state.windowWidth <= 1000}"
+                v-if="$store.state.windowWidth <= 1000 && $store.getters.isTrackSet"
+                color="primaryLight">
             <div class="info-pane">
                 <media-info class="media-info"></media-info>
                 <follow-button class="button" :item="$store.state.media.track"></follow-button>
@@ -82,7 +85,6 @@
     import FollowButton from "./components/FollowButton";
     import QueueButton from "./components/QueueButton";
     import MusicPlayer from "./components/MusicPlayer";
-    import Directories from "./js/Directories";
 
     //TOOD:
     //maybe remove spotify stuff from store.js into spotify-module.js (probably not needed until more stuff starts to clutter base store.js)
@@ -94,12 +96,6 @@
     //click media notification -> open app
     //media controls in windows taskbar preview
     //icon to show if current track is local
-    //first load loads playlists in reverse order
-    //start on page where you quit the application
-    //fix toolbar icons when song is null
-    //express not found in build
-    //remove all windows.require
-    //holding seek down to the right of the seek bar skips next very often
 
 
     export default {
@@ -125,10 +121,12 @@
 
             if (this.$store.state.platform.type === 'electron') {
                 //todo move this to electron-module
-                window.require('electron').ipcRenderer.on('before-quit', () => {
+                const ipc = window.require('electron').ipcRenderer;
+                ipc.on('before-quit', () => {
                     this.$store.commit('cacheAll');
                 });
             }
+
             this.cacheInterval = setInterval(() => {
                 this.$store.commit('cacheAll');
                 this.$store.commit('cacheAllMedia');
@@ -211,10 +209,19 @@
     }
 
     .bottom-media-control {
-        width: 100%;
+        width: calc(100% - 256px);
+        left: 256px;
+        bottom: 0;
         padding: 5px;
-        bottom: 56px;
         position: relative;
+    }
+
+    @media (max-width: 680px) {
+        .bottom-media-control {
+            width: 100%;
+            left: 0;
+            bottom: 56px;
+        }
     }
 
     .info-pane {

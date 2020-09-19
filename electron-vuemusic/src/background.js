@@ -1,11 +1,16 @@
 'use strict'
 
-import {app, protocol, BrowserWindow} from 'electron'
+import {app, protocol, BrowserWindow, ipcMain} from 'electron'
 import {createProtocol} from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, {VUEJS_DEVTOOLS} from 'electron-devtools-installer'
 import path from 'path'
 import fs from "fs";
-import Directories from "@/js/Directories";
+import Directories from "./js/Directories";
+
+const Store = require('electron-store');
+const store = new Store();
+import * as Splashscreen from "@trodi/electron-splashscreen";
+
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
@@ -34,30 +39,56 @@ function registerLocalResourceProtocol() {
 function createWindow() {
     // Create the browser window.
     let icon = path.join(__static, process.env.WEBPACK_DEV_SERVER_URL ? 'img/logo-red.png' : 'img/logo-gradient.png');
-    win = new BrowserWindow({
+    let splash = path.join(__static, 'splash.html');
+    let bounds = store.get('bounds', {});
+    if ((bounds.width && bounds.height) && (bounds.width < 300 || bounds.height < 400))
+        bounds = {};
+    let windowConfig = {
         width: 1400,
         height: 900,
+        ...bounds,
         frame: false,
+        backgroundColor: '#e7474c',
         autoHideMenuBar: true,
         icon,
-        backgroundColor: '#e7474c',
         webPreferences: {
             webSecurity: false,
             // Use pluginOptions.nodeIntegration, leave this alone
             // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
             nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION
         }
-    })
+    };
+    // win = new BrowserWindow(windowConfig);
+    const splashConfig = Splashscreen.Config = {
+        windowOpts: windowConfig,
+        templateUrl: splash,
+        minVisible: 0,
+        splashScreenOpts: {
+            fullscreenable: false,
+            maximizable: false,
+            width: 425,
+            height: 305,
+            icon,
+            transparent: true,
+        },
+    };
+    win = Splashscreen.initSplashScreen(splashConfig);
 
     if (process.env.WEBPACK_DEV_SERVER_URL) {
         // Load the url of the dev server if in development mode
         // win.loadURL(`file://${__dirname}/dist/index.html`);
-        win.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
+        let url = store.get('lastUrl', process.env.WEBPACK_DEV_SERVER_URL);
+        url = url === '' ? process.env.WEBPACK_DEV_SERVER_URL : url;
+        console.log("Loading url", url);
+        win.loadURL(url);
         if (!process.env.IS_TEST) win.webContents.openDevTools()
     } else {
         createProtocol('app')
         // Load the index.html when not in development
-        win.loadURL('app://./index.html')
+        let url = store.get('lastUrl', 'app://./index.html');
+        url = url === '' ? 'app://./index.html' : url;
+        console.log("Loading url", url);
+        win.loadURL(url)
         // win.webContents.openDevTools()
     }
 
@@ -70,6 +101,11 @@ app.on('before-quit', event => {
     event.preventDefault();
     //Clean temp directory
     try {
+        store.set('bounds', win.getBounds());
+
+        let lastUrl = win.getURL();
+        if (lastUrl.includes('app://') || lastUrl.includes('localhost'))
+            store.set('lastUrl', win.getURL());
         let files = fs.readdirSync(Directories.temp);
         for (const file of files)
             fs.unlinkSync(path.join(Directories.temp, file));

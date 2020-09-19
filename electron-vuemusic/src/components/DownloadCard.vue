@@ -1,5 +1,5 @@
 <template>
-    <v-card outlined v-if="download !== null" :loading="!done">
+    <v-card :width="500" outlined v-if="download !== null" :loading="!done">
         <div class="d-flex flex-no-wrap justify-space-between">
             <div>
                 <v-card-title>{{download.track.name}}</v-card-title>

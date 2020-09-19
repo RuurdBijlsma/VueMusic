@@ -26,7 +26,7 @@ export default {
         volume: (state, volume) => state.volume = volume,
         seekTo: (state, percentage) => {
             if (state.audio.duration)
-                state.audio.currentTime = state.audio.duration * percentage
+                state.audio.currentTime = state.audio.duration * percentage;
         },
         duration: (state, duration) => state.duration = duration || 0,
         currentTime: (state, currentTime) => state.currentTime = currentTime || 0,
@@ -155,18 +155,22 @@ export default {
         async setTrack({dispatch, state, commit}, track) {
             dispatch('setMetadata', track);
             commit('trackLoading', true);
-            state.audio.src = '';
+            await dispatch('pause');
             for await(let {url, local} of await dispatch('getTrackUrls', track)) {
-                commit('local', local);
+                if (state.track.id !== track.id)
+                    return; // Don't set src when track has been skipped while loading
 
+                commit('local', local);
                 let success = await dispatch('setTrackUrl', url);
                 if (success) {
                     commit('trackLoading', false);
                     if (!local)
                         await dispatch('downloadTrackByUrl', {track, url});
-                    break;
+                    return;
                 }
             }
+            // Failed to load track
+            await dispatch('skip', 1);
         },
         async setTrackUrl({dispatch, state, commit}, url) {
             return new Promise((resolve, reject) => {
@@ -194,7 +198,12 @@ export default {
                     // this.win.setThumbarButtons(this.pausedIcons);
                     commit('playing', false);
                 };
+                let canplayFired = false;
                 state.audio.oncanplay = async () => {
+                    if (canplayFired)
+                        return;
+                    canplayFired = true; //Don't run this when seeking through a track, which also fires oncanplay
+
                     clearTimeout(loadTimeout);
                     if (playAfterLoad)
                         await dispatch('play');

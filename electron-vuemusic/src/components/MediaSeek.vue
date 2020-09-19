@@ -75,6 +75,11 @@
             seekUp(e) {
                 this.seeking = false;
             }
+        },
+        watch: {
+            '$store.state.media.track'() {
+                this.seeking = false;
+            }
         }
     }
 </script>
