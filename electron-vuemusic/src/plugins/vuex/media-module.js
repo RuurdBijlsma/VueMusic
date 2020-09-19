@@ -123,8 +123,15 @@ export default {
         cacheMedia: state => {
             let cachedFields = ["recentlyPlayed", "track", "queue", "shuffledQueue", "contextItem", "shuffle", "repeat", "volume"];
             let cache = {};
-            for (let field of cachedFields)
-                cache[field] = state[field];
+            for (let field of cachedFields) {
+                if (field === 'library') {
+                    let lib = state[field];
+                    lib.tracks = lib.tracks.map(Utils.reduceTrackSize);
+                    cache[field] = lib;
+                } else {
+                    cache[field] = state[field];
+                }
+            }
             localStorage.mediaStateCache = JSON.stringify(cache);
             console.log("Media state cache complete");
         },

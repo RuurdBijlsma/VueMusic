@@ -4,6 +4,7 @@ import SpotifyWebApi from 'spotify-web-api-js';
 import media from './media-module';
 import search from './search-module';
 import EventEmitter from 'events';
+import Utils from "../../js/Utils";
 
 let isElectron = window && window.process !== undefined && window.process.type !== undefined;
 console.log("is electron?", isElectron);
@@ -86,8 +87,15 @@ export default new Vuex.Store({
             let cachedFields = ["auth", "homePage", "browse", "userInfo", "library", "playlist",
                 "album", "artist", "category", "user", "spotifyId", "spotifySecret", "youtubeKey"];
             let cache = {};
-            for (let field of cachedFields)
-                cache[field] = state[field];
+            for (let field of cachedFields) {
+                if (field === 'library') {
+                    let lib = state[field];
+                    lib.tracks = lib.tracks.map(Utils.reduceTrackSize);
+                    cache[field] = lib;
+                } else {
+                    cache[field] = state[field];
+                }
+            }
             localStorage.stateCache = JSON.stringify(cache);
 
             console.log("State cache complete");

@@ -1,4 +1,23 @@
 export default class Utils {
+    static reduceTrackSize(track) {
+        return {
+            album: {
+                images: track.album.images,
+                name: track.album.name,
+                type: track.album.type,
+                id: track.album.id,
+                release_date: track.album.release_date,
+            },
+            artists: track.artists,
+            name: track.name,
+            duration_ms: track.duration_ms,
+            id: track.id,
+            is_local: track.is_local,
+            type: track.type,
+            disc_number: track.disc_number,
+        }
+    }
+
     static isLegible(hexColor, theme) {
         let currentTheme = theme.themes[theme.dark ? 'dark' : 'light'];
         let background = currentTheme.navBackground;
