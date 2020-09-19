@@ -28,6 +28,17 @@ export default class NodeMusicDownloader extends MusicDownloader {
         return false;
     }
 
+    async removeCached(track) {
+        let fileName = fileNamify(this.getSearchString(track));
+        let filePath = path.join(this.directories.music, fileName + '.mp3');
+        if (await this.fileExists(filePath)) {
+            await this.deleteFile(filePath);
+            console.warn(`Deleted cache ${filePath} for`, track);
+            return true;
+        }
+        return false;
+    }
+
     async downloadTrack(url, track, progress = () => 0, abortSignal = null) {
         abortSignal.addEventListener('abort', () => progress('Cancelled'));
 

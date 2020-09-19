@@ -10,6 +10,13 @@ export default class BrowserMusicDownloader extends MusicDownloader {
         XMLHttpRequestInterceptor.start();
     }
 
+    async removeCached(track) {
+        let trackString = this.getSearchString(track);
+        const cacheStorage = await caches.open('vue-music');
+        console.warn(`Deleted cache ${trackString} for`, track);
+        return await cacheStorage.delete(trackString);
+    }
+
     async isTrackOffline(track) {
         let trackString = this.getSearchString(track);
         const cacheStorage = await caches.open('vue-music');

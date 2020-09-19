@@ -162,6 +162,9 @@ export default {
         isTrackAvailableOffline: async ({rootState}, track) => {
             return await rootState.platform.downloader.isTrackOffline(track);
         },
+        removeCached: async({rootState, commit}, track)=>{
+            await rootState.platform.downloader.removeCached(track);
+        },
         downloadTrackByUrl: async ({rootState, commit}, {track, url}) => {
             let abortController = new AbortController();
             commit('addDownload', {track, state: 'Preparing', abortController: abortController})
@@ -189,6 +192,10 @@ export default {
                     if (!local)
                         await dispatch('downloadTrackByUrl', {track, url});
                     return;
+                }else{
+                    if(local){
+                        await dispatch('removeCached', track);
+                    }
                 }
             }
             // Failed to load track

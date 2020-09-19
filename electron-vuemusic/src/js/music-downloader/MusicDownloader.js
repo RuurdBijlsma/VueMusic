@@ -36,7 +36,7 @@ export default class MusicDownloader extends EventEmitter {
 
         if (this.apiKey === null)
             await this.waitForApiKey();
-        console.log("Searching with key", this.apiKey);
+
         let {results} = await search(term, {maxResults, key: this.apiKey});
         this.searchCache[cacheKey] = results;
         localStorage.searchCache = JSON.stringify(this.searchCache);
@@ -70,6 +70,10 @@ export default class MusicDownloader extends EventEmitter {
     }
 
     async isTrackOffline(track) {
+        throw "Not implemented";
+    }
+
+    async removeCached(track) {
         throw "Not implemented";
     }
 
