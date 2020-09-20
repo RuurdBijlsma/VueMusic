@@ -93,10 +93,9 @@
     //maybe add play/shuffle to track grid/ search results and artist tracks
     //click media notification -> open app
 
-    //download tracks on web
     //break up store.js into some modules
-    //music not playing on mobile
-
+    //add toggle to enable/disable auto downloading of tracks
+    //notification bugs when track loads
 
     export default {
         name: 'App',

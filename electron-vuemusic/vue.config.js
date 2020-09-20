@@ -12,7 +12,7 @@ module.exports = {
     publicPath: '/vuemusic',
     pwa: {
         name: 'Vue Music',
-        themeColor: '#ef2d46',
+        themeColor: '#1b1b1c',
         msTileColor: "#ef2d46",
         manifestOptions: {
             "name": "Vue Music",
