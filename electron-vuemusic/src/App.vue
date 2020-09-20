@@ -89,7 +89,6 @@
     //TOOD:
     //maybe remove spotify stuff from store.js into spotify-module.js (probably not needed until more stuff starts to clutter base store.js)
     //Delete cache every week or so to prevent massive cache causing lag (see first if lag actually happens)
-    //check shuffle button size maybe
     //maybe add play/shuffle to track grid/ search results and artist tracks
     //click media notification -> open app
 
@@ -100,7 +99,6 @@
     //queue menu not wide enough? for mobile
     //maybe don't include play button and menu button on ItemSquares on touch devices
     //change folder structure of /electron-vuemusic since web vuemusic is in here too
-    //actually highlight and select track when going to track url
 
     export default {
         name: 'App',
