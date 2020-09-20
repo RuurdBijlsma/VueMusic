@@ -1,6 +1,7 @@
 import MusicDownloader from "./MusicDownloader";
 import FetchInterceptor from "./FetchInterceptor";
 import XMLHttpRequestInterceptor from "./XMLHttpRequestInterceptor";
+import config from './config'
 
 export default class BrowserMusicDownloader extends MusicDownloader {
     constructor() {
@@ -8,6 +9,12 @@ export default class BrowserMusicDownloader extends MusicDownloader {
         this.cacheName = 'vue-music';
         FetchInterceptor.start();
         XMLHttpRequestInterceptor.start();
+    }
+
+    async getYtdlInfo(id) {
+        // sadly we must move ytdl to the server, because the IP of the ytdl requester has to match the client requesting it
+        let response = await fetch(config.api + '/ytdl?id=' + id, {method: "POST"});
+        return await response.json();
     }
 
     async removeCached(track) {

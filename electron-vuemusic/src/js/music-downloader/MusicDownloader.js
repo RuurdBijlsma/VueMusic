@@ -43,6 +43,13 @@ export default class MusicDownloader extends EventEmitter {
         return results;
     }
 
+    async getYtdlInfo(id) {
+        return await ytdl.getInfo(id, {
+            quality: 'highestaudio',
+            filter: 'audioonly',
+        });
+    }
+
     async* getTrackUrls(track) {
         let offlineUrl = await this.isTrackOffline(track);
         if (offlineUrl)
@@ -52,10 +59,7 @@ export default class MusicDownloader extends EventEmitter {
         let ids = results.map(r => r.id);
 
         for (let id of ids) {
-            let result = await ytdl.getInfo(id, {
-                quality: 'highestaudio',
-                filter: 'audioonly',
-            });
+            let result = await this.getYtdlInfo(id);
             let formats = result.formats;
             let qualities = ["AUDIO_QUALITY_LOW", "AUDIO_QUALITY_MEDIUM", "AUDIO_QUALITY_HIGH"];
             formats = formats
