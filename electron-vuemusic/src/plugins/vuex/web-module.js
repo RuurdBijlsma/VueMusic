@@ -18,7 +18,7 @@ export default {
             //Not needed
         },
 
-        platformInitialize: async ({state, commit, dispatch, getters, rootState}) => {
+        initializePlatform: async ({state, commit, dispatch, getters, rootState}) => {
         },
         setPlatformPlaying: ({state}, playing) => {
         },

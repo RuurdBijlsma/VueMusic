@@ -252,7 +252,8 @@ export default new Vuex.Store({
         initialize: async ({commit, state, dispatch}) => {
             state.platform.downloader.apiKey = state.youtubeKey;
             await dispatch('processAuth');
-            await dispatch('platformInitialize');
+            await dispatch('initializeMedia');
+            await dispatch('initializePlatform');
         },
 
         cacheAll: async ({commit, dispatch}) => {

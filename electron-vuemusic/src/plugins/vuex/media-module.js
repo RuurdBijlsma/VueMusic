@@ -159,10 +159,13 @@ export default {
         },
     },
     actions: {
+        initializeMedia: ({state}) => {
+        },
+
         isTrackAvailableOffline: async ({rootState}, track) => {
             return await rootState.platform.downloader.isTrackOffline(track);
         },
-        removeCached: async({rootState, commit}, track)=>{
+        removeCached: async ({rootState, commit}, track) => {
             await rootState.platform.downloader.removeCached(track);
         },
         downloadTrackByUrl: async ({rootState, commit}, {track, url}) => {
@@ -192,8 +195,8 @@ export default {
                     if (!local)
                         await dispatch('downloadTrackByUrl', {track, url});
                     return;
-                }else{
-                    if(local){
+                } else {
+                    if (local) {
                         await dispatch('removeCached', track);
                     }
                 }

@@ -24,7 +24,7 @@ export default {
     },
     getters: {},
     actions: {
-        platformInitialize: async ({state, commit, dispatch, getters, rootState}) => {
+        initializePlatform: async ({state, commit, dispatch, getters, rootState}) => {
             const likeShortcut = 'Shift+Alt+L';
             if (remote.globalShortcut.isRegistered(likeShortcut))
                 remote.globalShortcut.unregister(likeShortcut);

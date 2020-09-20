@@ -100,6 +100,7 @@
                     </v-list-item>
                 </v-list>
             </v-menu>
+
             <v-btn v-if="$store.state.platform.type==='electron'" icon
                    class="minimize-button"
                    @click="$store.dispatch('minimizeWindow')">
