@@ -7,7 +7,7 @@
                     :style="{opacity: grey ? 0.7 : 1}"
                     class="artist"
                     :to="$store.getters.relativeItemUrl(artist)">{{artist.name}}</router-link>
-            <span v-if="i!==artists.length - 1">, </span>
+            <span v-if="i !== artists.length - 1">, </span>
         </span>
     </span>
 </template>

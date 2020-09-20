@@ -346,9 +346,10 @@ export default new Vuex.Store({
         share: async ({dispatch, getters}, {item, copy}) => {
             let url = getters.shareUrl(item);
             if (navigator.share instanceof Function) {
+                let type = item.type ?? 'category';
                 await navigator.share({
-                    name: item.name || item.display_name,
-                    text: item.description || '',
+                    name: type.substr(0, 1).toUpperCase() + type.substr(1),
+                    text: item.name ?? item.display_name,
                     url,
                 });
             } else {
@@ -382,9 +383,6 @@ export default new Vuex.Store({
             if (state.api.getAccessToken() !== null)
                 return;
             return await dispatch('waitFor', 'accessToken');
-        },
-        getCached: ({}, {key, getFunction, lifeTimeMs = 1000 * 60 * 60}) => {
-
         },
         findPagination: ({}, object) => {
             if (object === null)
@@ -475,6 +473,7 @@ export default new Vuex.Store({
                 await dispatch('waitFor', 'refreshed' + type);
                 return;
             }
+            await dispatch('awaitAuth');
             commit('isRefreshing', {type, value: true});
 
             let isInitial = state.library[type + 's'].length === 0;
@@ -561,6 +560,8 @@ export default new Vuex.Store({
                 commit('homeRecent', JSON.parse(localStorage.recentlyPlayed));
         },
         refreshBrowsePage: async ({dispatch, commit, state}) => {
+            await dispatch('awaitAuth');
+
             state.api.getCategories({limit: 50})
                 .then(c => commit('browseCategories', c.categories.items));
             state.api.getAvailableGenreSeeds().then(g => {
@@ -575,6 +576,8 @@ export default new Vuex.Store({
             });
         },
         loadPlaylist: async ({dispatch, commit, state}, id) => {
+            await dispatch('awaitAuth');
+
             let retrieval = () => state.api.getPlaylist(id);
             for await(let batch of await dispatch('retrieveSpotifyArray', retrieval)) {
                 if (batch.items) {
@@ -595,6 +598,7 @@ export default new Vuex.Store({
             }
         },
         loadAlbum: async ({dispatch, commit, state}, id) => {
+            await dispatch('awaitAuth');
             let retrieval = () => state.api.getAlbum(id);
             for await(let batch of await dispatch('retrieveSpotifyArray', retrieval)) {
                 if (batch.items) {
@@ -617,6 +621,7 @@ export default new Vuex.Store({
             }
         },
         loadCategory: async ({state, commit, dispatch}, id) => {
+            await dispatch('awaitAuth');
             if (!state.category.hasOwnProperty(id)) {
                 let category = {playlists: [], ...(await state.api.getCategory(id))};
                 commit('loadCategory', {id, category});
@@ -632,6 +637,7 @@ export default new Vuex.Store({
             }
         },
         loadArtist: async ({dispatch, commit, state}, id) => {
+            await dispatch('awaitAuth');
             let isInitial = !state.artist.hasOwnProperty(id);
 
             let artist = await state.api.getArtist(id);
@@ -656,6 +662,7 @@ export default new Vuex.Store({
             commit('loadArtistAlbums', {id, albums});
         },
         loadUser: async ({dispatch, commit, state}, id) => {
+            await dispatch('awaitAuth');
             let isInitial = state.user[id] === undefined;
             let user = await state.api.getUser(id);
 
@@ -667,7 +674,8 @@ export default new Vuex.Store({
             else
                 commit('loadUser', {id, user: {...user, playlists}});
         },
-        loadTrack: async ({state}, id) => {
+        loadTrack: async ({state, dispatch}, id) => {
+            await dispatch('awaitAuth');
             return await state.api.getTrack(id);
         },
         followPlaylist: async ({state, dispatch}, playlist) => {

@@ -1,6 +1,11 @@
 <template>
-    <div ref="trackRow" class="track-row" v-if="track!==null" :class="rowClass">
-        <track-item :context-item="contextItem" class="track-left" :track="track" :album-list="albumList"></track-item>
+    <v-sheet :color=" activeTrack ? '#c12238' : 'transparent'"
+             :dark="activeTrack"
+             rounded
+             @dblclick="play"
+             ref="trackRow" class="track-row" v-if="track !== null" :class="rowClass">
+        <track-item ref="trackItem" :context-item="contextItem" class="track-left" :track="track"
+                    :album-list="albumList"></track-item>
         <div class="track-middle" :title="track.album.name" v-if="!albumList">
             <router-link class="album-link" tag="span"
                          :to="$store.getters.relativeItemUrl(track.album)">
@@ -11,7 +16,7 @@
             <div class="track-duration">{{duration}}</div>
             <item-menu :queue-track="queueTrack" :context-item="contextItem" :item="track"></item-menu>
         </div>
-    </div>
+    </v-sheet>
 </template>
 
 <script>
@@ -57,7 +62,10 @@
         },
         methods: {
             windowResize() {
-                this.rowWidth = this.$refs.trackRow.getBoundingClientRect().width;
+                this.rowWidth = this.$refs.trackRow.$el.getBoundingClientRect().width;
+            },
+            play() {
+                this.$refs.trackItem.play();
             },
         },
         computed: {
@@ -69,7 +77,10 @@
             },
             duration() {
                 return Utils.secondsToHms(this.track.duration_ms / 1000);
-            }
+            },
+            activeTrack() {
+                return this.$store.state.media.track.id === this.track.id;
+            },
         }
     }
 </script>

@@ -46,7 +46,7 @@
                 </v-list-item-icon>
                 <v-list-item-title>Remove from queue</v-list-item-title>
             </v-list-item>
-            <v-menu open-on-hover offset-y>
+            <v-menu offset-y>
                 <template v-slot:activator="{ on, attrs }">
                     <v-list-item v-if="item.type === 'track'" v-on="on" v-bind="attrs">
                         <v-list-item-icon>

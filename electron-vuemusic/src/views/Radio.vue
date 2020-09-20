@@ -27,7 +27,7 @@
             </div>
         </div>
         <div v-for="track in tracks" :key="track.id">
-            <v-divider></v-divider>
+            <v-divider class="mr-1 ml-1"></v-divider>
             <track-row :context-item="context"
                        :track="track"></track-row>
         </div>

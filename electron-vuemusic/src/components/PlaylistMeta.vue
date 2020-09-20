@@ -2,7 +2,7 @@
     <div class="playlist-meta">
         <glow-image :size="imageSize" v-if="showArt" :url="$store.getters.itemImage(playlist)"
                     class="art-section"></glow-image>
-        <h2 class="name">{{playlist.name}}</h2>
+        <h2 class="name" :title="playlist.name">{{playlist.name}}</h2>
         <h2 class="album-artist" v-if="isAlbum"
             :title="playlist.artists.map(t=>t.name).join(', ')">
             <span v-for="(artist, index) in playlist.artists" :key="artist.id">

@@ -30,7 +30,7 @@
                         <span>Refreshing</span>
                     </span>
                 </div>
-                <v-divider></v-divider>
+                <v-divider class="mr-1 ml-1"></v-divider>
             </div>
             <div class="scroll-item" v-if="index>0">
                 <track-row
@@ -40,7 +40,7 @@
                         :album-list="false"
                         :key="item.id"
                         :track="item"></track-row>
-                <v-divider></v-divider>
+                <v-divider class="mr-1 ml-1"></v-divider>
             </div>
         </recycle-scroller>
     </div>

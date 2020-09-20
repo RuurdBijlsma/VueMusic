@@ -13,7 +13,7 @@
                            :fg-legible="fgLegible"></playlist-meta>
             <!--            <v-divider></v-divider>-->
             <div class="scroll-item" v-if="index>0">
-                <v-divider></v-divider>
+                <v-divider class="mr-1 ml-1"></v-divider>
                 <track-row
                         :context-item="playlist"
                         :no-album="hideAlbum || isAlbum"
@@ -64,8 +64,6 @@
                     if (index !== -1 && this.hasHighlighted === false) {
                         this.hasHighlighted = true;
                         this.$refs.scroller.scrollToItem(index + 1);
-                        //todo click play on the track here
-                        console.warn("Implement todo here!!");
                     }
                 }
             },

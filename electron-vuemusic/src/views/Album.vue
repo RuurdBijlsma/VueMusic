@@ -1,5 +1,6 @@
 <template>
-    <playlist-page :highlight-id="$route.params.trackId" type="album" :id="id" :playlist="playlist" ref="playlistPage"></playlist-page>
+    <playlist-page :highlight-id="$route.params.trackId" type="album" :id="id" :playlist="playlist"
+                   ref="playlistPage"></playlist-page>
 </template>
 
 <script>
@@ -12,6 +13,19 @@
         data: () => ({}),
         async mounted() {
             await this.$store.dispatch('loadAlbum', this.id);
+            if (this.$route.params.trackId !== undefined) {
+                console.log(this.$route.params);
+                let trackId = this.$route.params.trackId;
+                if (trackId === this.$store.state.media.track.id) {
+                    return this.$store.dispatch('play');
+                }
+                let track = this.playlist.tracks.find(t => t.id === trackId);
+                this.$store.commit('playAfterLoad', true);
+                this.$store.commit('track', {
+                    track,
+                    contextItem: this.playlist
+                });
+            }
         },
         computed: {
             id() {
