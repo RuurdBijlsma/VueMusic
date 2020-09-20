@@ -1,5 +1,5 @@
 <template>
-    <v-sheet :color=" activeTrack ? '#c12238' : 'transparent'"
+    <v-sheet :color="activeTrack ? '#c12238' : 'transparent'"
              :dark="activeTrack"
              rounded
              @dblclick="play"
@@ -79,6 +79,8 @@
                 return Utils.secondsToHms(this.track.duration_ms / 1000);
             },
             activeTrack() {
+                if (!this.$store.getters.isTrackSet)
+                    return false;
                 return this.$store.state.media.track.id === this.track.id;
             },
         }

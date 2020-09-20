@@ -16,7 +16,7 @@
             if (this.$route.params.trackId !== undefined) {
                 console.log(this.$route.params);
                 let trackId = this.$route.params.trackId;
-                if (trackId === this.$store.state.media.track.id) {
+                if (this.$store.getters.isTrackSet && trackId === this.$store.state.media.track.id) {
                     return this.$store.dispatch('play');
                 }
                 let track = this.playlist.tracks.find(t => t.id === trackId);
