@@ -238,7 +238,10 @@ export default new Vuex.Store({
             return `/${type}/${getters.urlName(name)}/${item.id}`;
         },
         shareUrl: (state, getters) => item => {
-            return `${location.origin}/#${getters.relativeItemUrl(item)}`;
+            let baseUrl = state.platform.type === 'web' ?
+                `${location.origin}${location.pathname}` :
+                'https://ruurd.dev/vuemusic/';
+            return `${baseUrl}#${getters.relativeItemUrl(item)}`;
         },
         isArtistFollowed: state => artist => state.library.artists.find(a => a.id === artist.id),
         isTrackFollowed: state => track => state.library.tracks.find(a => a.id === track.id),

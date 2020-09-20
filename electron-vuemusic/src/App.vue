@@ -96,6 +96,11 @@
     //break up store.js into some modules
     //add toggle to enable/disable auto downloading of tracks
     //notification bugs when track loads
+    //add now playing page
+    //queue menu not wide enough? for mobile
+    //maybe don't include play button and menu button on ItemSquares on touch devices
+    //change folder structure of /electron-vuemusic since web vuemusic is in here too
+    //actually highlight and select track when going to track url
 
     export default {
         name: 'App',
