@@ -11,13 +11,16 @@
                  :style="{
                     borderRadius: type === 'artist' ? '50%' : '5px',
                  }">
-                <v-btn :loading="playLoading" fab small color="primary" @click="play" v-if="!itemIsPlaying">
+                <v-btn :loading="playLoading" fab small color="primary" @click="play" v-if="!itemIsPlaying && !$store.state.isTouch">
                     <v-icon color="white">mdi-play</v-icon>
                 </v-btn>
-                <v-btn :loading="playLoading" fab small color="primary" @click="pause" v-else>
+                <v-btn :loading="playLoading" fab small color="primary" @click="pause" v-else-if="!$store.state.isTouch">
                     <v-icon color="white">mdi-pause</v-icon>
                 </v-btn>
-                <item-menu color="white" :fab="type==='artist'" v-if="!hideMenu" :item="item"></item-menu>
+                <item-menu :color="type==='artist' ? 'default' : 'white'"
+                           :fab="type==='artist'"
+                           v-if="!hideMenu && !$store.state.isTouch"
+                           :item="item"></item-menu>
             </div>
             <div class="text" v-if="!noTitle" :class="{big,small}"
                  :style="{textAlign: type==='artist'?'center':'left'}">
@@ -87,7 +90,7 @@
         },
         computed: {
             itemIsLoaded() {
-                if(!this.$store.getters.isTrackSet)
+                if (!this.$store.getters.isTrackSet)
                     return false;
                 let contextItem = this.$store.state.media.contextItem;
                 return contextItem.type === this.item.type && contextItem.id === this.item.id;

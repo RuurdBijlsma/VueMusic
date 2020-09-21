@@ -247,7 +247,6 @@ export default {
 
                 console.log("🎵 Now playing 🎵", url)
                 commit('swapAudios');
-                console.log("Commit currenttime to ", 0);
                 state.backupAudio.pause();
                 state.audio.src = url;
                 if (playAfterLoad)
@@ -255,7 +254,7 @@ export default {
 
                 let loadTimeout = setTimeout(() => {
                     //if url doesn't load in time, go next url
-                    console.warn("can't play");
+                    console.warn("Can't play");
                     resolve(false);
                 }, 3500);
                 let canplayFired = false;
