@@ -6,7 +6,7 @@
                       class="top-select"></v-select>
             <div class="option" v-for="option in options">
                 <v-divider></v-divider>
-                <v-switch v-model="option.active" :label="option.name"></v-switch>
+                <v-switch inset v-model="option.active" :label="option.name"></v-switch>
                 <p class="description">{{option.description}}</p>
                 <div class="input" v-if="option.active">
                     <v-select outlined dense :label="option.name" class="select-input" v-if="option.select"

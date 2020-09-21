@@ -34,7 +34,9 @@
         methods: {
             handleVolume() {
                 let audio = this.$store.state.media.audio;
+                let backupAudio = this.$store.state.media.backupAudio;
                 audio.volume = this.$store.state.media.volume;
+                backupAudio.volume = this.$store.state.media.volume;
             }
         },
         watch: {

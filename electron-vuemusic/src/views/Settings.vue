@@ -59,6 +59,7 @@
                     <v-icon>mdi-error</v-icon>
                     Clear cache
                 </v-btn>
+                <v-switch inset v-model="$store.state.media.shouldDownload" label="Download tracks while you're listening?"></v-switch>
             </div>
         </div>
     </div>

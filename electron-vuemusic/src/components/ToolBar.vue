@@ -95,7 +95,7 @@
                             </v-list-item-title>
                         </v-list-item-content>
                         <v-list-item-action>
-                            <v-switch v-model="$vuetify.theme.dark"></v-switch>
+                            <v-switch dense inset v-model="$vuetify.theme.dark"></v-switch>
                         </v-list-item-action>
                     </v-list-item>
                 </v-list>

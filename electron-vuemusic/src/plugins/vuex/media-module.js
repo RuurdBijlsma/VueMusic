@@ -17,6 +17,7 @@ export default {
         playAfterLoad: false,
         volume: 1,
         trackLoading: true,
+        shouldDownload: true,
         audio: document.createElement('audio'),
         backupAudio: document.createElement('audio'),
 
@@ -124,7 +125,8 @@ export default {
         },
 
         cacheMedia: state => {
-            let cachedFields = ["recentlyPlayed", "track", "queue", "shuffledQueue", "contextItem", "shuffle", "repeat", "volume"];
+            let cachedFields = ["shouldDownload", "recentlyPlayed", "track", "queue",
+                "shuffledQueue", "contextItem", "shuffle", "repeat", "volume"];
             let cache = {};
             for (let field of cachedFields) {
                 if (field === 'library') {
@@ -172,7 +174,10 @@ export default {
         removeCached: async ({rootState, commit}, track) => {
             await rootState.platform.downloader.removeCached(track);
         },
-        downloadTrackByUrl: async ({rootState, commit}, {track, url}) => {
+        downloadTrackByUrl: async ({rootState, state, commit}, {track, url}) => {
+            if (!state.shouldDownload)
+                return;
+
             let abortController = new AbortController();
             commit('addDownload', {track, state: 'Preparing', abortController: abortController})
             await rootState.platform.downloader.downloadTrack(url, track,
