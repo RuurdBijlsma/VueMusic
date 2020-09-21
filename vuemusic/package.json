@@ -1,6 +1,6 @@
 {
   "name": "vuemusic",
-  "version": "5.0.5",
+  "version": "5.0.6",
   "description": "Music streaming program that uses the Spotify API",
   "keywords": [
     "Music",

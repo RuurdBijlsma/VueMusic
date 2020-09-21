@@ -95,7 +95,8 @@
     //break up store.js into some modules
     //change to indexeddb for state cache etc.
     //add now playing page
-    //maybe don't include play button and menu button on ItemSquares on touch devices
+    //remove unused image from public/img
+    //add meta description to index.html
 
     export default {
         name: 'App',
