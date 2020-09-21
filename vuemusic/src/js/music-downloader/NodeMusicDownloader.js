@@ -46,10 +46,14 @@ export default class NodeMusicDownloader extends MusicDownloader {
 
         let downloadedTrackFile = path.join(this.directories.temp, fileName);
         progress('Downloading');
-        await this.downloadFile(url, downloadedTrackFile, abortSignal);
+        try {
+            await this.downloadFile(url, downloadedTrackFile, abortSignal);
+        } catch (e) {
+            return progress('Failed');
+        }
         progress('Processing metadata');
         let processedFile = await this.ffmpegProcessing(track, downloadedTrackFile, () => 0, abortSignal);
-        progress('Done');
+        progress('Downloaded');
         console.log("Downloaded track and converted to mp3 ✔", processedFile);
     }
 
@@ -72,7 +76,12 @@ export default class NodeMusicDownloader extends MusicDownloader {
             await this.downloadFile(track.album.images[0].url, imageFile, abortSignal);
 
         let outputFile = path.join(this.directories.temp, baseFileName + '.mp3');
-        await this.ffmpegMetadata(trackInputFile, outputFile, hasImage ? imageFile : '', tags, abortSignal);
+
+        try {
+            await this.ffmpegMetadata(trackInputFile, outputFile, hasImage ? imageFile : '', tags, abortSignal);
+        } catch (e) {
+            progress('Failed');
+        }
 
         return new Promise((resolve, reject) => {
             let destinationFile = path.join(this.directories.music, baseFileName + '.mp3');
@@ -118,7 +127,6 @@ export default class NodeMusicDownloader extends MusicDownloader {
                 });
                 abortSignal.addEventListener('abort', () => process.kill());
             }
-
         })
     }
 

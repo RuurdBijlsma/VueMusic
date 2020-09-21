@@ -37,10 +37,13 @@ export default class BrowserMusicDownloader extends MusicDownloader {
     async downloadTrack(url, track, progress = () => 0, abortSignal = null) {
         progress('Downloading');
         let trackString = this.getSearchString(track);
-        let res = await fetch(url, {signal: abortSignal});
-
-        const cacheStorage = await caches.open(this.cacheName);
-        await cacheStorage.put(trackString, res);
-        progress('Done');
+        try {
+            let res = await fetch(url, {signal: abortSignal});
+            const cacheStorage = await caches.open(this.cacheName);
+            await cacheStorage.put(trackString, res);
+            progress('Downloaded');
+        } catch (e) {
+            return progress('Failed');
+        }
     }
 }

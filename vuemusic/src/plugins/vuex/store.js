@@ -348,11 +348,15 @@ export default new Vuex.Store({
             let url = getters.shareUrl(item);
             if (navigator.share instanceof Function) {
                 let type = item.type ?? 'category';
-                await navigator.share({
-                    name: type.substr(0, 1).toUpperCase() + type.substr(1),
-                    text: item.name ?? item.display_name,
-                    url,
-                });
+                try {
+                    await navigator.share({
+                        title: type.substr(0, 1).toUpperCase() + type.substr(1),
+                        text: item.name ?? item.display_name,
+                        url,
+                    });
+                } catch (e) {
+                    console.warn(e)
+                }
             } else {
                 await copy(url);
                 await dispatch('addSnack', {text: 'Share URL copied to clipboard!'});

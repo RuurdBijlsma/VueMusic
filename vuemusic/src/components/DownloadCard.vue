@@ -15,7 +15,9 @@
         </div>
         <v-card-actions class="card-actions" v-if="done">
             <v-btn text>
-                Downloaded <v-icon color="success">mdi-check</v-icon>
+                <v-icon color="error" v-if="download.state === 'Failed'">mdi-alert-circle-outline</v-icon>
+                <v-icon color="success" v-else>mdi-check</v-icon>
+                {{download.state}}
             </v-btn>
             <v-btn @click="dismiss" color="primary" text>Dismiss</v-btn>
         </v-card-actions>
@@ -27,7 +29,7 @@
 </template>
 
 <script>
-    import ArtistsSpan from "@/components/ArtistsSpan";
+    import ArtistsSpan from "./ArtistsSpan";
 
     export default {
         name: "DownloadCard",
@@ -49,7 +51,7 @@
         },
         computed: {
             done() {
-                return this.download.state === 'Done' || this.download.state === 'Cancelled';
+                return ['Downloaded', 'Cancelled', 'Failed'].includes(this.download.state);
             }
         }
     }
