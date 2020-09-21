@@ -91,10 +91,11 @@
     //Delete cache every week or so to prevent massive cache causing lag (see first if lag actually happens)
     //maybe add play/shuffle to track grid/ search results and artist tracks
     //click media notification -> open app (impossible)
+    //queue track menus not showing when in fullscreen (geen zin om te fixen)
 
     //break up store.js into some modules
     //change to indexeddb for state cache etc.
-    //add now playing page
+    //fullscreen button not clickable when fullscreen xd
 
     export default {
         name: 'App',

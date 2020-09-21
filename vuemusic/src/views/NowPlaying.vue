@@ -7,10 +7,12 @@
                     <v-btn title="Toggle fullscreen" @click="toggleFullScreen" icon small class="fullscreen-button">
                         <v-icon>mdi-fullscreen</v-icon>
                     </v-btn>
-                    <v-btn title="Close queue list" v-if="!hideQueue" @click="hideQueue = true" icon small class="fullscreen-button">
+                    <v-btn title="Close queue list" v-if="!hideQueue" @click="hideQueue = true" icon small
+                           class="fullscreen-button">
                         <v-icon>mdi-menu-right</v-icon>
                     </v-btn>
-                    <v-btn title="Open queue list" v-else @click="hideQueue = false" icon small class="fullscreen-button">
+                    <v-btn title="Open queue list" v-else @click="hideQueue = false" icon small
+                           class="fullscreen-button">
                         <v-icon>mdi-menu-left</v-icon>
                     </v-btn>
                 </div>
@@ -88,7 +90,7 @@
                             if (bins[binKey] === undefined)
                                 bins[binKey] = {n: 0, color};
                             // console.log(hsl);
-                            bins[binKey].n += 1 + s * 255;
+                            bins[binKey].n += 1 + (s * (1 - Math.abs(0.5 - l))) * 255;
                         }
                         let values = Object.values(bins);
                         const indexOfMaxValue = values.map(e => e.n).reduce((iMax, x, i, arr) => x > arr[iMax] ? i : iMax, 0);
@@ -163,7 +165,7 @@
         watch: {
             hideQueue() {
                 localStorage.hideNPQueue = this.hideQueue;
-                if(this.hideQueue===false){
+                if (this.hideQueue === false) {
                     this.$refs.list.scrollToItem();
                 }
             },
