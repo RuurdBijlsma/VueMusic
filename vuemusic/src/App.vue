@@ -42,7 +42,7 @@
                 <follow-button class="button" :item="$store.state.media.track"></follow-button>
                 <queue-button class="button"></queue-button>
             </div>
-            <div class="full-controls">
+            <div class="full-controls" v-if="$route.name !== 'NowPlaying'">
                 <media-controls :full="$store.state.windowWidth > 430"></media-controls>
                 <media-seek class="seeker"></media-seek>
             </div>

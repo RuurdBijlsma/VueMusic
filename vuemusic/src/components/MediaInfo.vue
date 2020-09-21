@@ -2,9 +2,10 @@
     <div class="media-info">
         <v-card outlined class="media-card">
             <div class="media-album"
+                 @click="$router.push('/nowplaying')"
+                 v-ripple
                  :style="{
                             backgroundImage: `url(${$store.getters.itemImage($store.state.media.track)})`,
-                            webkitAppRegion: 'drag',
                          }"/>
             <div class="white-part">
                 <div class="media-text-info">
@@ -73,6 +74,7 @@
     }
 
     .media-album {
+        cursor: pointer;
         border-top-left-radius: 2px;
         border-bottom-left-radius: 2px;
         border-top-right-radius: 0 !important;

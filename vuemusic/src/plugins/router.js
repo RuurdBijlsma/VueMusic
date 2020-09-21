@@ -95,6 +95,11 @@ const routes = [
         name: 'Radio',
         component: () => import('../views/Radio')
     },
+    {
+        path: '/nowplaying',
+        name: 'NowPlaying',
+        component: () => import('../views/NowPlaying')
+    },
 ]
 
 const router = new VueRouter({
