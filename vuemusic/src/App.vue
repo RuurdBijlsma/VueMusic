@@ -90,10 +90,9 @@
     //maybe remove spotify stuff from store.js into spotify-module.js (probably not needed until more stuff starts to clutter base store.js)
     //Delete cache every week or so to prevent massive cache causing lag (see first if lag actually happens)
     //maybe add play/shuffle to track grid/ search results and artist tracks
-    //click media notification -> open app
+    //click media notification -> open app (impossible)
 
     //break up store.js into some modules
-    //add toggle to enable/disable auto downloading of tracks
     //change to indexeddb for state cache etc.
     //add now playing page
     //maybe don't include play button and menu button on ItemSquares on touch devices
