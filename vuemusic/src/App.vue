@@ -96,7 +96,6 @@
     //change to indexeddb for state cache etc.
     //add now playing page
     //maybe don't include play button and menu button on ItemSquares on touch devices
-    //change folder structure of /electron-vuemusic since web vuemusic is in here too
 
     export default {
         name: 'App',
