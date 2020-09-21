@@ -25,7 +25,8 @@
                 </recycle-scroller>
                 <div class="bottom-buttons">
                     <v-btn v-if="context.to !== null" :disabled="$route.fullPath === context.to" color="primary" text
-                           class="view-more" small :to="context.to" :title="'Visit ' + $store.state.media.contextItem.name">View more
+                           class="view-more" small :to="context.to"
+                           :title="'Visit ' + $store.state.media.contextItem.name">View more
                     </v-btn>
                     <v-btn small text class="view-more" @click="$store.commit('clearQueue')">Clear queue</v-btn>
                 </div>
@@ -78,15 +79,14 @@
     }
 
     .view-more {
-        margin: 15px;
-        margin-bottom: 5px;
+        margin: 15px 15px 5px;
     }
 
     .track-list {
         height: calc(100vh - 100px);
         overflow-y: auto;
-        max-width: 500px;
-        min-width: 400px;
+        max-width: 100%;
+        width: 420px;
     }
 
     .scroller {

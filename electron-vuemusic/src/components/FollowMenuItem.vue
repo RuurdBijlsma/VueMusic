@@ -2,7 +2,7 @@
     <v-list-item v-if="isFollowed" @click="unfollow">
         <v-list-item-icon>
             <v-progress-circular size="20" indeterminate width="1" v-if="loading"></v-progress-circular>
-            <v-icon color="primary" v-else>mdi-heart-outline</v-icon>
+            <v-icon color="primary" v-else>mdi-heart</v-icon>
         </v-list-item-icon>
         <v-list-item-title>Remove from library</v-list-item-title>
     </v-list-item>

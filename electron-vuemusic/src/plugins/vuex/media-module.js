@@ -17,10 +17,13 @@ export default {
         playAfterLoad: false,
         volume: 1,
         trackLoading: true,
+        audio: document.createElement('audio'),
+        backupAudio: document.createElement('audio'),
 
         ...(localStorage.getItem('mediaStateCache') === null ? {} : JSON.parse(localStorage.mediaStateCache)),
     },
     mutations: {
+        swapAudios: (state) => [state.audio, state.backupAudio] = [state.backupAudio, state.audio],
         local: (state, local) => state.local = local,
         trackLoading: (state, trackLoading) => state.trackLoading = trackLoading,
         volume: (state, volume) => state.volume = volume,
@@ -159,7 +162,8 @@ export default {
         },
     },
     actions: {
-        initializeMedia: ({state}) => {
+        initializeMedia: ({state, dispatch}) => {
+            dispatch('initAudios');
         },
 
         isTrackAvailableOffline: async ({rootState}, track) => {
@@ -183,6 +187,7 @@ export default {
         async setTrack({dispatch, state, commit}, track) {
             dispatch('setMetadata', track);
             commit('trackLoading', true);
+            commit('currentTime', 0);
             await dispatch('pause');
             for await(let {url, local} of await dispatch('getTrackUrls', track)) {
                 if (state.track.id !== track.id)
@@ -204,44 +209,60 @@ export default {
             // Failed to load track
             await dispatch('skip', 1);
         },
+        initAudios({state, commit, dispatch}) {
+            for (let audio of [state.audio, state.backupAudio]) {
+                audio.onloadedmetadata = () => {
+                    if (audio === state.audio)
+                        commit('duration', audio.duration);
+                };
+                audio.onended = () => {
+                    if (audio === state.audio)
+                        dispatch('skip', 1);
+                }
+                audio.onplay = () => {
+                    if (audio === state.audio) {
+                        navigator.mediaSession.playbackState = 'playing';
+                        dispatch('setPlatformPlaying', true);
+                        commit('playing', true);
+                    }
+                };
+                audio.onpause = () => {
+                    if (audio === state.audio) {
+                        navigator.mediaSession.playbackState = 'paused';
+                        dispatch('setPlatformPlaying', false);
+                        commit('playing', false);
+                    }
+                };
+            }
+        },
         async setTrackUrl({dispatch, state, commit}, url) {
             return new Promise((resolve, reject) => {
                 let playAfterLoad = state.playAfterLoad;
                 commit('playAfterLoad', false);
 
                 console.log("🎵 Now playing 🎵", url)
+                commit('swapAudios');
+                console.log("Commit currenttime to ", 0);
+                state.backupAudio.pause();
                 state.audio.src = url;
+                if (playAfterLoad)
+                    state.audio.play();
+
                 let loadTimeout = setTimeout(() => {
                     //if url doesn't load in time, go next url
                     console.warn("can't play");
                     resolve(false);
                 }, 3500);
-                state.audio.onloadedmetadata = () => {
-                    commit('duration', state.audio.duration);
-                };
-                state.audio.onended = () => dispatch('skip', 1);
-                state.audio.onplay = () => {
-                    navigator.mediaSession.playbackState = 'playing';
-                    dispatch('setPlatformPlaying', true);
-                    commit('playing', true);
-                };
-                state.audio.onpause = () => {
-                    navigator.mediaSession.playbackState = 'paused';
-                    dispatch('setPlatformPlaying', false);
-                    commit('playing', false);
-                };
                 let canplayFired = false;
+                state.backupAudio.oncanplay = () => 0;
                 state.audio.oncanplay = async () => {
                     if (canplayFired)
                         return;
                     canplayFired = true; //Don't run this when seeking through a track, which also fires oncanplay
 
                     clearTimeout(loadTimeout);
-                    if (playAfterLoad)
-                        await dispatch('play');
                     resolve(true);
                 }
-
             });
         },
         async play({state}) {

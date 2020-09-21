@@ -37,6 +37,10 @@ export default {
                 utterance.voice = voice;
                 speechSynthesis.speak(utterance);
             });
+            if (regResult)
+                console.log("Registered global shortcut ✔")
+            else
+                console.log("Failed to register global shortcut ❌")
 
 
             let playIcon = {

@@ -27,6 +27,7 @@ export default new Vuex.Store({
         requestedScopes: "ugc-image-upload user-read-email user-read-private playlist-read-collaborative playlist-modify-public playlist-read-private playlist-modify-private user-library-modify user-library-read user-top-read user-read-recently-played user-follow-read user-follow-modify",
         authUrl: 'https://accounts.spotify.com/',
 
+        isTouch: Utils.isTouchDevice(),
         dontCache: false,
         events: new EventEmitter(),
         windowWidth: window.innerWidth,

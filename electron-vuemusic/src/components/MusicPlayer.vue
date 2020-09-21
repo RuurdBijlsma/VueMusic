@@ -1,6 +1,5 @@
 <template>
     <div>
-        <audio ref="audio"></audio>
     </div>
 </template>
 
@@ -11,15 +10,16 @@
             timeInterval: -1,
         }),
         async mounted() {
-            this.$store.commit('audioElement', this.$refs.audio);
-
             this.timeInterval = setInterval(() => {
-                this.$store.commit('currentTime', this.$refs.audio.currentTime);
-                if (this.$refs.audio.duration && navigator.mediaSession.hasOwnProperty('setPositionState')) {
+                let audio = this.$store.state.media.audio;
+
+                if (!this.$store.state.media.trackLoading)
+                    this.$store.commit('currentTime', audio.currentTime);
+                if (audio.duration && navigator.mediaSession.hasOwnProperty('setPositionState')) {
                     navigator.mediaSession.setPositionState({
-                        duration: this.$refs.audio.duration,
+                        duration: audio.duration,
                         playbackRate: 1,
-                        position: this.$refs.audio.currentTime,
+                        position: audio.currentTime,
                     });
                 }
             }, 1000 / 30);
@@ -33,7 +33,8 @@
         },
         methods: {
             handleVolume() {
-                this.$refs.audio.volume = this.$store.state.media.volume;
+                let audio = this.$store.state.media.audio;
+                audio.volume = this.$store.state.media.volume;
             }
         },
         watch: {
