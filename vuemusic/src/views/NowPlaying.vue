@@ -5,11 +5,16 @@
             <div class="media">
                 <div class="media-container">
                     <div class="media-center">
-                        <glow-image :size="$store.state.windowWidth < 400 ? 200 : 300" class="album-image"
-                                    :url="image"></glow-image>
-                        <div class="track-info">
-                            <span class="track-title">{{track.name}}</span>
-                            <artists-span class="track-artists" :artists="track.artists" grey></artists-span>
+                        <div
+                                @touchstart="startSwipe"
+                                class="swipe-container"
+                        >
+                            <glow-image :size="$store.state.windowWidth < 400 ? 200 : 300" class="album-image"
+                                        :url="image"></glow-image>
+                            <div class="track-info">
+                                <span class="track-title">{{track.name}}</span>
+                                <artists-span class="track-artists" :artists="track.artists" grey></artists-span>
+                            </div>
                         </div>
                         <media-seek class="seek"></media-seek>
                         <media-controls :fg-legible="$store.state.theme.fgLegible"
@@ -43,18 +48,52 @@
     import MediaControls from "../components/MediaControls";
     import ArtistsSpan from "../components/ArtistsSpan";
     import MediaSeek from "../components/MediaSeek";
-    import Utils from "../js/Utils";
 
     export default {
         name: "NowPlaying",
         components: {MediaSeek, ArtistsSpan, MediaControls, GlowImage, QueueList},
         data: () => ({
             hideQueue: localStorage.getItem('hideNPQueue') === null ? false : JSON.parse(localStorage.hideNPQueue),
+            startSwipeInfo: null,
         }),
         mounted() {
             this.$store.dispatch('setThemeToItem', this.track);
+            document.addEventListener('touchend', this.swipeEnd);
+        },
+        beforeDestroy() {
+            document.removeEventListener('touchend', this.swipeEnd);
         },
         methods: {
+            startSwipe(e) {
+                this.startSwipeInfo = {
+                    down: true,
+                    x: e.touches[0].pageX,
+                    y: e.touches[0].pageY,
+                    time: performance.now(),
+                }
+            },
+            swipeEnd(e) {
+                if (!this.startSwipeInfo.down)
+                    return;
+                this.startSwipeInfo.down = false;
+                let startX = this.startSwipeInfo.x;
+                let startY = this.startSwipeInfo.y;
+                let endX = e.changedTouches[0].pageX;
+                let endY = e.changedTouches[0].pageY;
+                let absDeltaY = Math.abs(endY - startY);
+                if (absDeltaY > 150)
+                    return;
+                let deltaX = endX - startX;
+                let swipeTime = performance.now() - this.startSwipeInfo.time;
+                console.log(absDeltaY, deltaX, swipeTime)
+                if (Math.abs(deltaX) > 150 && swipeTime < 700) {
+                    if (deltaX > 0) {
+                        this.$store.dispatch('skip', -1);
+                    } else {
+                        this.$store.dispatch('skip', 1);
+                    }
+                }
+            },
             toggleFullScreen() {
                 if (!document.fullscreenElement) {
                     this.$refs.nowPlaying.requestFullscreen();
@@ -176,6 +215,12 @@
         flex-direction: column;
         align-items: center;
         padding: 0 15px;
+    }
+
+    .swipe-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
 
     .album-image {

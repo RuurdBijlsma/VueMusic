@@ -131,7 +131,7 @@
 
             this.cacheInterval = setInterval(async () => {
                 await this.$store.dispatch('cacheAll');
-            }, 1000 * 60);//Cache every 1 minute(s).
+            }, 1000 * 60 * 2);//Cache every 2 minute(s).
 
             console.log(this.$store);
             if (!this.$store.getters.isKeySet) {

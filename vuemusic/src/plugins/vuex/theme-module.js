@@ -54,9 +54,10 @@ export default {
             commit('color', null);
             await dispatch('revertThemeColor');
         },
-        getImageColor({dispatch}, imgUrl) {
+        async getImageColor({dispatch}, imgUrl) {
             return new Promise(resolve => {
                 let img = document.createElement('img');
+                img.crossOrigin = 'anonymous';
                 img.src = imgUrl;
                 let canvas = document.createElement('canvas');
                 let context = canvas.getContext('2d');
