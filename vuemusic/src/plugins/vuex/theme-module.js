@@ -5,6 +5,7 @@ export default {
     state: {
         original: JSON.parse(JSON.stringify(Vuetify.userPreset.theme)),
         color: null,
+        fgLegible: true,
     },
     mutations: {
         color: (state, color) => state.color = color,
