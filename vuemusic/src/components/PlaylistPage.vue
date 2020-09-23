@@ -4,7 +4,6 @@
                     v-if="$store.state.windowWidth > 1030"></glow-image>
         <track-section :highlight-id="highlightId"
                        :show-art="$store.state.windowWidth <= 1030"
-                       :fg-legible="fgLegible"
                        :playlist="playlist"></track-section>
     </div>
 </template>
@@ -17,10 +16,7 @@
     export default {
         name: "PlaylistPage",
         components: {GlowImage, TrackSection},
-        data: () => ({
-            previousColors: null,
-            fgLegible: true,
-        }),
+        data: () => ({}),
         props: {
             type: {
                 type: String,
@@ -41,42 +37,14 @@
         },
         methods: {
             checkForThemeColorChange() {
-                if (this.playlist && this.playlist.primary_color) {
-                    let {bgLegible, fgLegible} = Utils.isLegible(this.playlist.primary_color, this.$vuetify.theme);
-                    if (!bgLegible) {
-                        this.revertThemeColor();
-                        return;
-                    }
-                    console.log("Applying theme color", this.playlist.primary_color);
-                    this.fgLegible = fgLegible;
-
-                    this.previousColors = {
-                        primaryDark: this.$vuetify.theme.themes.dark.primary,
-                        primaryLight: this.$vuetify.theme.themes.light.primary,
-                        primarySeekLight: this.$vuetify.theme.themes.light.primarySeek,
-                    }
-
-                    this.$vuetify.theme.themes.dark.primary = this.playlist.primary_color;
-                    this.$vuetify.theme.themes.light.primary = this.playlist.primary_color;
-                    this.$vuetify.theme.themes.light.primarySeek = this.playlist.primary_color;
-                }
-            },
-            revertThemeColor() {
-                this.fgLegible = true;
-                if (this.previousColors !== null) {
-                    this.$vuetify.theme.themes.dark.primary = this.previousColors.primaryDark;
-                    this.$vuetify.theme.themes.light.primary = this.previousColors.primaryLight;
-                    this.$vuetify.theme.themes.light.primarySeek = this.previousColors.primarySeekLight;
-                }
+                if (this.playlist && this.playlist.primary_color)
+                    this.$store.dispatch('applyThemeColor', this.playlist.primary_color);
             },
         },
         watch: {
             playlist() {
                 this.checkForThemeColorChange();
             },
-            '$vuetify.theme.dark'() {
-                this.checkForThemeColorChange();
-            }
         },
         computed: {
             imageSize() {

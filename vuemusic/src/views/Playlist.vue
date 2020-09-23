@@ -23,12 +23,12 @@
         },
         watch: {
             async '$route.params.id'() {
-                this.$refs.playlistPage.revertThemeColor();
+                await this.$store.dispatch('leavePage');
                 await this.$store.dispatch('loadPlaylist', this.id);
             },
         },
         beforeRouteLeave(to, from, next) {
-            this.$refs.playlistPage.revertThemeColor();
+            this.$store.dispatch('leavePage');
             next();
         },
     }

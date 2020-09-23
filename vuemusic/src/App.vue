@@ -94,8 +94,6 @@
     //queue track menus not showing when in fullscreen (geen zin om te fixen)
 
     //break up store.js into some modules
-    //change to indexeddb for state cache etc.
-    //fullscreen button not clickable when fullscreen xd
 
     export default {
         name: 'App',
@@ -110,23 +108,30 @@
             document.addEventListener('keypress', this.devListener);
             window.addEventListener('resize', this.resizeListener);
 
+            let isCaching = false;
             window.onbeforeunload = e => {
-                if (!this.$store.state.dontCache) {
-                    this.$store.dispatch('cacheAll');
+                if (!this.$store.state.dontCache && !isCaching) {
+                    isCaching = true;
+                    this.$store.dispatch('cacheAll').then(() => isCaching = false);
                 }
                 delete e['returnValue'];
             };
-
             if (this.$store.state.platform.type === 'electron') {
                 //todo move this to electron-module
-                window.require('electron').ipcRenderer.on('before-quit', async () => {
-                    await this.$store.dispatch('cacheState');
+                let electron = window.require('electron');
+                electron.ipcRenderer.on('before-close', async () => {
+                    if (!isCaching) {
+                        isCaching = true;
+                        await this.$store.dispatch('cacheAll');
+                        isCaching = false;
+                    }
+                    electron.remote.app.quit();
                 });
             }
 
             this.cacheInterval = setInterval(async () => {
                 await this.$store.dispatch('cacheAll');
-            }, 1000 * 60 * 5);//Cache every 5 minutes.
+            }, 1000 * 60);//Cache every 1 minute(s).
 
             console.log(this.$store);
             if (!this.$store.getters.isKeySet) {
@@ -164,8 +169,13 @@
                     this.$store.dispatch('openDevTools');
                 if (e.key === 'r' && e.ctrlKey)
                     location.reload();
-            }
-        }
+            },
+        },
+        watch: {
+            '$vuetify.theme.dark'() {
+                this.$store.dispatch('applyThemeColor', this.$store.state.theme.color);
+            },
+        },
     };
 </script>
 <style>

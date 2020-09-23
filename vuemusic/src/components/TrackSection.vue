@@ -9,8 +9,7 @@
                 v-slot="{item, index}"
         >
             <playlist-meta :style="{paddingTop: showArt?'0':'30px'}" class="playlist-meta" :show-art="showArt"
-                           v-if="index===0" :playlist="playlist"
-                           :fg-legible="fgLegible"></playlist-meta>
+                           v-if="index===0" :playlist="playlist"></playlist-meta>
             <!--            <v-divider></v-divider>-->
             <div class="scroll-item" v-if="index>0">
                 <v-divider class="mr-1 ml-1"></v-divider>
@@ -34,10 +33,6 @@
         name: "TrackSection",
         components: {TrackRow, PlaylistMeta},
         props: {
-            fgLegible: {
-                type: Boolean,
-                default: true,
-            },
             playlist: {
                 type: Object,
                 default: null,

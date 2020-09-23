@@ -97,7 +97,7 @@ export default {
                 }
                 const port = 38900;
                 const redirectUrl = 'http://localhost:' + port;
-                const url = `${rootState.authUrl}authorize?client_id=${rootState.spotifyId}&response_type=code&redirect_uri=${redirectUrl}&scope=${encodeURIComponent(rootState.requestedScopes)}`;
+                const url = `${rootState.authUrl}authorize?client_id=${rootState.keys.spotifyId}&response_type=code&redirect_uri=${redirectUrl}&scope=${encodeURIComponent(rootState.requestedScopes)}`;
                 let {shell} = electron;
                 await shell.openExternal(url);
 

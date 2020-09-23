@@ -14,7 +14,9 @@
                         <p>Spotify Client Secret</p>
                         <p>Youtube API Key</p>
                     </div>
-                    <v-textarea no-resize spellcheck="false" :rules="secretRules" outlined auto-grow row-height="4"
+                    <v-textarea :placeholder="secretsPlaceholder" no-resize spellcheck="false" :rules="secretRules"
+                                outlined
+                                auto-grow row-height="4"
                                 v-model="secrets"></v-textarea>
                 </div>
                 <p class="key-saved" v-if="$store.getters.isKeySet">
@@ -55,11 +57,12 @@
             </div>
             <div class="misc">
                 <h2>Miscellaneous</h2>
-                <v-btn outlined @click="$store.commit('clearCache')" color="error">
+                <v-btn outlined @click="$store.dispatch('clearCache')" color="error">
                     <v-icon>mdi-error</v-icon>
                     Clear cache
                 </v-btn>
-                <v-switch inset v-model="$store.state.media.shouldDownload" label="Download tracks while you're listening?"></v-switch>
+                <v-switch inset v-model="$store.state.media.shouldDownload"
+                          label="Download tracks while you're listening?"></v-switch>
             </div>
         </div>
     </div>
@@ -69,6 +72,7 @@
     export default {
         name: "Settings",
         data: () => ({
+            secretsPlaceholder: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\nbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\ncccccccccccc-dddddddddddddddddddddddddd",
             secrets: "",
             loginLoading: false,
             secretRules: [
@@ -76,7 +80,7 @@
             ],
         }),
         mounted() {
-            this.secrets = this.$store.state.spotifyId + '\n' + this.$store.state.spotifySecret + '\n' + this.$store.state.youtubeKey;
+
         },
         methods: {
             async resetLogin() {
@@ -90,14 +94,18 @@
             }
         },
         watch: {
-            secrets() {
+            '$store.state.keys'() {
+                this.secrets = this.$store.state.keys.spotifyId + '\n' + this.$store.state.keys.spotifySecret + '\n' + this.$store.state.keys.youtube;
+            },
+            async secrets() {
+                console.log("Secrets changed to", this.secrets);
                 let splitSecret = this.secrets.split('\n');
                 if (splitSecret.length === 3) {
                     let [spotifyId, spotifySecret, youtubeKey] = splitSecret;
                     this.$store.commit('spotifyId', spotifyId);
                     this.$store.commit('spotifySecret', spotifySecret);
                     this.$store.commit('youtubeKey', youtubeKey);
-                    this.$store.dispatch('cacheState');
+                    await this.$store.dispatch('cacheState');
                 }
             },
         }

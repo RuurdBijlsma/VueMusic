@@ -29,6 +29,7 @@
     "express": "^4.17.1",
     "ffbinaries": "^1.1.4",
     "filenamify": "^4.1.0",
+    "idb-keyval": "^3.2.0",
     "register-service-worker": "^1.7.1",
     "spotify-web-api-js": "^1.5.0",
     "vue": "^2.6.11",

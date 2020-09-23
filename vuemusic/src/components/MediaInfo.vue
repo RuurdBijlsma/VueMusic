@@ -1,5 +1,5 @@
 <template>
-    <div class="media-info">
+    <div class="media-info" v-if="$store.state.media.track">
         <v-card outlined class="media-card">
             <div class="media-album"
                  @click="$router.push('/nowplaying')"
@@ -9,10 +9,7 @@
                          }"/>
             <div class="white-part">
                 <div class="media-text-info">
-                    <img v-if="!$store.getters.isTrackSet"
-                         class="media-info-logo" src="../assets/logo-small-v.png"
-                         alt="vm5 logo">
-                    <div v-else class="media-title-artists">
+                    <div class="media-title-artists">
                         <span :title="$store.state.media.track.name"
                               class="track-title">
                             {{$store.state.media.track.name}}

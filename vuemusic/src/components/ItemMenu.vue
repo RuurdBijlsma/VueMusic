@@ -15,7 +15,7 @@
                 </v-list-item-icon>
                 <v-list-item-title>Go to {{type}} radio</v-list-item-title>
             </v-list-item>
-            <v-list-item v-if="!queueTrack && type !== 'category' && type !== 'liked'" @click="playNext(item)">
+            <v-list-item v-if="!queueTrack && type !== 'category' && type !== 'liked' && type !== 'user'" @click="playNext(item)">
                 <v-list-item-icon>
                     <v-progress-circular size="20" indeterminate width="1"
                                          v-if="nextQueueLoading"></v-progress-circular>
@@ -23,7 +23,7 @@
                 </v-list-item-icon>
                 <v-list-item-title>Play next</v-list-item-title>
             </v-list-item>
-            <v-list-item v-if="!queueTrack && type !== 'category' && type !== 'liked'" @click="addToQueue(item)">
+            <v-list-item v-if="!queueTrack && type !== 'category' && type !== 'liked' && type !== 'user'" @click="addToQueue(item)">
                 <v-list-item-icon>
                     <v-progress-circular size="20" indeterminate width="1"
                                          v-if="addQueueLoading"></v-progress-circular>

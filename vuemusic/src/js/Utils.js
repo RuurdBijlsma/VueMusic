@@ -25,12 +25,15 @@ export default class Utils {
     }
 
     static isLegible(hexColor, theme) {
-        let currentTheme = theme.themes[theme.dark ? 'dark' : 'light'];
+        console.log("Is", hexColor, "legible on theme", theme);
+
+        let currentTheme = theme.themes[theme.isDark ? 'dark' : 'light'];
         let background = currentTheme.navBackground;
         let foreground = currentTheme.foreground;
 
         let contrastOnBg = Utils.hexContrast(hexColor, background);
         let contrastOnFg = Utils.hexContrast(hexColor, foreground);
+        console.log({contrastOnBg, contrastOnFg});
         return {bgLegible: contrastOnBg > 3, fgLegible: contrastOnFg > 2};
     }
 

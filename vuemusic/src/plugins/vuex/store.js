@@ -3,8 +3,10 @@ import Vuex from 'vuex'
 import SpotifyWebApi from 'spotify-web-api-js';
 import media from './media-module';
 import search from './search-module';
+import theme from './theme-module';
 import EventEmitter from 'events';
 import Utils from "../../js/Utils";
+import {get, keys, set, clear} from "idb-keyval";
 
 let isElectron = window && window.process !== undefined && window.process.type !== undefined;
 console.log("is electron?", isElectron);
@@ -21,9 +23,11 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
     state: {
-        spotifyId: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
-        spotifySecret: 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb',
-        youtubeKey: 'cccccccccccc-dddddddddddddddddddddddddd',
+        keys: {
+            spotifyId: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+            spotifySecret: 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb',
+            youtube: 'cccccccccccc-dddddddddddddddddddddddddd',
+        },
         requestedScopes: "ugc-image-upload user-read-email user-read-private playlist-read-collaborative playlist-modify-public playlist-read-private playlist-modify-private user-library-modify user-library-read user-top-read user-read-recently-played user-follow-read user-follow-modify",
         authUrl: 'https://accounts.spotify.com/',
 
@@ -74,43 +78,22 @@ export default new Vuex.Store({
         artist: {},
         category: {},
         user: {},
-
-        ...(localStorage.getItem('stateCache') === null ? {} : JSON.parse(localStorage.stateCache)),
     },
     mutations: {
+        setStateValue: (state, {key, value}) => Vue.set(state, key, value),
+
         spotifyId: (state, id) => {
-            state.spotifyId = id
+            state.keys.spotifyId = id
         },
         spotifySecret: (state, secret) => {
-            state.spotifySecret = secret
+            state.keys.spotifySecret = secret
         },
         youtubeKey: (state, key) => {
-            state.youtubeKey = key;
+            state.keys.youtube = key;
             state.platform.downloader.apiKey = key;
         },
 
-        cacheState: state => {
-            let cachedFields = ["auth", "homePage", "browse", "userInfo", "library", "playlist",
-                "album", "artist", "category", "user", "spotifyId", "spotifySecret", "youtubeKey"];
-            let cache = {};
-            for (let field of cachedFields) {
-                if (field === 'library') {
-                    let lib = state[field];
-                    lib.tracks = lib.tracks.map(Utils.reduceTrackSize);
-                    cache[field] = lib;
-                } else {
-                    cache[field] = state[field];
-                }
-            }
-            localStorage.stateCache = JSON.stringify(cache);
-
-            console.log("State cache complete");
-        },
-        clearCache: state => {
-            state.dontCache = true;
-            localStorage.clear();
-            location.reload();
-        },
+        dontCache: state => state.dontCache = true,
         addSnackObject: (state, snack) => state.snackbars.push(snack),
         removeSnack: (state, snack) => state.snackbars.splice(state.snackbars.indexOf(snack), 1),
 
@@ -160,15 +143,15 @@ export default new Vuex.Store({
         auth: (state, auth) => state.auth = auth,
     },
     getters: {
-        isValidKeySet: () => ({spotifyId, spotifySecret, youtubeKey}) =>
+        isValidKeySet: () => ({spotifyId, spotifySecret, youtube}) =>
             spotifyId !== "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" &&
             spotifySecret !== "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb" &&
-            youtubeKey !== "cccccccccccc-dddddddddddddddddddddddddd" &&
+            youtube !== "cccccccccccc-dddddddddddddddddddddddddd" &&
             spotifyId.length === 32 &&
             spotifySecret.length === 32 &&
-            youtubeKey.length === 39 &&
-            youtubeKey.indexOf('-') === 12,
-        isKeySet: (state, getters) => getters.isValidKeySet({...state}),
+            youtube.length === 39 &&
+            youtube.indexOf('-') === 12,
+        isKeySet: (state, getters) => getters.isValidKeySet({...state.keys}),
 
         notFoundUser: () => {
             let i = Math.floor(Math.random() * 7) + 1;
@@ -183,6 +166,8 @@ export default new Vuex.Store({
             return `img/liked/${i}.png`;
         },
         itemImage: (state, getters) => item => {
+            if (!item)
+                return getters.notFoundImage;
             let type = item.type || 'category';
             if (type === 'category') {
                 if (item.icons.length > 0)
@@ -251,27 +236,47 @@ export default new Vuex.Store({
     },
     actions: {
         initialize: async ({commit, state, dispatch}) => {
-            state.platform.downloader.apiKey = state.youtubeKey;
+            let lsKeys = await keys();
+            let getKvPair = async lsKey => {
+                let value = await get(lsKey);
+                let stateKey = lsKey.substring('state.'.length);
+                return {key: stateKey, value};
+            }
+            let kvPairs = await Promise.all(lsKeys.filter(key => key.startsWith('state.')).map(getKvPair));
+            kvPairs.forEach(({key, value}) => commit('setStateValue', {key, value}));
+
+            state.platform.downloader.apiKey = state.keys.youtube;
             await dispatch('processAuth');
             await dispatch('initializeMedia');
             await dispatch('initializePlatform');
         },
 
         cacheAll: async ({commit, dispatch}) => {
-            commit('cacheState');
-            commit('cacheMedia');
-            await dispatch('exportCache');
+            await Promise.all([
+                dispatch('cacheState'),
+                dispatch('cacheMedia'),
+            ]);
         },
-        cacheState: async ({commit, dispatch}) => {
-            commit('cacheState');
-            await dispatch('exportCache');
+        cacheState: async ({state}) => {
+            let cachedFields = ["auth", "homePage", "browse", "userInfo", "library", "playlist",
+                "album", "artist", "category", "user", "keys"];
+
+            await Promise.all(cachedFields.map(field => set('state.' + field, state[field])));
+            console.log("State cache complete");
+        },
+
+        clearCache: async ({state, commit}) => {
+            commit('dontCache');
+            localStorage.clear();
+            await clear();
+            location.reload();
         },
 
         getAuthByRefreshToken: async ({state}, refreshToken) => {
             console.log('Refresh using refreshToken', refreshToken);
             let result = await (await fetch('https://accounts.spotify.com/api/token', {
                 method: 'post',
-                body: `grant_type=refresh_token&refresh_token=${refreshToken}&client_id=${state.spotifyId}&client_secret=${state.spotifySecret}`,
+                body: `grant_type=refresh_token&refresh_token=${refreshToken}&client_id=${state.keys.spotifyId}&client_secret=${state.keys.spotifySecret}`,
                 headers: {'Content-Type': 'application/x-www-form-urlencoded',}
             })).text();
             try {
@@ -285,7 +290,7 @@ export default new Vuex.Store({
             let result = await (await fetch(`${state.authUrl}api/token`, {
                 method: 'post',
                 body: `grant_type=authorization_code&code=${code}&redirect_uri=${redirectUrl}&client_id=` +
-                    `${state.spotifyId}&client_secret=${state.spotifySecret}`,
+                    `${state.keys.spotifyId}&client_secret=${state.keys.spotifySecret}`,
                 headers: {'Content-Type': 'application/x-www-form-urlencoded',}
             })).text();
             try {
@@ -800,5 +805,5 @@ export default new Vuex.Store({
             return completeItem;
         },
     },
-    modules: {platform, media, search}
+    modules: {platform, media, search, theme}
 })

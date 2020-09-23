@@ -1,5 +1,5 @@
 <template>
-    <v-list class="queue-list" ref="list" :style="{
+    <v-list v-if="contextItem !== null" class="queue-list" ref="list" :style="{
         height: height,
     }">
         <h5 class="context">{{context.name}}</h5>
@@ -16,7 +16,7 @@
                 <v-divider></v-divider>
                 <track-row
                         queue-track
-                        :context-item="$store.state.media.contextItem"
+                        :context-item="contextItem"
                         :key="item.id"
                         :track="item"></track-row>
             </div>
@@ -24,7 +24,7 @@
         <div class="bottom-buttons">
             <v-btn v-if="context.to !== null" :disabled="$route.fullPath === context.to" color="primary" text
                    class="view-more" small :to="context.to"
-                   :title="'Visit ' + $store.state.media.contextItem.name">View {{contextItem.type}}
+                   :title="'Visit ' + contextItem.name">Go to {{contextItem.type}}
             </v-btn>
             <v-btn small text class="view-more" @click="$store.commit('clearQueue')">Clear queue</v-btn>
         </div>

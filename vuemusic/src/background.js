@@ -93,26 +93,27 @@ function createWindow() {
     win.on('closed', () => {
         win = null
     })
+
+    win.once('close', event => {
+        event.preventDefault();
+        //Clean temp directory
+        try {
+            win.webContents.send('before-close');
+            store.set('bounds', win.getBounds());
+
+            let lastUrl = win.getURL();
+            if (lastUrl.includes('app://'))
+                store.set('lastUrl', win.getURL());
+            if (lastUrl.includes('//localhost:'))
+                store.set('lastUrlDev', win.getURL());
+            let files = fs.readdirSync(Directories.temp);
+            for (const file of files)
+                fs.unlinkSync(path.join(Directories.temp, file));
+        } catch (e) {
+            //sad
+        }
+    });
 }
-
-app.on('before-quit', event => {
-    event.preventDefault();
-    //Clean temp directory
-    try {
-        store.set('bounds', win.getBounds());
-
-        let lastUrl = win.getURL();
-        if (lastUrl.includes('app://'))
-            store.set('lastUrl', win.getURL());
-        if (lastUrl.includes('//localhost:'))
-            store.set('lastUrlDev', win.getURL());
-        let files = fs.readdirSync(Directories.temp);
-        for (const file of files)
-            fs.unlinkSync(path.join(Directories.temp, file));
-    } catch (e) {
-        //sad
-    }
-})
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {

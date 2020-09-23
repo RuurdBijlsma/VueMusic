@@ -133,7 +133,7 @@
                 type: Boolean,
                 default: false,
             },
-            compact:{
+            compact: {
                 type: Boolean,
                 default: false,
             },
@@ -170,6 +170,9 @@
         watch: {
             '$vuetify.theme.dark'() {
                 localStorage.darkTheme = this.$vuetify.theme.dark;
+            },
+            '$store.state.media.volume'() {
+                this.volume = this.$store.state.media.volume ** 0.5;
             },
             mobile() {
                 if (!this.mobile) {

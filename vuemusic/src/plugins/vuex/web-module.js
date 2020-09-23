@@ -38,7 +38,7 @@ export default {
                 let redirectUrl = location.origin + (location.pathname + (location.pathname.endsWith('/') ? '' : '/')).replace(/\/\//gi, '/');
                 console.log("REDIRECT URL:", redirectUrl);
                 redirectUrl = encodeURIComponent(redirectUrl);
-                const url = `${rootState.authUrl}authorize?client_id=${rootState.spotifyId}&response_type=code&redirect_uri=${redirectUrl}&scope=${encodeURIComponent(rootState.requestedScopes)}`;
+                const url = `${rootState.authUrl}authorize?client_id=${rootState.keys.spotifyId}&response_type=code&redirect_uri=${redirectUrl}&scope=${encodeURIComponent(rootState.requestedScopes)}`;
                 window.open(url);
 
                 if (state.channel)

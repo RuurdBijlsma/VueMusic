@@ -72,6 +72,7 @@
                     return this.$store.dispatch('play');
                 }
 
+                console.log('contextitem', this.contextItem);
                 this.$store.commit('playAfterLoad', true);
                 this.$store.commit('track', {
                     track: this.track,

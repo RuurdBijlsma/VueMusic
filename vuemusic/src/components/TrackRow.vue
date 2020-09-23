@@ -1,6 +1,6 @@
 <template>
-    <v-sheet :color="activeTrack ? '#c12238' : 'transparent'"
-             :dark="activeTrack"
+    <v-sheet :color="activeTrack ? 'primary darken-1' : 'transparent'"
+             :dark="activeTrack && $store.state.theme.fgLegible"
              rounded
              @dblclick="play"
              ref="trackRow" class="track-row" v-if="track !== null" :class="rowClass">

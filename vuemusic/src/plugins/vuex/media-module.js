@@ -1,4 +1,6 @@
 import Utils from "../../js/Utils";
+import {get, set, keys} from "idb-keyval";
+import Vue from "vue";
 
 export default {
     state: {
@@ -20,10 +22,10 @@ export default {
         shouldDownload: true,
         audio: document.createElement('audio'),
         backupAudio: document.createElement('audio'),
-
-        ...(localStorage.getItem('mediaStateCache') === null ? {} : JSON.parse(localStorage.mediaStateCache)),
     },
     mutations: {
+        setMediaStateValue: (state, {key, value}) => Vue.set(state, key, value),
+
         swapAudios: (state) => [state.audio, state.backupAudio] = [state.backupAudio, state.audio],
         local: (state, local) => state.local = local,
         trackLoading: (state, trackLoading) => state.trackLoading = trackLoading,
@@ -56,6 +58,11 @@ export default {
         shuffle: (state, shuffle) => state.shuffle = shuffle,
         repeat: (state, repeat) => state.repeat = repeat,
         playAfterLoad: (state, playAfterLoad) => state.playAfterLoad = playAfterLoad,
+        shuffledQueue: state => state.shuffledQueue = Utils.shuffleArray([...state.queue]),
+        queue: (state, queue) => {
+            state.queue = queue;
+            state.shuffledQueue = Utils.shuffleArray([...queue]);
+        },
         track: (state, {track, contextItem}) => {
             state.track = track;
             if (contextItem === undefined)
@@ -64,6 +71,7 @@ export default {
             if (state.contextItem === null || //No context item is set
                 state.contextItem.id !== contextItem.id || //The ID of the new context is different
                 state.contextItem.type !== contextItem.type || //The type of the new context is different
+                !state.queue ||
                 state.queue.findIndex(t => t.id === track) === -1 //The new track is not in the current queue
             ) {
                 if (contextItem.type !== 'radio' && contextItem.type !== 'search') {
@@ -74,9 +82,9 @@ export default {
                     state.recentlyPlayed = state.recentlyPlayed.slice(0, 10);
                 }
 
-                state.contextItem = contextItem;
                 state.queue = contextItem.tracks;
-                state.shuffledQueue = Utils.shuffleArray([...contextItem.tracks]);
+                state.contextItem = contextItem;
+                state.shuffledQueue = Utils.shuffleArray([...state.queue]);
             }
         },
         playNext: (state, tracks) => {
@@ -123,23 +131,6 @@ export default {
             state.queue = [state.track];
             state.shuffledQueue = [state.track];
         },
-
-        cacheMedia: state => {
-            let cachedFields = ["shouldDownload", "recentlyPlayed", "track", "queue",
-                "shuffledQueue", "contextItem", "shuffle", "repeat", "volume"];
-            let cache = {};
-            for (let field of cachedFields) {
-                if (field === 'library') {
-                    let lib = state[field];
-                    lib.tracks = lib.tracks.map(Utils.reduceTrackSize);
-                    cache[field] = lib;
-                } else {
-                    cache[field] = state[field];
-                }
-            }
-            localStorage.mediaStateCache = JSON.stringify(cache);
-            console.log("Media state cache complete");
-        },
     },
     getters: {
         trackIndex: (state, getters) => {
@@ -164,8 +155,24 @@ export default {
         },
     },
     actions: {
-        initializeMedia: ({state, dispatch}) => {
-            dispatch('initAudios');
+        initializeMedia: async ({state, commit, dispatch}) => {
+            let lsKeys = await keys();
+            let getKvPair = async lsKey => {
+                let value = await get(lsKey);
+                let stateKey = lsKey.substring('media.'.length);
+                return {key: stateKey, value};
+            }
+            let kvPairs = await Promise.all(lsKeys.filter(key => key.startsWith('media.')).map(getKvPair));
+            kvPairs.forEach(({key, value}) => commit('setMediaStateValue', {key, value}));
+            if (state.queue)
+                commit('shuffledQueue');
+
+            await dispatch('initAudios');
+        },
+        cacheMedia: async ({state}) => {
+            let cachedFields = ["shouldDownload", "recentlyPlayed", "track", "contextItem", "shuffle", "repeat", "volume", "queue"];
+            await Promise.all(cachedFields.map(field => set('media.' + field, state[field])));
+            console.log("Media cache complete");
         },
 
         isTrackAvailableOffline: async ({rootState}, track) => {

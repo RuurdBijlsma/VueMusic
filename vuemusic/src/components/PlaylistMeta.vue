@@ -38,12 +38,12 @@
         </p>
         <div class="buttons">
             <div>
-                <v-btn class="play-button" small :color="fgLegible ? 'primary' : 'default'"
+                <v-btn class="play-button" small :color="$store.state.theme.fgLegible ? 'primary' : 'default'"
                        @click="$store.dispatch('playItem', {item: playlist})">
                     <v-icon small class="mr-2">mdi-play</v-icon>
                     Play
                 </v-btn>
-                <v-btn v-if="playlist.tracks.length > 1" small :color="fgLegible ? 'primary' : 'default'"
+                <v-btn v-if="playlist.tracks.length > 1" small :color="$store.state.theme.fgLegible ? 'primary' : 'default'"
                        @click="$store.dispatch('playItem', {item: playlist, shuffle: true})">
                     <v-icon small class="mr-2">mdi-shuffle</v-icon>
                     Shuffle
@@ -70,10 +70,6 @@
         name: "PlaylistMeta",
         components: {GlowImage, ItemMenu, FollowMenuItem, FollowButton, ShareMenuItem},
         props: {
-            fgLegible: {
-                type: Boolean,
-                default: true,
-            },
             playlist: {
                 type: Object,
                 default: null,

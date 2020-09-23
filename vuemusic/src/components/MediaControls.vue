@@ -17,7 +17,7 @@
         <v-btn :loading="$store.state.media.trackLoading"
                :icon="!large"
                :fab="large"
-               :color="(large && fgLegible) ? 'primary' : 'default'"
+               :color="(large && $store.state.theme.fgLegible) ? 'primary' : 'default'"
                large
                @click="$store.dispatch(playing ? 'pause' : 'play')">
             <v-icon :large="large" v-if="playing">mdi-pause</v-icon>
@@ -50,10 +50,6 @@
             large: {
                 type: Boolean,
                 default: false,
-            },
-            fgLegible: {
-                type: Boolean,
-                default: true,
             },
         },
         computed: {

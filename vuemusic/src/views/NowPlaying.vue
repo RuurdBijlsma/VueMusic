@@ -1,21 +1,8 @@
 <template>
     <div class="now-playing" ref="nowPlaying">
-        <div class="left" v-if="track">
+        <v-sheet class="left" v-if="track">
             <div class="blur-background" :style="{backgroundImage: `url(${image})`}"></div>
             <div class="media">
-                <div class="fsb-container">
-                    <v-btn title="Toggle fullscreen" @click="toggleFullScreen" icon small class="fullscreen-button">
-                        <v-icon>mdi-fullscreen</v-icon>
-                    </v-btn>
-                    <v-btn title="Close queue list" v-if="!hideQueue" @click="hideQueue = true" icon small
-                           class="fullscreen-button">
-                        <v-icon>mdi-menu-right</v-icon>
-                    </v-btn>
-                    <v-btn title="Open queue list" v-else @click="hideQueue = false" icon small
-                           class="fullscreen-button">
-                        <v-icon>mdi-menu-left</v-icon>
-                    </v-btn>
-                </div>
                 <div class="media-container">
                     <div class="media-center">
                         <glow-image :size="$store.state.windowWidth < 400 ? 200 : 300" class="album-image"
@@ -25,12 +12,27 @@
                             <artists-span class="track-artists" :artists="track.artists" grey></artists-span>
                         </div>
                         <media-seek class="seek"></media-seek>
-                        <media-controls :fg-legible="fgLegible" class="controls" full large></media-controls>
+                        <media-controls :fg-legible="$store.state.theme.fgLegible"
+                                        class="controls" full
+                                        large></media-controls>
                     </div>
                 </div>
+                <div class="fsb-container">
+                    <v-btn title="Toggle fullscreen" @click="toggleFullScreen" icon small class="fullscreen-button">
+                        <v-icon>mdi-fullscreen</v-icon>
+                    </v-btn>
+                    <v-btn title="Close queue list" v-if="mountQueue && !hideQueue" @click="hideQueue = true" icon small
+                           class="fullscreen-button">
+                        <v-icon>mdi-menu-right</v-icon>
+                    </v-btn>
+                    <v-btn title="Open queue list" v-else-if="mountQueue" @click="hideQueue = false" icon small
+                           class="fullscreen-button">
+                        <v-icon>mdi-menu-left</v-icon>
+                    </v-btn>
+                </div>
             </div>
-        </div>
-        <queue-list ref="list" class="queue" v-if="$store.state.windowWidth >= 1080" v-show="!hideQueue"
+        </v-sheet>
+        <queue-list ref="list" class="queue" v-if="mountQueue" v-show="!hideQueue"
                     :height="'100%'"></queue-list>
     </div>
 </template>
@@ -47,13 +49,10 @@
         name: "NowPlaying",
         components: {MediaSeek, ArtistsSpan, MediaControls, GlowImage, QueueList},
         data: () => ({
-            previousColors: null,
-            fgLegible: true,
-            color: null,
             hideQueue: localStorage.getItem('hideNPQueue') === null ? false : JSON.parse(localStorage.hideNPQueue),
         }),
         mounted() {
-            this.processImage();
+            this.$store.dispatch('setThemeToItem', this.track);
         },
         methods: {
             toggleFullScreen() {
@@ -61,96 +60,6 @@
                     this.$refs.nowPlaying.requestFullscreen();
                 } else {
                     document.exitFullscreen();
-                }
-            },
-            async processImage() {
-                let imgUrl = this.$store.getters.itemImage(this.track);
-                this.color = await this.getImageColor(imgUrl);
-                this.applyThemeColor(this.color);
-            },
-            getImageColor(imgUrl) {
-                return new Promise(resolve => {
-                    let img = document.createElement('img');
-                    img.src = imgUrl;
-                    let canvas = document.createElement('canvas');
-                    let context = canvas.getContext('2d');
-                    img.onload = () => {
-                        let width = 20;
-                        let height = 20;
-                        canvas.width = width;
-                        canvas.height = height;
-                        context.drawImage(img, 0, 0, width, height);
-                        let bins = {};
-                        let imageData = context.getImageData(0, 0, width, height);
-                        for (let i = 0; i < imageData.data.length; i += 4) {
-                            let color = imageData.data.slice(i, i + 3);
-                            let rgb = color.map(c => Math.floor(c / 20))
-                            let [h, s, l] = this.rgbToHsl(...rgb);
-                            let binKey = rgb.join(',');
-                            if (bins[binKey] === undefined)
-                                bins[binKey] = {n: 0, color};
-                            // console.log(hsl);
-                            bins[binKey].n += 1 + (s * (1 - Math.abs(0.5 - l))) * 255;
-                        }
-                        let values = Object.values(bins);
-                        const indexOfMaxValue = values.map(e => e.n).reduce((iMax, x, i, arr) => x > arr[iMax] ? i : iMax, 0);
-                        let [r, g, b] = values[indexOfMaxValue].color;
-                        let toHex = c => c.toString(16).padStart(2, '0');
-                        resolve('#' + toHex(r) + toHex(g) + toHex(b));
-                    };
-                });
-            },
-            rgbToHsl(r, g, b) {
-                r /= 255, g /= 255, b /= 255;
-                let max = Math.max(r, g, b), min = Math.min(r, g, b);
-                let h, s, l = (max + min) / 2;
-                if (max === min) {
-                    h = s = 0; // achromatic
-                } else {
-                    let d = max - min;
-                    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-                    switch (max) {
-                        case r:
-                            h = (g - b) / d + (g < b ? 6 : 0);
-                            break;
-                        case g:
-                            h = (b - r) / d + 2;
-                            break;
-                        case b:
-                            h = (r - g) / d + 4;
-                            break;
-                    }
-                    h /= 6;
-                }
-                return [h, s, l];
-            },
-            applyThemeColor(color) {
-                let {bgLegible, fgLegible} = Utils.isLegible(color, this.$vuetify.theme);
-                if (!bgLegible) {
-                    console.log("Theme color", color, "not legible on background, reverting back to", this.previousColors?.primaryDark);
-                    this.revertThemeColor();
-                    return;
-                }
-                console.log("Applying theme color 🎨", color);
-                this.fgLegible = fgLegible;
-
-                if (this.previousColors === null)
-                    this.previousColors = {
-                        primaryDark: this.$vuetify.theme.themes.dark.primary,
-                        primaryLight: this.$vuetify.theme.themes.light.primary,
-                        primarySeekLight: this.$vuetify.theme.themes.light.primarySeek,
-                    }
-
-                this.$vuetify.theme.themes.dark.primary = color;
-                this.$vuetify.theme.themes.light.primary = color;
-                this.$vuetify.theme.themes.light.primarySeek = color;
-            },
-            revertThemeColor() {
-                this.fgLegible = true;
-                if (this.previousColors !== null) {
-                    this.$vuetify.theme.themes.dark.primary = this.previousColors.primaryDark;
-                    this.$vuetify.theme.themes.light.primary = this.previousColors.primaryLight;
-                    this.$vuetify.theme.themes.light.primarySeek = this.previousColors.primarySeekLight;
                 }
             },
             scrollToItem() {
@@ -169,15 +78,14 @@
                     this.$refs.list.scrollToItem();
                 }
             },
-            '$vuetify.theme.dark'() {
-                if (this.color !== null)
-                    this.applyThemeColor(this.color);
-            },
             track() {
-                this.processImage();
+                this.$store.dispatch('setThemeToItem', this.track);
             },
         },
         computed: {
+            mountQueue() {
+                return this.$store.state.windowWidth >= 1080;
+            },
             track() {
                 return this.$store.state.media.track;
             },
@@ -186,7 +94,7 @@
             },
         },
         beforeRouteLeave(to, from, next) {
-            this.revertThemeColor();
+            this.$store.dispatch('leavePage');
             next();
         },
     }
@@ -219,12 +127,21 @@
         width: 100%;
         height: 100%;
         position: relative;
-        top: calc(-100% - 10px);
+        top: -100%;
+    }
+
+    .media-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        overflow-y: auto;
     }
 
     @media (max-height: 705px) {
-        .media {
-            align-items: flex-start;
+        .media-container {
+            justify-content: flex-start !important;
         }
 
         .album-image {
@@ -236,23 +153,12 @@
         }
     }
 
-    .media-container {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        height: 100%;
-        margin-top: -38px;
-        overflow-y: auto;
-    }
-
     .fsb-container {
-        width: calc(100% - 20px);
-        margin: 10px;
+        width: calc(100% - 5px);
         display: flex;
-        top: 10px;
         justify-content: flex-end;
-        position: relative;
+        height: 0;
+        margin-top: -38px;
     }
 
     .fullscreen-button {
@@ -298,6 +204,28 @@
     .track-title {
         font-size: 28px;
         font-weight: 400;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        max-width: 450px;
+    }
+
+    @media (max-width: 500px) {
+        .track-title {
+            max-width: 450px;
+        }
+    }
+
+    @media (max-width: 400px) {
+        .track-title {
+            max-width: 350px;
+        }
+    }
+
+    @media (max-width: 300px) {
+        .track-title {
+            max-width: 250px;
+        }
     }
 
     .controls {
