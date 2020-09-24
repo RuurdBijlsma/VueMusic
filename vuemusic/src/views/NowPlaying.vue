@@ -73,7 +73,7 @@
                 }
             },
             swipeEnd(e) {
-                if (!this.startSwipeInfo.down)
+                if (!this.startSwipeInfo?.down)
                     return;
                 this.startSwipeInfo.down = false;
                 let startX = this.startSwipeInfo.x;
@@ -257,19 +257,19 @@
 
     @media (max-width: 500px) {
         .track-title {
-            max-width: 450px;
+            max-width: 430px;
         }
     }
 
     @media (max-width: 400px) {
         .track-title {
-            max-width: 350px;
+            max-width: 330px;
         }
     }
 
     @media (max-width: 300px) {
         .track-title {
-            max-width: 250px;
+            max-width: 230px;
         }
     }
 
