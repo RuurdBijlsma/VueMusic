@@ -233,14 +233,16 @@ export default {
                 }
                 audio.onplay = () => {
                     if (audio === state.audio) {
-                        navigator.mediaSession.playbackState = 'playing';
+                        if (navigator.mediaSession)
+                            navigator.mediaSession.playbackState = 'playing';
                         dispatch('setPlatformPlaying', true);
                         commit('playing', true);
                     }
                 };
                 audio.onpause = () => {
                     if (audio === state.audio) {
-                        navigator.mediaSession.playbackState = 'paused';
+                        if (navigator.mediaSession)
+                            navigator.mediaSession.playbackState = 'paused';
                         dispatch('setPlatformPlaying', false);
                         commit('playing', false);
                     }
