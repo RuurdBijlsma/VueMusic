@@ -16,7 +16,7 @@
                 if (!this.$store.state.media.trackLoading)
                     this.$store.commit('currentTime', audio.currentTime);
                 if (audio.duration) {
-                    navigator?.mediaSession?.setPositionState({
+                    navigator?.mediaSession?.setPositionState?.({
                         duration: audio.duration,
                         playbackRate: 1,
                         position: audio.currentTime,

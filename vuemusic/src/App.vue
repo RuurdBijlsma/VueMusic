@@ -94,6 +94,7 @@
     //queue track menus not showing when in fullscreen (geen zin om te fixen)
 
     //break up store.js into some modules
+    //add youtube-only search/tracks
 
     export default {
         name: 'App',

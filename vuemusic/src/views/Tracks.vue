@@ -7,7 +7,12 @@
                 size-field="size"
                 v-slot="{item, index}">
             <div v-if="index===0" class="page-title-container">
-                <h1 class="page-title">Tracks</h1>
+                <v-form @submit.prevent="filter" class="title-container">
+                    <h1 class="page-title">Tracks</h1>
+                    <v-text-field ref="filterInput" outlined rounded dense v-model="liveFilter" label="Filter tracks"
+                                  class="filter-term" clearable
+                                  @click:clear="clearFilter"></v-text-field>
+                </v-form>
                 <v-divider class="divider"></v-divider>
                 <div class="buttons">
                     <v-btn small color="primary" @click="$store.dispatch('playItem', {item: context})">
@@ -53,13 +58,56 @@
     export default {
         name: "Tracks",
         components: {TrackRow},
-        data: () => ({}),
+        data: () => ({
+            liveFilter: '',
+            filterTerm: '',
+            focusInterval: -1,
+        }),
         async mounted() {
             await this.$store.dispatch('refreshUserData', 'track');
         },
+        beforeDestroy() {
+            clearInterval(this.focusInterval);
+        },
+        methods: {
+            clearFilter() {
+                this.liveFilter = '';
+                this.filter(false);
+            },
+            filter(focus = true) {
+                this.filterTerm = this.liveFilter;
+                if (!focus)
+                    return;
+
+                // 🍝 Input element is destroyed due to recycle scroller being rebuild
+                // so input focus is sometimes lost which is unexpected.
+                // This restores focus
+                let hasSwitched = false;
+                let timeout = 800;
+                let intervalSpeed = 10;
+                let i = 0;
+                clearInterval(this.focusInterval);
+                this.focusInterval = setInterval(() => {
+                    let inputEl = this.$refs.filterInput.$el.querySelector("input");
+                    if (inputEl !== document.activeElement) {
+                        hasSwitched = true;
+                        this.$refs.filterInput.focus();
+                        clearInterval(this.focusInterval);
+                        console.log("Stop due to focus called");
+                    }
+                    if (i++ > timeout / intervalSpeed) {
+                        clearInterval(this.focusInterval);
+                        console.log("Stop due to timeout");
+                    }
+                }, intervalSpeed);
+            }
+        },
         computed: {
+            lowerFilterTerm() {
+                return this.filterTerm.toLowerCase();
+            },
             context() {
-                return {type: 'liked', id: 'liked', name: 'Liked tracks', tracks: this.tracks}
+                return {type: 'liked', id: 'liked' + this.lowerFilterTerm, name: 'Liked tracks', tracks: this.tracks}
             },
             loading() {
                 return this.$store.state.isRefreshing.track;
@@ -74,11 +122,17 @@
             },
             scrollItems() {
                 let tracks = this.tracks.map(t => ({...t, size: 51}));
-                let titleHeight = 131;
+                let titleHeight = 142;
                 return [{id: '0', size: titleHeight}, ...tracks];
             },
             tracks() {
-                return this.$store.state.library.tracks.filter(t => !t.is_local);
+                if (this.filterTerm === '')
+                    return this.$store.state.library.tracks.filter(t => !t.is_local);
+                return this.$store.state.library.tracks.filter(t =>
+                    !t.is_local &&
+                    t.name.toLowerCase().includes(this.lowerFilterTerm) ||
+                    t.artists.map(a => a.name).join(' ').toLowerCase().includes(this.lowerFilterTerm)
+                );
             },
             fullDuration() {
                 if (this.tracks.length === 0)
@@ -95,9 +149,24 @@
         width: 100%;
     }
 
+    .title-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 4px;
+    }
+
+    .filter-term {
+        margin-bottom: -20px;
+        max-width: 250px;
+        margin-right: 5px;
+        margin-top: 4px;
+    }
+
     .scroller {
         height: 100%;
         padding: 30px;
+        padding-top: 20px;
     }
 
     @media (max-width: 680px) {
@@ -114,7 +183,7 @@
         display: flex;
     }
 
-    .buttons > *:first-child {
+    .buttons > *:not(:last-child) {
         margin-right: 15px;
     }
 
