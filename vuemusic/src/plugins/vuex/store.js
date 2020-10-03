@@ -229,6 +229,11 @@ export default new Vuex.Store({
                 'https://ruurd.dev/vuemusic/';
             return `${baseUrl}#${getters.relativeItemUrl(item)}`;
         },
+        spotifyShareUrl: (state, getters) => item => {
+            let type = item.type || 'category';
+            let baseUrl = 'https://open.spotify.com/';
+            return `${baseUrl}${type}/${item.id}`;
+        },
         isArtistFollowed: state => artist => state.library.artists.find(a => a.id === artist.id),
         isTrackFollowed: state => track => state.library.tracks.find(a => a.id === track.id),
         isPlaylistFollowed: state => playlist => state.library.playlists.find(a => a.id === playlist.id),
@@ -349,8 +354,8 @@ export default new Vuex.Store({
                 }, timeout + 500);
             });
         },
-        share: async ({dispatch, getters}, {item, copy}) => {
-            let url = getters.shareUrl(item);
+        share: async ({dispatch, getters}, {item, copy, urlType = 'vuemusic'}) => {
+            let url = urlType === 'spotify' ? getters.spotifyShareUrl(item) : getters.shareUrl(item);
             if (navigator.share instanceof Function) {
                 let type = item.type ?? 'category';
                 try {

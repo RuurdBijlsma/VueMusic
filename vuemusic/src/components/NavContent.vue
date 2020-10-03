@@ -49,8 +49,9 @@
                 </v-list-item-content>
             </v-list-item>
 
-            <div class="playlist-header" v-if="$store.state.library.playlists.length > 0">
-                <v-subheader>Playlists</v-subheader>
+            <div class="playlist-header">
+                <v-subheader v-if="$store.state.library.playlists.length > 0">Playlists</v-subheader>
+                <v-subheader v-else>Create playlist</v-subheader>
                 <v-btn @click="showPlaylistInput=true" v-if="!showPlaylistInput" icon small title="Create new playlist"
                        class="add-playlist">
                     <v-icon x-small>mdi-plus</v-icon>

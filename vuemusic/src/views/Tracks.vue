@@ -107,7 +107,7 @@
                 return this.filterTerm.toLowerCase();
             },
             context() {
-                return {type: 'liked', id: 'liked' + this.lowerFilterTerm, name: 'Liked tracks', tracks: this.tracks}
+                return {type: 'liked', id: 'liked', name: 'Liked tracks', tracks: this.tracks}
             },
             loading() {
                 return this.$store.state.isRefreshing.track;

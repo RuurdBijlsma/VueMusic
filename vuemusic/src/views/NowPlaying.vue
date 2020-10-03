@@ -226,6 +226,7 @@
     .album-image {
         margin: 0 0 20px;
         box-shadow: 0 5px 30px 0 rgba(0, 0, 0, 0.7);
+        border-radius: 5px;
     }
 
     .track-info {
@@ -257,19 +258,19 @@
 
     @media (max-width: 500px) {
         .track-title {
-            max-width: 430px;
+            max-width: 370px;
         }
     }
 
     @media (max-width: 400px) {
         .track-title {
-            max-width: 330px;
+            max-width: 270px;
         }
     }
 
     @media (max-width: 300px) {
         .track-title {
-            max-width: 230px;
+            max-width: 170px;
         }
     }
 

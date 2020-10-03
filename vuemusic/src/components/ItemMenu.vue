@@ -1,12 +1,12 @@
 <template>
-    <v-menu :close-on-content-click="true" :close-on-click="true">
+    <v-menu ref="parentMenu" :close-on-content-click="true" :close-on-click="true">
         <template v-slot:activator="{ on, attrs }">
             <v-btn :color="color" :fab="fab" :icon="!fab" :small="fab" v-on="on">
                 <v-icon>mdi-dots-horizontal</v-icon>
             </v-btn>
         </template>
         <v-list dense>
-            <share-menu-item :item="item"></share-menu-item>
+            <share-menu-item @action="$refs.parentMenu.isActive=false" :item="item"></share-menu-item>
             <follow-menu-item v-if="type!=='category' && type!=='user' && type !== 'liked'"
                               :item="item"></follow-menu-item>
             <v-list-item v-if="type === 'track' || type === 'artist'" exact :to="`/radio?seed_${type}s=${item.id}`">
@@ -15,7 +15,8 @@
                 </v-list-item-icon>
                 <v-list-item-title>Go to {{type}} radio</v-list-item-title>
             </v-list-item>
-            <v-list-item v-if="!queueTrack && type !== 'category' && type !== 'liked' && type !== 'user'" @click="playNext(item)">
+            <v-list-item v-if="!queueTrack && type !== 'category' && type !== 'liked' && type !== 'user'"
+                         @click="playNext(item)">
                 <v-list-item-icon>
                     <v-progress-circular size="20" indeterminate width="1"
                                          v-if="nextQueueLoading"></v-progress-circular>
@@ -23,7 +24,8 @@
                 </v-list-item-icon>
                 <v-list-item-title>Play next</v-list-item-title>
             </v-list-item>
-            <v-list-item v-if="!queueTrack && type !== 'category' && type !== 'liked' && type !== 'user'" @click="addToQueue(item)">
+            <v-list-item v-if="!queueTrack && type !== 'category' && type !== 'liked' && type !== 'user'"
+                         @click="addToQueue(item)">
                 <v-list-item-icon>
                     <v-progress-circular size="20" indeterminate width="1"
                                          v-if="addQueueLoading"></v-progress-circular>
@@ -39,8 +41,9 @@
                 <v-list-item-title>Remove from <span class="font-weight-bold">{{contextItem.name}}</span>
                 </v-list-item-title>
             </v-list-item>
-            <v-list-item v-if="type === 'track' && queueTrack && $store.getters.isTrackSet && item.id !== $store.state.media.track.id"
-                         @click="$store.commit('removeFromQueue', item)">
+            <v-list-item
+                    v-if="type === 'track' && queueTrack && $store.getters.isTrackSet && item.id !== $store.state.media.track.id"
+                    @click="$store.commit('removeFromQueue', item)">
                 <v-list-item-icon>
                     <v-icon>mdi-playlist-minus</v-icon>
                 </v-list-item-icon>
@@ -108,6 +111,7 @@
         }),
         methods: {
             async add(track, playlist) {
+                this.$refs.parentMenu.isActive = false;
                 Vue.set(this.addLoading, playlist.id, true);
                 await this.$store.dispatch('addToPlaylist', {track, playlist});
                 Vue.set(this.addLoading, playlist.id, false);

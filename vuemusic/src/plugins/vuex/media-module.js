@@ -20,11 +20,16 @@ export default {
         volume: 1,
         trackLoading: true,
         shouldDownload: true,
+        dontOverwriteTrackFromCache: false,
         audio: document.createElement('audio'),
         backupAudio: document.createElement('audio'),
     },
     mutations: {
-        setMediaStateValue: (state, {key, value}) => Vue.set(state, key, value),
+        setMediaStateValue: (state, {key, value}) => {
+            if (key === 'track' && state.dontOverwriteTrackFromCache)
+                return;
+            Vue.set(state, key, value)
+        },
 
         swapAudios: (state) => [state.audio, state.backupAudio] = [state.backupAudio, state.audio],
         local: (state, local) => state.local = local,
@@ -58,6 +63,7 @@ export default {
         shuffle: (state, shuffle) => state.shuffle = shuffle,
         repeat: (state, repeat) => state.repeat = repeat,
         playAfterLoad: (state, playAfterLoad) => state.playAfterLoad = playAfterLoad,
+        dontOverwriteTrackFromCache: (state, value) => state.dontOverwriteTrackFromCache = value,
         shuffledQueue: state => state.shuffledQueue = Utils.shuffleArray([...state.queue]),
         queue: (state, queue) => {
             state.queue = queue;

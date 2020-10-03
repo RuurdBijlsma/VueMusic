@@ -20,6 +20,7 @@
                     return this.$store.dispatch('play');
                 }
                 let track = this.playlist.tracks.find(t => t.id === trackId);
+                this.$store.commit('dontOverwriteTrackFromCache', true);
                 this.$store.commit('playAfterLoad', true);
                 this.$store.commit('track', {
                     track,
