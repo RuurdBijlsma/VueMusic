@@ -203,6 +203,7 @@ export default {
         },
 
         async setTrack({dispatch, state, commit}, track) {
+            commit('local', false);
             dispatch('setMetadata', track);
             commit('trackLoading', true);
             commit('currentTime', 0);
@@ -218,12 +219,11 @@ export default {
                     if (!local)
                         await dispatch('downloadTrackByUrl', {track, url});
                     return;
-                } else {
-                    if (local) {
-                        await dispatch('removeCached', track);
-                    }
+                } else if (local) {
+                    await dispatch('removeCached', track);
                 }
             }
+            console.warn("Failed to load track, skipping")
             // Failed to load track
             await dispatch('skip', 1);
         },
@@ -274,6 +274,11 @@ export default {
                 }, 3500);
                 let canplayFired = false;
                 state.backupAudio.oncanplay = () => 0;
+                state.backupAudio.onerror = () => 0;
+                state.audio.onerror = async () => {
+                    clearTimeout(loadTimeout);
+                    resolve(false);
+                };
                 state.audio.oncanplay = async () => {
                     if (canplayFired)
                         return;
@@ -281,7 +286,7 @@ export default {
 
                     clearTimeout(loadTimeout);
                     resolve(true);
-                }
+                };
             });
         },
         async play({state}) {
