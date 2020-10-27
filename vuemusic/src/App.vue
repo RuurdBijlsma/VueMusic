@@ -16,7 +16,7 @@
                       class="toolbar-content"></tool-bar>
         </v-app-bar>
 
-        <v-main class="scroll-container">
+        <v-main>
             <div class="perfect-scroller">
                 <router-view class="router-view"></router-view>
             </div>
@@ -220,7 +220,6 @@
     }
 
     .perfect-scroller {
-
         height: 100%;
     }
 
