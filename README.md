@@ -23,6 +23,9 @@ Supports large number of tracks
 ### Browse page containing curated lists and genres
 ![Browse](/.gh/browse.png?raw=true "Browse")
 
+### The now playing page with fullscreen option
+![Browse](/.gh/nowplaying.png?raw=true "Browse")
+
 ### Responsive layout and theme colors can adjust to playlist primary colors 
 ![Browse](/.gh/small.png?raw=true "Browse")
 
