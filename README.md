@@ -24,7 +24,7 @@ Supports large number of tracks
 ![Browse](/.gh/browse.png?raw=true "Browse")
 
 ### The now playing page with fullscreen option
-![Browse](/.gh/nowplaying.png?raw=true "Browse")
+![Browse](/.gh/nowplaying.png?raw=true "Now Playing")
 
 ### Responsive layout and theme colors can adjust to playlist primary colors 
 ![Browse](/.gh/small.png?raw=true "Browse")
