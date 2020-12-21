@@ -40,7 +40,7 @@
     "vuetify": "^2.3.18",
     "vuex": "^3.4.0",
     "youtube-search": "^1.1.4",
-    "ytdl-core": "^4.0.6"
+    "ytdl-core": "latest"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^4.5.9",

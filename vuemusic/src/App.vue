@@ -180,9 +180,6 @@
     };
 </script>
 <style>
-    @import url('https://fonts.googleapis.com/css?family=Roboto:400,400i,500,600,700,800,900&display=swap');
-    @import url('https://cdn.materialdesignicons.com/5.0.45/css/materialdesignicons.min.css');
-
     html, body {
         overflow-y: auto;
     }
