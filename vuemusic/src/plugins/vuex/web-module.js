@@ -26,7 +26,7 @@ export default {
         resetSpotifyLogin({state, commit}) {
             if (state.channel !== null) {
                 state.channel.close();
-                commit('server', null);
+                commit('channel', null);
             }
         },
         firstLogin: async ({rootState, getters, state, commit, dispatch}) => {

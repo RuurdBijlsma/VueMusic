@@ -19,14 +19,14 @@ export default class BrowserMusicDownloader extends MusicDownloader {
 
     async removeCached(track) {
         let trackString = this.getSearchString(track);
-        const cacheStorage = await caches.open('vue-music');
+        const cacheStorage = await caches.open(this.cacheName);
         console.warn(`Deleted cache ${trackString} for`, track);
         return await cacheStorage.delete(trackString);
     }
 
     async isTrackOffline(track) {
         let trackString = this.getSearchString(track);
-        const cacheStorage = await caches.open('vue-music');
+        const cacheStorage = await caches.open(this.cacheName);
         let response = await cacheStorage.match(trackString);
         if (response === undefined)
             return false;
