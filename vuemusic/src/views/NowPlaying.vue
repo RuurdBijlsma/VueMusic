@@ -73,7 +73,7 @@
                 }
             },
             swipeEnd(e) {
-                if (!this.startSwipeInfo?.down)
+                if (this.startSwipeInfo && !this.startSwipeInfo.down)
                     return;
                 this.startSwipeInfo.down = false;
                 let startX = this.startSwipeInfo.x;

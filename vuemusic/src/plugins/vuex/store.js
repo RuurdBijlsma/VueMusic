@@ -128,7 +128,11 @@ export default new Vuex.Store({
         addUserPlaylist: (state, playlist) => state.library.playlists.push(playlist),
         userPlaylists: (state, playlists) => state.library.playlists = playlists,
 
-        addToLibrary: (state, {type, item, addAtStart = false}) => state.library[type + 's'][addAtStart ? 'unshift' : 'push'](item),
+        addToLibrary: (state, {
+            type,
+            item,
+            addAtStart = false
+        }) => state.library[type + 's'][addAtStart ? 'unshift' : 'push'](item),
         removeFromLibrary: (state, {type, id}) => {
             let index = state.library[type + 's'].findIndex(i => i.id === id)
             if (index !== -1)
@@ -149,8 +153,7 @@ export default new Vuex.Store({
             youtube !== "cccccccccccc-dddddddddddddddddddddddddd" &&
             spotifyId.length === 32 &&
             spotifySecret.length === 32 &&
-            youtube.length === 39 &&
-            youtube.indexOf('-') === 12,
+            youtube.length === 39,
         isKeySet: (state, getters) => getters.isValidKeySet({...state.keys}),
 
         notFoundUser: () => {
@@ -357,11 +360,11 @@ export default new Vuex.Store({
         share: async ({dispatch, getters}, {item, copy, urlType = 'vuemusic'}) => {
             let url = urlType === 'spotify' ? getters.spotifyShareUrl(item) : getters.shareUrl(item);
             if (navigator.share instanceof Function) {
-                let type = item.type ?? 'category';
+                let type = item.type === null || item.type === undefined ? 'category' : item.type;
                 try {
                     await navigator.share({
                         title: type.substr(0, 1).toUpperCase() + type.substr(1),
-                        text: item.name ?? item.display_name,
+                        text: item.name === null || item.name === undefined ? item.display_name : item.name,
                         url,
                     });
                 } catch (e) {
@@ -431,7 +434,7 @@ export default new Vuex.Store({
                 return r;
             }
         },
-        async * retrieveSpotifyArray({state, dispatch}, apiFunction) {
+        async* retrieveSpotifyArray({state, dispatch}, apiFunction) {
             let getData = () => apiFunction()
 
             while (true) {

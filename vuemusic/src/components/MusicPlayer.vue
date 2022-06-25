@@ -16,11 +16,12 @@
                 if (!this.$store.state.media.trackLoading)
                     this.$store.commit('currentTime', audio.currentTime);
                 if (audio.duration) {
-                    navigator?.mediaSession?.setPositionState?.({
-                        duration: audio.duration,
-                        playbackRate: 1,
-                        position: audio.currentTime,
-                    });
+                    if(navigator && navigator.mediaSession && navigator.mediaSession.setPositionState)
+                        navigator.mediaSession.setPositionState({
+                            duration: audio.duration,
+                            playbackRate: 1,
+                            position: audio.currentTime,
+                        });
                 }
             }, 1000 / 30);
 

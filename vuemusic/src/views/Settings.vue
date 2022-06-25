@@ -25,7 +25,7 @@
                 </p>
                 <p v-else class="key-saved">
                     <v-icon color="error">mdi-close</v-icon>
-                    <span>One ore more keys not valid</span>
+                    <span>One or more keys not valid</span>
                 </p>
             </div>
             <div>
