@@ -211,7 +211,16 @@ export default new Vuex.Store({
             return new Date > state.auth.expiryDate;
         },
         urlName: () => name => {
-            return encodeURIComponent(name.toLowerCase().replace(/ /gi, '-').slice(0, 36));
+            let toEncode = name.toLowerCase().replace(/ /gi, '-').slice(0, 36);
+            let encoded = '';
+            try{
+                encoded = encodeURIComponent(toEncode);
+            }catch(e){
+                encoded = toEncode.replace(/[^a-z0-9]/gi,'');
+                console.warn(`Couldn't uri encode ${toEncode}, changed to ${encoded}`);
+            }
+            console.log({name, toEncode, encoded});
+            return encoded;
         },
         relativeItemUrl: (state, getters) => item => {
             let type = item.type || 'category';
