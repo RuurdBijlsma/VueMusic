@@ -473,7 +473,7 @@ export default new Vuex.Store({
                     await dispatch('cacheState');
                 }
             }
-            dispatch('refreshUserData').then(checkDone);
+            dispatch('refreshUserData', 'playlist').then(checkDone);
             dispatch('refreshUserData', 'artist').then(checkDone);
             dispatch('refreshUserData', 'album').then(checkDone);
             if (!libLoaded) {
